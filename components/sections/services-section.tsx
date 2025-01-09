@@ -53,7 +53,8 @@ const ServicesSection = ({ data, services }: ServicesSectionProps) => {
               {services.map((service, index) => (
                 <div key={service.id} className={`cardS ${index % 2 !== 0 ? 'orgCS' : ''}`}>
                   {service.image && (
-                    <Image src={service.image} alt={service.subtitle} />
+                    <Image   width={300}
+                      height={300} src={service.image} alt={service.subtitle} />
                   )}
                   <div className="textCardS">
                     <p className="text-base lg:text-xl" 
@@ -72,7 +73,8 @@ const ServicesSection = ({ data, services }: ServicesSectionProps) => {
           </div>
         </div>
       </div>
-      <Image className="arrowSC arrowSC2" src="images/arrow2.svg" alt="" />
+      <Image className="arrowSC arrowSC2"   width={0}
+  height={0} src="images/arrow2.svg" alt="image"  />
     </section>
   );
 };

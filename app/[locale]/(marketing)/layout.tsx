@@ -15,7 +15,7 @@ export default async function MarketingLayout({ children }: MarketingLayoutProps
   const settings = await getSiteSettings();
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-white">
       <NavMobile navItems={navItems} settings={settings} />
       <NavBar navItems={navItems} settings={settings} />
         {children}

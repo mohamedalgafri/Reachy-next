@@ -25,15 +25,15 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" >
-        <DropdownMenuItem className="flex  gap-2 rtl:flex-row-reverse" onClick={() => setTheme("light")}>
+        <DropdownMenuItem className="flex  gap-2 rtl:flex-row-reverse cursor-pointer" onClick={() => setTheme("light")}>
           <Icons.sun className="mr-2 size-4 " />
           <span>Light</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="flex  gap-2 rtl:flex-row-reverse" onClick={() => setTheme("dark")}>
+        <DropdownMenuItem className="flex  gap-2 rtl:flex-row-reverse cursor-pointer" onClick={() => setTheme("dark")}>
           <Icons.moon className="mr-2 size-4" />
           <span>Dark</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="flex  gap-2 rtl:flex-row-reverse" onClick={() => setTheme("system")}>
+        <DropdownMenuItem className="flex  gap-2 rtl:flex-row-reverse cursor-pointer" onClick={() => setTheme("system")}>
           <Icons.laptop className="mr-2 size-4" />
           <span>System</span>
         </DropdownMenuItem>

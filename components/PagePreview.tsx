@@ -74,6 +74,7 @@ export const PagePreview = ({
     return (
       <div className="relative">
         <Image
+          fill
           src={imageUrl}
           alt={section.title || "صورة القسم"}
           width={800}

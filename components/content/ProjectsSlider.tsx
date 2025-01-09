@@ -56,6 +56,7 @@ export default function ProjectsSlider({ projects }: { projects: Project[] }) {
                 <div className="relative h-40">
                   {project.coverImage ? (
                     <Image
+                      fill
                       src={project.coverImage}
                       alt={project.title}
                       className="w-full h-full object-cover"

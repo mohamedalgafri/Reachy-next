@@ -42,7 +42,7 @@ const ContactForm = ({settings}) => {
   };
 
   return (
-    <section className="sectionCU sectionBGColor">
+    <section className="sectionCU sectionBGColor" id="contact">
       <div className="overlay-wrapper overlay-wrapperR">
         <div className="blur-background blurR"></div>
       </div>
@@ -58,7 +58,9 @@ const ContactForm = ({settings}) => {
               <div className="ballC"></div>
             </div>
             <div>
-              <span className="uppercase font-bold text-white">CONTACT US.</span>
+              <span className="uppercase font-bold text-white">
+                {locale === 'ar' ? 'تواصل معنا' : 'Contact Us'}
+              </span>
             </div>
           </div>
 
@@ -69,7 +71,7 @@ const ContactForm = ({settings}) => {
                   <input
                     className="inputF"
                     type="text"
-                    placeholder="Your Full Name"
+                    placeholder={`${locale === 'ar' ? 'الاسم' : 'Name'}`}
                     {...form.register("name")}
                     disabled={isLoading}
                   />
@@ -85,7 +87,7 @@ const ContactForm = ({settings}) => {
                     <input
                       className="inputF"
                       type="email"
-                      placeholder="Your Email"
+                      placeholder={`${locale === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}`}
                       {...form.register("email")}
                       disabled={isLoading}
                     />
@@ -99,7 +101,7 @@ const ContactForm = ({settings}) => {
                     <input
                       className="inputF"
                       type="tel"
-                      placeholder="Phone/Mobile Number"
+                      placeholder={`${locale === 'ar' ? 'رقم الهاتف' : 'Phone Number'}`}
                       {...form.register("phone")}
                       disabled={isLoading}
                     />
@@ -115,7 +117,7 @@ const ContactForm = ({settings}) => {
                   <input
                     className="inputF"
                     type="text"
-                    placeholder="Subject"
+                    placeholder={`${locale === 'ar' ? 'عنوان الرسالة' : 'Message Subject'}`}
                     {...form.register("subject")}
                     disabled={isLoading}
                   />
@@ -129,7 +131,7 @@ const ContactForm = ({settings}) => {
                 <div>
                   <textarea
                     className="inputF"
-                    placeholder="Your Message"
+                    placeholder={`${locale === 'ar' ? 'نص الرسالة' : 'Message Text'}`}
                     rows={10}
                     {...form.register("message")}
                     disabled={isLoading}
@@ -148,7 +150,7 @@ const ContactForm = ({settings}) => {
                     className="action btnArrow flex items-center justify-center gap-1 w-max min-w-[200px] py-1 px-8"
                   >
                     <span className="textbtn">
-                      {isLoading ? "Sending..." : "Send"}
+                      {isLoading ? locale === "ar" ? "Sending..." : "جاري الارسال" : locale === "ar" ? "إرسال" : "Send"}
                     </span>
                   </button>
                 </div>

@@ -41,6 +41,7 @@ export const columns: ColumnDef<Client>[] = [
             onError={(e) => {
               e.currentTarget.src = "/placeholder-image.jpg"
             }}
+          fill
           />
         </div>
       )

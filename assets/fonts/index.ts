@@ -1,4 +1,4 @@
-import { Montserrat, Almarai } from "next/font/google";
+import { Montserrat ,Almarai } from "next/font/google";
 import localFont from "next/font/local";
 
 // إضافة خط Montserrat
@@ -9,22 +9,15 @@ export const montserrat = Montserrat({
   display: 'swap',
 });
 
-export const fontHeading = localFont({
-  src: "./CalSans-SemiBold.woff2",
-  variable: "--font-heading",
+export const fontArabic = localFont({
+  src: "./29ltbukralight.otf",
+  variable: "--font-arabic",
 });
 
-export const fontSatoshi = localFont({
-  src: "./satoshi-variable.woff2",
-  variable: "--font-satoshi",
-  weight: "300 900",
-  display: "swap",
-  style: "normal",
-});
 
-export const fontArabic = Almarai({
-  subsets: ['arabic'],
-  weight: ['300', '400', '700', '800'],
-  variable: '--font-arabic',
-  display: 'swap',
-});
+// export const fontArabic = Almarai({
+//   subsets: ['arabic'],
+//   weight: ['300', '400', '700', '800'],
+//   variable: '--font-arabic',
+//   display: 'swap',
+// });

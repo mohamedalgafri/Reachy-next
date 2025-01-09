@@ -37,9 +37,9 @@ const HeroSection = ({ data }: HeroSectionProps) => {
                     <div className="blur-background blurL"></div>
                 </div>
                 <div>
-                    {/* <video autoPlay loop className="backVideo lazy-video" muted playsInline>
-                        <source src="images/02.mp4" type="video/mp4" />
-                    </video> */}
+                    <video autoPlay loop className="backVideo lazy-video" muted playsInline>
+                        <source src="/images/02.mp4" type="video/mp4" />
+                    </video>
                 </div>
             </div>
 
@@ -73,7 +73,7 @@ const HeroSection = ({ data }: HeroSectionProps) => {
                             }} 
                         />
 
-                        <div className={`arrowBtn ${locale === 'ar' ? 'flex-row-reverse' : ''}`}>
+                        <div className={`arrowBtn`}>
                             <a 
                                 href={data.buttonLink} 
                                 className="action btnArrow flex items-center gap-1 w-max mt-5 py-1 px-8"
@@ -84,7 +84,9 @@ const HeroSection = ({ data }: HeroSectionProps) => {
                             </a>
                             <Image 
                                 src="images/arrowHero.svg" 
-                                alt="" 
+                                alt="image"  
+                                width="80"
+                                height="80"
                                 className={locale === 'ar' ? 'transform rotate-180' : ''}
                             />
                         </div>

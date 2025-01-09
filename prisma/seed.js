@@ -214,7 +214,101 @@ async function main() {
     }
   });
 
-  console.log('Seeded:', { homePage });
+  const aboutPage = await prisma.page.create({
+    data: {
+      title: 'من نحن',
+      slug: 'about',
+      sections: {
+        create: [
+          {
+            title: 'About Section',
+            type: 'ABOUT',
+            order: 1,
+            isVisible: true,
+            inputs: {
+              create: [
+                {
+                  label: 'title_ar',
+                  type: 'RICH_TEXT',
+                  value: 'من نحن',
+                  order: 1
+                },
+                {
+                  label: 'title_en',
+                  type: 'RICH_TEXT',
+                  value: 'About Us',
+                  order: 2
+                },
+                {
+                  label: 'content_ar',
+                  type: 'RICH_TEXT',
+                  value: 'نحن شركة رائدة في مجال التسويق الرقمي...',
+                  order: 3
+                },
+                {
+                  label: 'content_en',
+                  type: 'RICH_TEXT',
+                  value: 'We are a leading digital marketing company...',
+                  order: 4
+                },
+                {
+                  label: 'vision_title_ar',
+                  type: 'RICH_TEXT',
+                  value: 'رؤيتنا',
+                  order: 5
+                },
+                {
+                  label: 'vision_title_en',
+                  type: 'RICH_TEXT',
+                  value: 'Our Vision',
+                  order: 6
+                },
+                {
+                  label: 'vision_content_ar',
+                  type: 'RICH_TEXT',
+                  value: 'نسعى لأن نكون الشريك الأول في حلول التسويق الرقمي...',
+                  order: 7
+                },
+                {
+                  label: 'vision_content_en',
+                  type: 'RICH_TEXT',
+                  value: 'We strive to be the leading provider of digital marketing solutions...',
+                  order: 8
+                },
+                {
+                  label: 'mission_title_ar',
+                  type: 'RICH_TEXT',
+                  value: 'مهمتنا',
+                  order: 9
+                },
+                {
+                  label: 'mission_title_en',
+                  type: 'RICH_TEXT',
+                  value: 'Our Mission',
+                  order: 10
+                },
+                {
+                  label: 'mission_content_ar',
+                  type: 'RICH_TEXT',
+                  value: 'تقديم خدمات تسويقية مبتكرة تساعد عملائنا على النمو...',
+                  order: 11
+                },
+                {
+                  label: 'mission_content_en',
+                  type: 'RICH_TEXT',
+                  value: 'To provide innovative marketing services that help our clients grow...',
+                  order: 12
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  });
+  
+
+  console.log('Seeded:', { homePage , aboutPage });
 }
 
 main()

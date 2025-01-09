@@ -30,7 +30,6 @@ export function NavBar({ navItems, settings }: NavBarProps) {
   const t = useTranslations('nav');
 
   const isActiveLink = (href) => {
-    // تجاهل بادئة اللغة (ar/ أو en/) عند المقارنة
     const currentPath = pathname.split('/').slice(2).join('/')
     const itemPath = href.split('/').slice(1).join('/')
     return currentPath === itemPath
@@ -45,7 +44,8 @@ export function NavBar({ navItems, settings }: NavBarProps) {
               {/* البريد الإلكتروني */}
               {settings?.email && (
                 <div className="flex gap-2 items-center">
-                  <Image src="images/whatsapp-brands-solid.svg" className="size-4 object-contain" alt="" />
+                  <Image src="images/envelope.svg" width={0}
+                    height={0} className="size-4 object-contain" alt="image" />
                   <span>{settings.email}</span>
                 </div>
               )}
@@ -53,7 +53,8 @@ export function NavBar({ navItems, settings }: NavBarProps) {
               {/* رقم الواتساب */}
               {settings?.phone && (
                 <div className="flex gap-2 items-center leftItemNavTopc">
-                  <Image src="images/whatsapp-brands-solid.svg" className="size-4 object-contain" alt="" />
+                  <Image src="images/whatsapp-brands-solid.svg" width={0}
+                    height={0} className="size-4 object-contain" alt="image" />
                   <span>{t('contactUs')}</span>
                 </div>
               )}
@@ -94,20 +95,21 @@ export function NavBar({ navItems, settings }: NavBarProps) {
         <div className="container flex justify-between items-center w-full">
           <Link href="/" className="action logo text-white h-7 object-contain object-left">
             {settings?.logoImage && (
-              <Image className="size-full" src={settings.logoImage} alt="" />
+              <Image className="size-full" width={0}
+                height={0} src={settings.logoImage} alt="image" />
             )}
           </Link>
 
           <div className="navMenu flex items-center gap-10 text-white">
             <div className="navMenuList">
-              <ul className="flex items-center gap-3">
+              <ul className="flex items-center gap-5">
                 {navItems.map((item) => {
                   const isActive = isActiveLink(item.href)
                   return (
                     <li
                       key={item.href}
                       className={cn(
-                        "navList uppercase",
+                        "navList uppercase textdown",
                         isActive && "active"
                       )}
                     >
@@ -122,8 +124,10 @@ export function NavBar({ navItems, settings }: NavBarProps) {
           </div>
 
           <div id="menuIcon" className="menuIcon">
-            <Image className="openNav" src="images/bars-solid.svg" alt="" />
-            <Image className="closeNav" src="images/xmark-solid.svg" alt="" />
+            <Image className="openNav" width={0}
+              height={0} src="images/bars-solid.svg" alt="image" />
+            <Image className="closeNav" width={0}
+              height={0} src="images/xmark-solid.svg" alt="image" />
           </div>
         </div>
       </nav>

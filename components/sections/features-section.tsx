@@ -47,7 +47,7 @@ export default function FeaturesSection({ data, features }: FeaturesSectionProps
                     <div className="relative w-16 h-16 mb-4">
                       <Image
                         src={feature.image}
-                        alt=""
+                        alt="image" 
                         fill
                         className="object-contain"
                       />
@@ -71,7 +71,8 @@ export default function FeaturesSection({ data, features }: FeaturesSectionProps
           </div>
         </div>
       </div>
-      <Image className="arrowSC arrowSC3" src="images/arrow3.svg" alt="" />
+      <Image className="arrowSC arrowSC3"   width={0}
+  height={0} src="images/arrow3.svg" alt="image"  />
     </section>
   );
 }

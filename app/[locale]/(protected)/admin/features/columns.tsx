@@ -51,6 +51,7 @@ export const columns: ColumnDef<Feature>[] = [
             onError={(e) => {
               e.currentTarget.src = "/placeholder-image.jpg"
             }}
+            fill
           />
         </div>
       )

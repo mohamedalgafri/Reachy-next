@@ -14,6 +14,7 @@ export default async function Author({
 
   return imageOnly ? (
     <Image
+      fill
       src={authors[username].image}
       alt={authors[username].name}
       width={32}
@@ -28,6 +29,7 @@ export default async function Author({
       rel="noopener noreferrer"
     >
       <Image
+        fill
         src={authors[username].image}
         alt={authors[username].name}
         width={40}

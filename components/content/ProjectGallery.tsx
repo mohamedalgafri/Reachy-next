@@ -69,6 +69,7 @@ export default function ProjectGallery({ coverImage, images, title }: ProjectGal
           <SwiperSlide key={image.id}>
             <div className="relative w-full h-full">
               <Image
+                fill
                 src={image.url}
                 alt={`${title} - صورة ${image.id}`}
                 className="w-full h-full object-cover rounded-lg"
@@ -104,6 +105,7 @@ export default function ProjectGallery({ coverImage, images, title }: ProjectGal
               <div className="relative w-full h-full cursor-pointer">
                 <Image
                   src={image.url}
+                  fill
                   alt={`${title} - مصغرة ${image.id}`}
                   className="w-full h-full object-cover rounded-lg hover:opacity-80 transition-opacity"
                 />

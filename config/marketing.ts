@@ -11,11 +11,11 @@ export const staticNav = [
   },
   {
     titleKey: "about",
-    href: "/aboutus",
+    href: "/about",
   },
   {
     titleKey: "contact",
-    href: "/contact",
+    href: "/#contact",
   },
 ];
 

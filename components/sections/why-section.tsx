@@ -21,7 +21,7 @@ interface WhySectionProps {
 const WhySection = ({ data , services  }: WhySectionProps) => {
   return (
     <section className="sectionWR sectionBGColor">
-    {/* <!-- <img className="imageBG" src="images/BG1.svg" alt=""> --> */}
+    {/* <!-- <img className="imageBG" src="images/BG1.svg" alt="image" > --> */}
     <div className=" container relative">
       <div className="pt-10">
         <div className="ballsCT">
@@ -43,22 +43,26 @@ const WhySection = ({ data , services  }: WhySectionProps) => {
 
           <div className="cards mt-8 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             <div className="cardWR">
-              <Image src="images/TEAM1.svg" alt=""/>
+              <Image   width={0}
+  height={0} src="images/TEAM1.svg" alt="image" />
               <h4 className="text-2xl">Specialized Team</h4>
               <p className="text-base">Our team includes experts in all areas of digital marketing</p>
             </div>
             <div className="cardWR">
-              <Image src="images/TEAM2.svg" alt=""/>
+              <Image   width={0}
+  height={0} src="images/TEAM2.svg" alt="image" />
               <h4 className="text-2xl">Customized Solutions</h4>
               <p className="text-base">We design strategies to fit your unique needs</p>
             </div>
             <div className="cardWR">
-              <Image src="images/TEAM3.svg" alt=""/>
+              <Image   width={0}
+  height={0} src="images/TEAM3.svg" alt="image" />
               <h4 className="text-2xl">Tangible Results</h4>
               <p className="text-base">We focus on achieving your goals as efficiently as possible</p>
             </div>
             <div className="cardWR">
-              <Image src="images/TEAM4.svg" alt=""/>
+              <Image   width={0}
+  height={0} src="images/TEAM4.svg" alt="image" />
               <h4 className="text-2xl">Ongoing Support</h4>
               <p className="text-base">Provide continuing support to ensure success of your projects</p>
             </div>
@@ -68,7 +72,8 @@ const WhySection = ({ data , services  }: WhySectionProps) => {
         </div>
       </div>
     </div>
-    <Image className="arrowSC arrowSC3" src="images/arrow3.svg" alt="" />
+    <Image className="arrowSC arrowSC3"   width={0}
+  height={0} src="images/arrow3.svg" alt="image"  />
   </section>
   );
 };

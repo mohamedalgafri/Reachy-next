@@ -17,7 +17,8 @@ export async function SiteFooter({ className }: React.HTMLAttributes<HTMLElement
 
     <footer className=" footer">
     <div className="footerContant container">
-      <Image className="logoF" src={settings?.logoImage} alt=""/>
+      <Image   width={0}
+  height={0} className="logoF" src={settings?.logoImage} alt="image" />
       <div className="flex gap-1">
         {settings?.socialLinks?.map((item) => {
               const iconName = item?.icon

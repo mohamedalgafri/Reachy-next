@@ -30,7 +30,11 @@ export function LanguageSwitcher() {
             onClick={switchLocale}
             className="btnLang flex items-center gap-2">
             <div className="flex gap-2 items-center"></div>
-            <Image src="images/iconLang.png" className="size-6 object-contain" alt="" />
+            <Image src="/images/iconLang.png"  
+            width={24}
+            height={24}
+            className="size-6 object-contain" alt="image"
+            />
             <span>{locale === 'ar' ? 'English' : 'عربي'}</span>
         </div>
   );

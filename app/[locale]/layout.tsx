@@ -1,6 +1,8 @@
 import { Providers } from './providers';
-import { montserrat } from "@/assets/fonts";
 import { unstable_setRequestLocale } from 'next-intl/server';
+import { cn } from "@/lib/utils";
+import { montserrat , fontArabic } from "@/assets/fonts";
+
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
@@ -9,12 +11,8 @@ interface LocaleLayoutProps {
 
 export default async function LocaleLayout({
   children,
-  params,
+  params: { locale },
 }: LocaleLayoutProps) {
-  // تخزين params بشكل كامل أولاً
-  const resolvedParams = await Promise.resolve(params);
-  const locale = resolvedParams.locale;
-  
   unstable_setRequestLocale(locale);
   
   let messages;
@@ -25,22 +23,18 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
-      <body
-        className={montserrat.variable}
-        suppressHydrationWarning
-      >
-        <Providers 
-          locale={locale} 
-          messages={messages}
-        >
+    <div dir={locale === 'ar' ? 'rtl' : 'ltr'}
+    className={cn(
+      "min-h-screen bg-background antialiased",
+      montserrat.variable,
+      fontArabic.variable
+    )}
+    lang={locale}>
+      <Providers locale={locale} messages={messages}>
+        <main className="min-h-screen bg-background antialiased">
           {children}
-        </Providers>
-      </body>
-    </html>
+        </main>
+      </Providers>
+    </div>
   );
-}
-
-export function generateStaticParams() {
-  return [{ locale: 'ar' }, { locale: 'en' }];
 }

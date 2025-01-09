@@ -30,8 +30,8 @@ export default async function FeaturesPage() {
           </p>
         </div>
         <Button >
-          <Link href="/admin/features/create">
-            <Plus className="w-4 h-4 ml-2" />
+          <Link href="/admin/features/create" className="flex gap-1">
+            <Plus className="w-4 h-4" />
             إضافة ميزة
           </Link>
         </Button>

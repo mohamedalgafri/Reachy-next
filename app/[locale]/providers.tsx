@@ -6,6 +6,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { ReduxProvider } from "@/store/provider";
 import { Suspense } from "react";
 import { ClientSideProvider } from "./client-provider";
+import Loading from "../loading";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -23,7 +24,7 @@ export function Providers({ children, locale, messages }: ProvidersProps) {
           timeZone="Asia/Dubai"
         >
           <ClientSideProvider>
-            <Suspense fallback={<div>جاري التحميل...</div>}>
+            <Suspense fallback={<Loading />}>
               {children}
             </Suspense>
           </ClientSideProvider>

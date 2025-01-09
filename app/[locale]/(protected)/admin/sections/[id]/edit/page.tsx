@@ -2,10 +2,11 @@
 import HeroSectionForm from "@/components/forms/HeroForm";
 import StoryForm from "@/components/forms/StoryForm";
 import ServicesSectionForm from "@/components/forms/ServicesSectionForm";
+import FeaturesSectionForm from "@/components/forms/FeaturesForm";
+import AboutForm from "@/components/forms/AboutForm";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import FeaturesSectionForm from "@/components/forms/FeaturesForm";
 
 export const metadata: Metadata = {
   title: "تعديل القسم",
@@ -48,6 +49,22 @@ export default async function EditSectionPage({ params }: EditSectionPageProps) 
           buttonLink: section.inputs.find(i => i.label === 'buttonLink')?.value || ''
         };
 
+      case 'ABOUT':
+        return {
+          title_ar: section.inputs.find(i => i.label === 'title_ar')?.value || '',
+          title_en: section.inputs.find(i => i.label === 'title_en')?.value || '',
+          content_ar: section.inputs.find(i => i.label === 'content_ar')?.value || '',
+          content_en: section.inputs.find(i => i.label === 'content_en')?.value || '',
+          vision_title_ar: section.inputs.find(i => i.label === 'vision_title_ar')?.value || '',
+          vision_title_en: section.inputs.find(i => i.label === 'vision_title_en')?.value || '',
+          vision_content_ar: section.inputs.find(i => i.label === 'vision_content_ar')?.value || '',
+          vision_content_en: section.inputs.find(i => i.label === 'vision_content_en')?.value || '',
+          mission_title_ar: section.inputs.find(i => i.label === 'mission_title_ar')?.value || '',
+          mission_title_en: section.inputs.find(i => i.label === 'mission_title_en')?.value || '',
+          mission_content_ar: section.inputs.find(i => i.label === 'mission_content_ar')?.value || '',
+          mission_content_en: section.inputs.find(i => i.label === 'mission_content_en')?.value || ''
+        };
+    
       case 'STORY':
         return {
           title: section.inputs.find(i => i.label === 'title')?.value || '',
@@ -56,17 +73,14 @@ export default async function EditSectionPage({ params }: EditSectionPageProps) 
         };
 
       case 'FEATURES':
-        // تجميع العناوين
         const title = {
           ar: section.inputs.find(i => i.label === 'title_ar')?.value || '',
           en: section.inputs.find(i => i.label === 'title_en')?.value || ''
         };
 
-        // تجميع المميزات
         const featuresMap = new Map();
 
         section.inputs.forEach(input => {
-          // تعديل التعبير المنتظم ليتطابق مع تخزين البيانات
           const match = input.label.match(/feature_(\d+)_(\w+)/);
           if (!match) return;
 
@@ -82,7 +96,6 @@ export default async function EditSectionPage({ params }: EditSectionPageProps) 
 
           const feature = featuresMap.get(featureIndex);
 
-          // معالجة كل نوع من البيانات
           if (field === 'title_ar') {
             feature.title.ar = input.value;
           } else if (field === 'title_en') {
@@ -92,14 +105,11 @@ export default async function EditSectionPage({ params }: EditSectionPageProps) 
           }
         });
 
-
         return {
           title
         };
 
-
       case 'SERVICES':
-        // تجميع الخدمات
         const servicesMap = new Map();
 
         section.inputs.forEach(input => {
@@ -149,7 +159,8 @@ export default async function EditSectionPage({ params }: EditSectionPageProps) 
         return <FeaturesSectionForm {...props} />;
       case 'SERVICES':
         return <ServicesSectionForm {...props} />;
-        
+      case 'ABOUT':
+        return <AboutForm {...props} />;
       default:
         return <div className="text-center p-4 text-red-500">نوع القسم غير معروف</div>;
     }

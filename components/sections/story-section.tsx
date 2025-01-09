@@ -54,6 +54,7 @@ const StorySection = ({ data }: StorySectionProps) => {
                 </span>
               </a>
               {data.profileUrl && (
+                <div className="textdown">
                 <a 
                   href="" 
                   target="_blank"
@@ -66,12 +67,15 @@ const StorySection = ({ data }: StorySectionProps) => {
                   <Download className="h-5 w-5" />
                   {locale === 'ar' ? 'تحميل الملف التعريفي' : 'Download Profile'}
                 </a>
+                </div>
               )}
             </div>
           </div>
         </div>
       </div>
-      <Image className="arrowSC arrowSC1" src="images/arrow1.svg" alt="" />
+      <Image className="arrowSC arrowSC1"   width={0}
+              height={0} src="images/arrow1.svg" alt="image"
+      />
     </section>
   );
 };

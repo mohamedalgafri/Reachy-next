@@ -32,13 +32,13 @@ export function LanguageSwitcher() {
       <DropdownMenuContent align="end">
         <DropdownMenuItem 
           onClick={() => handleLanguageChange('ar')}
-          className={locale === 'ar' ? 'bg-muted' : ''}
+          className={locale === 'ar' ? 'bg-muted mb-1 cursor-pointer' : 'mb-1 cursor-pointer'}
         >
           العربية
         </DropdownMenuItem>
         <DropdownMenuItem 
           onClick={() => handleLanguageChange('en')}
-          className={locale === 'en' ? 'bg-muted' : ''}
+          className={locale === 'en' ? 'bg-muted cursor-pointer' : 'cursor-pointer'}
         >
           English
         </DropdownMenuItem>

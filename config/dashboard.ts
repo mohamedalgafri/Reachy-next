@@ -24,33 +24,18 @@ export async function getDashboardLinks(unreadDonations: number = 0, unreadMessa
           titleKey: "dashboard.sections.sections",
           authorizeOnly: UserRole.ADMIN,
         },
-      ],
-    },
-    {
-      titleKey: "dashboard.sections.services",
-      items: [
         {
           href: "/admin/services",
           icon: "Wrench",
           titleKey: "dashboard.sections.services",
           authorizeOnly: UserRole.ADMIN,
         },
-      ],
-    },
-    {
-      titleKey: "dashboard.sections.features",
-      items: [
         {
           href: "/admin/features",
           icon: "Stars",
           titleKey: "dashboard.sections.features",
           authorizeOnly: UserRole.ADMIN,
         },
-      ],
-    },
-    {
-      titleKey: "dashboard.sections.clients",
-      items: [
         {
           href: "/admin/clients",
           icon: "Users",

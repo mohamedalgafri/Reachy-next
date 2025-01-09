@@ -1,7 +1,7 @@
 import { BeatLoader } from "react-spinners"
 
 
-const loading = () => {
+const Loading = () => {
   return (
     <div className="flex h-screen flex-col items-center justify-center">
       <BeatLoader color="#8b5cf6" />
@@ -9,4 +9,4 @@ const loading = () => {
   )
 }
 
-export default loading
+export default Loading
