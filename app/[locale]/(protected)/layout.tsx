@@ -1,0 +1,77 @@
+// app /[locale]/(protected)/layout.tsx
+import { redirect } from "next/navigation";
+
+import { getDashboardLinks } from "@/config/dashboard";
+import { getCurrentUser } from "@/lib/session";
+
+import {
+  DashboardSidebar,
+  MobileSheetSidebar,
+} from "@/components/layout/dashboard-sidebar";
+import { ModeToggle } from "@/components/layout/mode-toggle";
+import { UserAccountNav } from "@/components/layout/user-account-nav";
+import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
+import { getSiteSettings } from "@/lib/settings";
+import { Toaster } from "@/components/ui/toaster";
+import { NotificationsButton } from "@/components/content/NotificationsDropdown";
+import { MessagesProvider } from "@/components/MessagesProvider";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { SearchCommand } from "@/components/dashboard/search-command";
+import { UserRole } from "@prisma/client"
+
+interface ProtectedLayoutProps {
+  children: React.ReactNode;
+}
+
+export default async function Dashboard({ children }: ProtectedLayoutProps) {
+  const settings = await getSiteSettings();
+  
+  // if (!user) redirect("/login");
+
+  const user = await getCurrentUser();
+  
+  const sidebarLinks = await getDashboardLinks();
+  
+  const filteredLinks = sidebarLinks.map((section) => ({
+    ...section,
+    items: section.items.filter((item) => {
+      // إظهار العناصر التي ليس لها تقييد
+      if (!item.authorizeOnly) return true;
+      // إظهار العناصر للمستخدم المناسب
+      return item.authorizeOnly === 'ADMIN' && user?.role === 'ADMIN';
+    })
+  })).filter(section => section.items.length > 0);
+
+  return (
+
+  
+    <div  className="relative flex min-h-screen w-full">
+      <Toaster />
+      <MessagesProvider />
+      <DashboardSidebar links={filteredLinks} settings={settings} />
+
+      <div className="flex flex-1 flex-col">
+        <header className="sticky top-0 z-50 flex h-14 bg-background px-4 lg:h-[60px] xl:px-8">
+          <MaxWidthWrapper className="flex max-w-7xl items-center gap-x-3 px-0">
+            <MobileSheetSidebar links={filteredLinks} settings={settings} />
+
+            <div className="w-full flex-1">
+              <SearchCommand links={filteredLinks} />
+            </div>
+
+            {/* <NotificationsButton /> */}
+            <LanguageSwitcher /> 
+            <ModeToggle />
+            <UserAccountNav />
+          </MaxWidthWrapper>
+        </header>
+
+        <main className="flex-1 p-4 xl:px-8">
+          <MaxWidthWrapper className="flex h-full max-w-7xl flex-col gap-4 px-0 lg:gap-6">
+            {children}
+          </MaxWidthWrapper>
+        </main>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,25 @@
+{
+    "nav": {
+      "home": "الرئيسية",
+      "services": "خدماتنا",
+      "about": "من نحن",
+      "contact": "اتصل بنا",
+      "contactUs": "اتصل بنا"
+    },
+    "dashboard": {
+        "sections": {
+          "main": "القائمة الرئيسية",
+          "dashboard": "لوحة التحكم",
+          "sections": "الأقسام",
+          "services": "الخدمات",
+          "clients": "العملاء",
+          "features": "المميزات",
+          "contacts": "تواصل معنا",
+          "messages": "رسائل التواصل",
+          "options": "الخيارات",
+          "settings": "الإعدادات",
+          "website": "الموقع الخارجي"
+        }
+    }
+
+  }

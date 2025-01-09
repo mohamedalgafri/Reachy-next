@@ -1,0 +1,24 @@
+{
+    "nav": {
+      "home": "HOME",
+      "services": "SERVICES",
+      "about": "ABOUT US",
+      "contact": "CONTACT",
+      "contactUs": "CONTACT US"
+    },
+    "dashboard": {
+        "sections": {
+          "main": "Main Menu",
+          "dashboard": "Dashboard",
+          "sections": "Sections",
+          "services": "Services",
+          "clients": "Clients",
+          "features": "Features",
+          "contacts": "Contact Us",
+          "messages": "Messages",
+          "options": "Options",
+          "settings": "Settings",
+          "website": "Website"
+        }
+    }
+  }

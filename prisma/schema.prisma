@@ -1,0 +1,146 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model Settings {
+  id          String    @id @default(cuid())
+  siteName    String
+  logoImage   String?
+  logoText    String?
+  email       String?
+  phone       String?
+  address_ar     String?   @db.Text
+  address_en     String?   @db.Text
+  socialLinks Json[]    
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String?
+  role      UserRole  @default(ADMIN)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  UserNotificationState UserNotificationState[]
+}
+
+
+model Page {
+  id          Int       @id @default(autoincrement())
+  title       String    
+  slug        String    @unique
+  isActive    Boolean   @default(true)
+  sections    Section[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isActive])
+}
+
+model Section {
+  id          Int       @id @default(autoincrement())
+  title       String
+  pageId      Int
+  page        Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type        String    // hero, features, etc.
+  inputs      Input[]
+  order       Int
+  isVisible   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([pageId, order])
+}
+
+model Input {
+  id          Int       @id @default(autoincrement())
+  label       String    // عنوان الحقل
+  type        String    // text, image, rich-text, etc.
+  value       String    @db.Text
+  sectionId   Int
+  section     Section   @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([sectionId, order])
+}
+
+model Service {
+  id          Int       @id @default(autoincrement())
+  title_ar    String    @db.Text
+  title_en    String    @db.Text
+  subtitle_ar String    @db.Text
+  subtitle_en String    @db.Text
+  image       String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isActive])
+}
+
+model Client {
+  id          Int       @id @default(autoincrement())
+  name        String    
+  image       String
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isActive])
+}
+
+model Contact {
+  id        String    @id @default(cuid())
+  name      String
+  email     String
+  phone     String
+  subject   String
+  message   String    @db.Text
+  isRead    Boolean   @default(false)  
+  createdAt DateTime  @default(now())
+
+  @@map("contacts")
+}
+
+model Feature {
+  id          Int       @id @default(autoincrement())
+  title_ar    String    
+  title_en    String    
+  subtitle_ar String    
+  subtitle_en String    
+  image       String    
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isActive])
+}
+
+
+model UserNotificationState {
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id])
+  lastDonationsVisit DateTime @default(now())
+  lastMessagesVisit  DateTime @default(now())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([userId])
+}
