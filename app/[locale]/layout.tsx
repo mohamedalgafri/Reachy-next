@@ -1,6 +1,8 @@
-// app/[locale]/layout.tsx
-import { unstable_setRequestLocale } from 'next-intl/server';
 import { Providers } from './providers';
+import { unstable_setRequestLocale } from 'next-intl/server';
+import { cn } from "@/lib/utils";
+import { montserrat , fontArabic } from "@/assets/fonts";
+
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
@@ -11,24 +13,29 @@ export default async function LocaleLayout({
   children,
   params,
 }: LocaleLayoutProps) {
-  // Store locale in a variable after awaiting params
-  const locale = await Promise.resolve(params.locale);
-  await unstable_setRequestLocale(locale);
+  const locale = await params.locale; 
+  unstable_setRequestLocale(locale);
   
-  // Import messages using the resolved locale
-  const messages = (await import(`@/i18n/messages/${locale}.json`)).default;
+  let messages;
+  try {
+    messages = (await import(`@/i18n/messages/${locale}.json`)).default;
+  } catch (error) {
+    messages = (await import(`@/i18n/messages/ar.json`)).default;
+  }
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body>
-        <Providers locale={locale} messages={messages}>
+    <div dir={locale === 'ar' ? 'rtl' : 'ltr'}
+    className={cn(
+      "min-h-screen bg-background antialiased",
+      montserrat.variable,
+      fontArabic.variable
+    )}
+    lang={locale}>
+      <Providers locale={locale} messages={messages}>
+        <main className="min-h-screen bg-background antialiased">
           {children}
-        </Providers>
-      </body>
-    </html>
+        </main>
+      </Providers>
+    </div>
   );
-}
-
-export function generateStaticParams() {
-  return [{ locale: 'ar' }, { locale: 'en' }];
 }
