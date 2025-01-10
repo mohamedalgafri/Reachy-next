@@ -1,12 +1,17 @@
 import { getRequestConfig } from 'next-intl/server';
-import { headers } from 'next/headers';
 
 export default getRequestConfig(async ({ locale }) => {
-  const headersList = await headers();
-  
-  return {
-    messages: (await import(`../messages/${locale}.json`)).default,
-    timeZone: 'Asia/Dubai',
-  };
-  
+  try {
+    const messages = (await import(`./messages/${locale}.json`)).default;
+    return {
+      messages,
+      timeZone: 'Asia/Dubai',
+    };
+  } catch (error) {
+    console.error(`Failed to load messages for locale: ${locale}`, error);
+    return {
+      messages: {},
+      timeZone: 'Asia/Dubai',
+    };
+  }
 });

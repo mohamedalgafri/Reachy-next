@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/tooltip";
 
 import { Icons } from "@/components/shared/icons";
-import { RealTimeBadge } from '@/components/RealTimeBadge';
 import Image from "next/image";
 
 interface SidebarProps {
@@ -83,12 +82,6 @@ function SidebarNav({ links, settings, isExpanded, isMobile, onLinkClick }: Side
                   >
                     <IconComponent iconName={item.icon} />
                     {t(item.titleKey)}
-                    {item.badge !== undefined && (
-                      <RealTimeBadge
-                        initialCount={item.badge}
-                        type={item.href.includes('contacts') ? 'contacts' : undefined}
-                      />
-                    )}
                   </Link>
                 ) : (
                   <Tooltip>

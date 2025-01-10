@@ -38,7 +38,6 @@ export function constructMetadata({
       "shadcn ui",
       "Resend",
       "React Email",
-      "Stripe",
     ],
     authors: [
       {

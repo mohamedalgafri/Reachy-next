@@ -13,7 +13,6 @@ import { UserAccountNav } from "@/components/layout/user-account-nav";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 import { getSiteSettings } from "@/lib/settings";
 import { Toaster } from "@/components/ui/toaster";
-import { MessagesProvider } from "@/components/MessagesProvider";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { SearchCommand } from "@/components/dashboard/search-command";
 
@@ -42,7 +41,6 @@ export default async function Dashboard({ children }: ProtectedLayoutProps) {
 
     <div  className="relative flex min-h-screen w-full">
       <Toaster />
-      <MessagesProvider />
       <DashboardSidebar links={filteredLinks} settings={settings} />
 
       <div className="flex flex-1 flex-col">

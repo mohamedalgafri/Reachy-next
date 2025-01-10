@@ -1,3 +1,4 @@
+import { locales, defaultLocale } from '@/i18n/navigation';
 import createMiddleware from 'next-intl/middleware';
 import { auth } from "@/auth";
 import {
@@ -7,10 +8,6 @@ import {
 } from "@/routes";
 import { NextResponse } from 'next/server';
 
-const locales = ['ar', 'en'];
-const defaultLocale = 'ar';
-
-// إنشاء middleware للترجمة
 const i18nMiddleware = createMiddleware({
     locales,
     defaultLocale,
@@ -21,7 +18,6 @@ export default auth(async function middleware(req) {
     const { nextUrl } = req;
     const isLoggedIn = !!req.auth;
     
-    // التحقق من المسارات
     const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
     const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
     const isLoginPage = nextUrl.pathname.includes("/auth/login");
@@ -39,7 +35,6 @@ export default auth(async function middleware(req) {
         return NextResponse.redirect(new URL("/auth/login", nextUrl));
     }
 
-    // تطبيق middleware الترجمة
     return i18nMiddleware(req);
 });
 
