@@ -1318,6 +1318,7 @@ html {
   backdrop-filter: blur(10px);
   padding: 10px 20px;
   border-radius: 30px;
+  margin-bottom: 10px;
   outline: none;
   color: #fff;
 
