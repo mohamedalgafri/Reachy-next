@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { updateServicesSection } from "@/actions/servicesSection";
+import { useLocale } from "next-intl";
 
 const formSchema = z.object({
   title: z.object({
@@ -39,6 +40,7 @@ export default function ServicesSectionForm({
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("ar");
   const router = useRouter();
+  const locale = useLocale();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -73,8 +75,8 @@ export default function ServicesSectionForm({
   return (
     <Card>
       <CardHeader>
-        <h2 className="text-2xl font-bold">تعديل قسم الخدمات</h2>
-        <CardDescription>قم بتحديث عنوان قسم الخدمات باللغتين العربية والإنجليزية</CardDescription>
+        <h2 className="text-2xl font-bold">{locale === "ar" ? " تعديل قسم الخدمات" : "Edit the services section"}</h2>
+        <CardDescription>{locale === "ar" ? "قم بتحديث عنوان قسم الخدمات باللغتين العربية والإنجليزية" : "Update the address of the services section in Arabic and English"}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>

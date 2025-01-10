@@ -30,6 +30,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import { useLocale } from "next-intl";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -44,6 +45,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [pageIndex, setPageIndex] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(10);
+  const locale  = useLocale();
 
   const table = useReactTable({
     data,
@@ -85,7 +87,7 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center gap-5 justify-between">
         {/* حقل البحث */}
         <Input
-          placeholder="بحث بالعنوان..."
+          placeholder={`${locale === "ar" ? "بحث بالعنوان..." : "Search by title..."}`}
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("title")?.setFilterValue(event.target.value)
@@ -95,12 +97,12 @@ export function DataTable<TData, TValue>({
 
         {/* اختيار عدد العناصر في الصفحة */}
         <div className="flex items-center  justify-between gap-4 ">
-          <span className="text-sm text-gray-500 hidden sm:flex ">عناصر كل صفحة:</span>
+          <span className="text-sm text-gray-500 hidden sm:flex ">{locale === "ar" ? "عناصر كل صفحة:" : "Elements of each page:"}</span>
           <Select
             value={pageSize.toString()}
             onValueChange={(value) => {
               setPageSize(Number(value));
-              setPageIndex(0); // إعادة التعيين للصفحة الأولى عند تغيير عدد العناصر
+              setPageIndex(0); 
             }}
             
           >
@@ -140,7 +142,7 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="text-right">
+                  <TableHead key={header.id} className={`${locale === "ar" ? "text-right" : ""}`}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -175,7 +177,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  لا توجد نتائج.
+                  {locale === "ar" ? "لا توجد نتائج." : "No results found."}
                 </TableCell>
               </TableRow>
             )}
@@ -186,12 +188,12 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* الترقيم والتصفح */}
-      <div className="flex items-center justify-between rtl">
+      <div className={`flex items-center justify-between ${locale === "ar" ? "rtl" : "ltr"}`}>
         <div className="hidden sm:flex items-center gap-2 text-sm text-gray-500  ">
-          <span>النتائج: {totalRows}</span>
+          <span>{locale === "ar" ? "النتائج" : "Results"}: {totalRows}</span>
           <span>|</span>
           <span>
-            {totalRows > 0 ? `${startRow}-${endRow}` : '0'} من {totalRows}
+            {totalRows > 0 ? `${startRow}-${endRow}` : '0'} {locale === "ar" ? "من" : "from"} {totalRows}
           </span>
         </div>
         
@@ -202,13 +204,13 @@ export function DataTable<TData, TValue>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            السابق
+            {locale === "ar" ? "السابق" : "previous"}
           </Button>
           
           <span className="px-2">
-            صفحة{' '}
+          {locale === "ar" ? "صفحة" : "page"}{' '}
             <strong>
-              {pageIndex + 1} من {totalPages}
+              {pageIndex + 1} {locale === "ar" ? "من" : "from"} {totalPages}
             </strong>
           </span>
           
@@ -218,7 +220,7 @@ export function DataTable<TData, TValue>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            التالي
+            {locale === "ar" ? "التالي" : "next"}
           </Button>
     
         </div>

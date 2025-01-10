@@ -1,5 +1,5 @@
 import { Providers } from './providers';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { cn } from "@/lib/utils";
 import { montserrat , fontArabic } from "@/assets/fonts";
 
@@ -14,7 +14,7 @@ export default async function LocaleLayout({
   params,
 }: LocaleLayoutProps) {
   const locale = await params.locale; 
-  unstable_setRequestLocale(locale);
+  setRequestLocale(locale);
   
   let messages;
   try {

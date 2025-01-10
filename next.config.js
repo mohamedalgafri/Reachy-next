@@ -33,6 +33,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   experimental: {
+    serverActions: true,
     mdxRs: true,
     turbo: true, 
   }

@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { TextEditor } from "@/components/forms/TextEditor";
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { updateStorySection } from "@/actions/storySection";
 import { FileUpload } from "@/components/file-upload";
+import { useLocale } from "next-intl";
 
 const formSchema = z.object({
     title_ar: z.string().min(1, "العنوان الرئيسي باللغة العربية مطلوب"),
@@ -41,6 +42,7 @@ export default function StoryForm({
 }: StoryFormProps) {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const locale = useLocale();
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
@@ -76,8 +78,8 @@ export default function StoryForm({
     return (
         <Card>
             <CardHeader>
-                <h2 className="text-2xl font-bold">تعديل قسم Our Story</h2>
-                <p className="text-muted-foreground">قم بتحديث محتوى قسم من نحن</p>
+                <h2 className="text-2xl font-bold">{locale === "ar" ? " تعديل قسم Our Story" : "Edit the Our Story section"}</h2>
+                <CardDescription>{locale === "ar" ? "قم بتحديث محتوى قسم من نحن" : "Update the content of the About Us section"}</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>

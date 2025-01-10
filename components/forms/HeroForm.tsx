@@ -13,6 +13,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { updateHeroSection } from "@/actions/heroSection";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 
 const formSchema = z.object({
   title_ar: z.string().min(1, "العنوان الرئيسي باللغة العربية مطلوب"),
@@ -45,6 +46,7 @@ export default function HeroSectionForm({
 }: HeroFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const locale = useLocale();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -82,8 +84,8 @@ export default function HeroSectionForm({
   return (
     <Card>
       <CardHeader>
-        <h2 className="text-2xl font-bold">تعديل قسم Hero</h2>
-        <CardDescription>قم بتحديث محتوى القسم الرئيسي</CardDescription>
+        <h2 className="text-2xl font-bold">{locale === "ar" ? "تعديل قسم Hero" : "Modify the Hero section"}</h2>
+        <CardDescription>{locale === "ar" ? "قم بتحديث محتوى القسم الرئيسي" : "Update the content of the main section"}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
