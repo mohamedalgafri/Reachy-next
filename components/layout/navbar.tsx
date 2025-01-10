@@ -1,9 +1,8 @@
 "use client";
 
 import { useLocale, useTranslations } from 'next-intl';
-import { Link, usePathname } from '@/i18n/navigation';  // استخدام Link من next-intl
+import { Link, usePathname } from '@/i18n/navigation';
 import { cn } from "@/lib/utils";
-
 import * as lucideIcons from 'lucide-react';
 import Image from 'next/image';
 import { LanguageSwitcher } from '../LanguageSwitcher';
@@ -30,24 +29,21 @@ export function NavBar({ navItems, settings }: NavBarProps) {
   const t = useTranslations('nav');
 
   const isActiveLink = (href: string) => {
-    // 1. طباعة القيم للتأكد من صحتها
-    console.log('Current pathname:', pathname);
-    console.log('Link href:', href);
-  
+    // تجاهل الروابط التي تبدأ بـ #
     if (href.startsWith('#')) return false;
-  
-    // 2. معالجة الصفحة الرئيسية بشكل خاص
+    
+    // معالجة خاصة للصفحة الرئيسية
     if (href === '/') {
-      return pathname === `/${locale}` || pathname === `/${locale}/`;
+      // تحقق مما إذا كان المسار الحالي هو الصفحة الرئيسية
+      return pathname === `/${locale}` || pathname === `/${locale}/` || pathname === '/';
     }
+
+    // للصفحات الأخرى، قم بإزالة بادئة اللغة وقارن المسارات
+    const cleanPathname = pathname.replace(`/${locale}`, '');
+    // إذا كان الرابط لا يبدأ بـ /، أضف / في البداية
+    const itemPath = href.startsWith('/') ? href : `/${href}`;
     
-    // 3. معالجة باقي الروابط
-    const currentPath = pathname.split('/').slice(2).join('/');
-    const itemPath = href.startsWith('/') ? href.slice(1) : href;
-    
-    console.log('Comparing:', { currentPath, itemPath });
-    
-    return currentPath === itemPath;
+    return cleanPathname === itemPath;
   };
 
   return (
@@ -99,7 +95,6 @@ export function NavBar({ navItems, settings }: NavBarProps) {
               if (!IconComponent) return null;
 
               return (
-                // استخدام Link من next-intl
                 <Link 
                   target="_blank" 
                   className="iconS flex items-center justify-center action"
@@ -117,7 +112,6 @@ export function NavBar({ navItems, settings }: NavBarProps) {
 
       <nav className="navbar">
         <div className="container flex justify-between items-center w-full">
-          {/* استخدام Link من next-intl للشعار */}
           <Link 
             href="/"
             locale={locale}
@@ -147,17 +141,12 @@ export function NavBar({ navItems, settings }: NavBarProps) {
                         isActive && "active"
                       )}
                     >
-                      {item.href.startsWith('#') ? (
-                        <a href={item.href}>{t(item.titleKey)}</a>
-                      ) : (
-                        // استخدام Link من next-intl مع تحديد locale
                         <Link 
                           href={item.href}
                           locale={locale}
                         >
                           {t(item.titleKey)}
                         </Link>
-                      )}
                     </li>
                   );
                 })}

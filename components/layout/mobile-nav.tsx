@@ -1,16 +1,12 @@
-// app/[locale]/NavMobile.tsx
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useSelectedLayoutSegment } from "next/navigation";
+import { useSelectedLayoutSegment, usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useLocale, useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';  
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { ModeToggle } from "./mode-toggle";
-
 import * as lucideIcons from 'lucide-react';
 import Image from 'next/image';
 import { LanguageSwitcher } from "../LanguageSwitcher";
@@ -39,6 +35,7 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
   const [open, setOpen] = useState(false);
   const selectedLayout = useSelectedLayoutSegment();
   const locale = useLocale();
+  const pathname = usePathname();
   const t = useTranslations('nav');
 
   useEffect(() => {
@@ -48,6 +45,21 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
       document.body.style.overflow = "auto";
     }
   }, [open]);
+
+  const isActiveLink = (href: string) => {
+    if (href.startsWith('#')) return false;
+    
+    // معالجة خاصة للصفحة الرئيسية
+    if (href === '/') {
+      return pathname === `/${locale}` || pathname === `/${locale}/` || pathname === '/';
+    }
+
+    // إزالة بادئة اللغة للمقارنة
+    const cleanPathname = pathname.replace(`/${locale}`, '');
+    const itemPath = href.startsWith('/') ? href : `/${href}`;
+    
+    return cleanPathname === itemPath;
+  };
 
   return (
     <>
@@ -102,20 +114,30 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
 
           {/* Navigation Items */}
           <ul className="grid divide-y divide-muted">
-            {navItems.map((item, index) => (
-              <li key={index} className="py-3">
-                <Link
-                  href={item.disabled ? "#" : item.href}
-                  onClick={() => setOpen(false)}
+            {navItems.map((item, index) => {
+              const isActive = isActiveLink(item.href);
+              return (
+                <li 
+                  key={index} 
                   className={cn(
-                    "flex w-full font-medium transition-colors hover:text-foreground/80",
-                    item.disabled && "cursor-not-allowed opacity-80"
+                    "py-3",
+                    isActive && "active" // إضافة كلاس active
                   )}
                 >
-                  {t(item.titleKey)}
-                </Link>
-              </li>
-            ))}
+                    <Link
+                      href={item.disabled ? "#" : item.href}
+                      onClick={() => setOpen(false)}
+                      locale={locale}
+                      className={cn(
+                        "flex w-full font-medium transition-colors hover:text-foreground/80",
+                        item.disabled && "cursor-not-allowed opacity-80"
+                      )}
+                    >
+                      {t(item.titleKey)}
+                    </Link>
+                </li>
+              );
+            })}
           </ul>
 
           {/* Footer Section */}
@@ -144,6 +166,7 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
                       target="_blank" 
                       key={item.name} 
                       href={item.url}
+                      locale={locale}
                       className="hover:text-primary transition-colors"
                     >
                       <IconComponent className="size-5" />

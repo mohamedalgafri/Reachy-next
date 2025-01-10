@@ -1,9 +1,9 @@
+// app/[locale]/(marketing)/layout.tsx
 import { NavMobile } from "@/components/layout/mobile-nav";
 import { NavBar } from "@/components/layout/navbar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { getMarketingConfig } from "@/config/marketing";
 import { getSiteSettings } from "@/lib/settings";
-
 
 interface MarketingLayoutProps {
   children: React.ReactNode;
@@ -18,7 +18,7 @@ export default async function MarketingLayout({ children }: MarketingLayoutProps
     <div className="flex flex-col bg-white">
       <NavMobile navItems={navItems} settings={settings} />
       <NavBar navItems={navItems} settings={settings} />
-        {children}
+      {children}
       <SiteFooter className="border-t" />
     </div>
   );

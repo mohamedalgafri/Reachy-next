@@ -1,6 +1,4 @@
 // app/[locale]/layout.tsx
-import { Suspense } from 'react';
-import Loading from "../loading";
 import { getMessages } from '@/lib/messages';
 import { setRequestLocale } from 'next-intl/server';
 import { Providers } from './providers';
@@ -12,7 +10,6 @@ interface LocaleLayoutProps {
   params: { locale: string };
 }
 
-
 export default async function LocaleLayout({
   children,
   params,
@@ -22,19 +19,19 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   return (
-    <div dir={locale === 'ar' ? 'rtl' : 'ltr'}
+    <div 
+      dir={locale === 'ar' ? 'rtl' : 'ltr'}
       className={cn(
         "min-h-screen bg-background antialiased",
         montserrat.variable,
         fontArabic.variable
       )}
-      lang={locale}>
+      lang={locale}
+    >
       <Providers locale={locale} messages={messages}>
-        <Suspense fallback={<Loading />}>
-          <main className="min-h-screen bg-background antialiased">
-            {children}
-          </main>
-        </Suspense>
+        <main className="min-h-screen bg-background antialiased">
+          {children}
+        </main>
       </Providers>
     </div>
   );

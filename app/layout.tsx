@@ -1,9 +1,8 @@
+// app/layout.tsx
 import { fontArabic, montserrat } from "@/assets/fonts";
 import { cn, constructMetadata } from "@/lib/utils";
 import "@/styles/globals.css";
 import Script from "next/script";
-import { Suspense } from "react";
-import Loading from "./loading";
 
 export const metadata = constructMetadata({
   title: "Reachy",
@@ -34,9 +33,7 @@ export default function RootLayout({
           fontArabic.variable
         )}
       >
-        <Suspense fallback={<Loading />}>
         {children}
-        </Suspense>
       </body>
     </html>
   );
