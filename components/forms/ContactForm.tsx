@@ -77,7 +77,7 @@ const ContactForm = ({settings}) => {
                 </div>
                 
                 <div className="flex gap-3">
-                  <div className="w-full">
+                  <div className="w-full mb-4">
                     <input
                       className="inputF"
                       type="email"

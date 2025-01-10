@@ -165,9 +165,9 @@ export default async function AboutPage({ params: { locale } }: Props) {
                   className="w-full h-auto"
                 />
                 <div className="textCardS">
-                  <p className="text-base lg:text-xl">
-                    {locale === 'ar' ? content.mission.title.ar : content.mission.title.en}
-                  </p>
+                  <p className="text-base lg:text-xl"
+                    dangerouslySetInnerHTML={{ __html: locale === 'ar' ? content.mission.title.ar : content.mission.title.en}}
+                  />
                   <ul>
                     <li dangerouslySetInnerHTML={{ 
                       __html: locale === 'ar' ? content.mission.content.ar : content.mission.content.en 
