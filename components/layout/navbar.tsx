@@ -4,9 +4,10 @@ import { useLocale, useTranslations } from 'next-intl';
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LanguageSwitcher } from '../LanguageSwitcher';
+// import { LanguageSwitcher } from '../LanguageSwitcher';
 import * as lucideIcons from 'lucide-react';
 import Image from 'next/image';
+import { LanguageSwitcher } from './language-switcher';
 
 interface NavItem {
   titleKey: string;

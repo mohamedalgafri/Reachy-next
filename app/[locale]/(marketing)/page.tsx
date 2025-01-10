@@ -128,45 +128,45 @@ export default async function HomePage() {
 
   const renderSection = (section: Section) => {
     switch (section.type) {
-      // case 'SERVICES':
-      //   const servicesData = {
-      //     title: {
-      //       ar: section.inputs.find(i => i.label === 'title_ar')?.value || '',
-      //       en: section.inputs.find(i => i.label === 'title_en')?.value || ''
-      //     }
-      //   };
-      //   return (
-      //     <ServicesSection 
-      //       key={section.id} 
-      //       data={servicesData} 
-      //       services={services} 
-      //     />
-      //   );
+      case 'SERVICES':
+        const servicesData = {
+          title: {
+            ar: section.inputs.find(i => i.label === 'title_ar')?.value || '',
+            en: section.inputs.find(i => i.label === 'title_en')?.value || ''
+          }
+        };
+        return (
+          <ServicesSection 
+            key={section.id} 
+            data={servicesData} 
+            services={services} 
+          />
+        );
 
-      // case 'FEATURES':
-      //   return (
-      //     <FeaturesSection
-      //       key={section.id}
-      //       features={features}
-      //       data={formatFeaturesData(section)}
-      //     />
-      //   );
+      case 'FEATURES':
+        return (
+          <FeaturesSection
+            key={section.id}
+            features={features}
+            data={formatFeaturesData(section)}
+          />
+        );
 
-      // case 'HERO':
-      //   return (
-      //     <HeroSection 
-      //       key={section.id} 
-      //       data={formatBilingualData(section)} 
-      //     />
-      //   );
+      case 'HERO':
+        return (
+          <HeroSection 
+            key={section.id} 
+            data={formatBilingualData(section)} 
+          />
+        );
 
-      // case 'STORY':
-      //   return (
-      //     <StorySection 
-      //       key={section.id} 
-      //       data={formatBilingualData(section)} 
-      //     />
-      //   );
+      case 'STORY':
+        return (
+          <StorySection 
+            key={section.id} 
+            data={formatBilingualData(section)} 
+          />
+        );
 
       default:
         return null;
@@ -175,9 +175,9 @@ export default async function HomePage() {
 
   return (
     <main>
-      {/* {page.sections.map((section) => renderSection(section))} */}
-      {/* <ClientsSection  clients={clients} /> */}
-      {/* <ContactSection /> */}
+      {page.sections.map((section) => renderSection(section))}
+      <ClientsSection  clients={clients} />
+      <ContactSection />
     </main>
   );
 }
