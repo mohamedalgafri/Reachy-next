@@ -5,4 +5,7 @@ export const locales = ['ar', 'en'] as const;
 export const defaultLocale = 'ar';
 
 export const { Link, redirect, usePathname, useRouter } = 
-    createSharedPathnamesNavigation({ locales });
+    createSharedPathnamesNavigation({ 
+      locales,
+      prefixPath: true 
+    });

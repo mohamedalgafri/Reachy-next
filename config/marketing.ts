@@ -1,6 +1,7 @@
-import { MarketingConfig } from "@/types";
+// config/marketing.ts
+import { MarketingConfig, NavItem } from "@/types";
 
-export const staticNav = [
+export const staticNav: NavItem[] = [
   {
     titleKey: "home",  
     href: "/",
@@ -21,6 +22,6 @@ export const staticNav = [
 
 export async function getMarketingConfig(): Promise<MarketingConfig> {
   return {
-    mainNav: [...staticNav],
+    mainNav: staticNav, // إزالة spread operator
   };
 }
