@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useLocale } from "next-intl";
 import Image from "next/image";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { cn } from "@/lib/utils";
 
 interface HeroSectionProps {
@@ -48,14 +48,72 @@ const BlurBackground = ({ position }: { position: 'left' | 'right' }) => {
 const HeroSection = ({ data }: HeroSectionProps) => {
     const locale = useLocale();
     const [videoLoaded, setVideoLoaded] = useState(false);
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const [isVideoVisible, setIsVideoVisible] = useState(false);
 
-    const handleVideoLoad = (video: HTMLVideoElement) => {
-        if (video) {
-            video.play().catch(error => console.log("Auto-play was prevented:", error));
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        setIsVideoVisible(true);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            {
+                threshold: 0.1,
+                rootMargin: '50px'
+            }
+        );
+
+        if (videoRef.current) {
+            observer.observe(videoRef.current);
+        }
+
+        return () => {
+            if (videoRef.current) {
+                observer.unobserve(videoRef.current);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        const loadVideo = async () => {
+            if (isVideoVisible && videoRef.current) {
+                try {
+                    const cachedVideo = sessionStorage.getItem('heroVideo');
+                    if (cachedVideo) {
+                        videoRef.current.src = cachedVideo;
+                    } else {
+                        const response = await fetch('/images/02.mp4');
+                        const blob = await response.blob();
+                        const videoUrl = URL.createObjectURL(blob);
+                        videoRef.current.src = videoUrl;
+                        
+                        try {
+                            sessionStorage.setItem('heroVideo', videoUrl);
+                        } catch (error) {
+                            console.log('Cache storage failed:', error);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading video:', error);
+                }
+            }
+        };
+
+        loadVideo();
+    }, [isVideoVisible]);
+
+    const handleVideoLoad = () => {
+        if (videoRef.current) {
+            videoRef.current.play()
+                .catch(error => console.log("Auto-play was prevented:", error));
             setVideoLoaded(true);
         }
     };
-    
+
     return (
         <>
             <div className="bgHeaderHome bgVH">
@@ -68,24 +126,27 @@ const HeroSection = ({ data }: HeroSectionProps) => {
                 </div>
                 <div 
                     className={cn(
-                        'absolute inset-0 ',
+                        'absolute inset-0',
                         'opacity-0 transition-opacity duration-1000',
                         videoLoaded && 'opacity-100'
                     )}
                 >
                     <video
+                        ref={videoRef}
                         autoPlay
                         loop
                         muted
                         playsInline
-                        className="backVideo lazy-video w-full h-full object-cover"
-                        onLoadedData={(e) => handleVideoLoad(e.target as HTMLVideoElement)}
-                    >
-                        <source src="/images/02.mp4" type="video/mp4" />
-                    </video>
+                        className={cn(
+                            'backVideo w-full h-full object-cover',
+                            'opacity-0 transition-opacity duration-500',
+                            videoLoaded && 'opacity-100'
+                        )}
+                        onLoadedData={handleVideoLoad}
+                        preload="none"
+                    />
                 </div>
             </div>
-
 
             <header className="headerHome">
                 <div className="container relative z-20 flex items-center gap-5 text-white h-full">
@@ -139,7 +200,7 @@ const HeroSection = ({ data }: HeroSectionProps) => {
                 </div>
             </header>
         </>
-    )
+    );
 };
 
 export default HeroSection;
