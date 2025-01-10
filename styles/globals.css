@@ -1545,6 +1545,9 @@ html {
     height:auto;
     min-height: 400px;
   }
+  .backVideo{
+    height: 100%;
+  }
   .textHomeHero{
     margin: auto 0;
   }
@@ -1721,4 +1724,9 @@ html {
 .gmap_iframe {
   width: 100% !important;
   height: 400px !important;
+}
+
+.bgBM{
+  background-color: #030712 !important;
+  color: #fff !important;
 }

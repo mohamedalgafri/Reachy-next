@@ -68,7 +68,7 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
 
       <nav
         className={cn(
-          "fixed inset-0 z-20 hidden w-full overflow-auto bg-background px-5 py-16 lg:hidden",
+          "fixed bgBM inset-0 z-20 hidden w-full overflow-auto bg-background px-5 py-16 lg:hidden",
           open && "block",
         )}
       >
@@ -124,7 +124,6 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
               {/* Language Switcher */}
               <div className="flex justify-between items-center">
                 <LanguageSwitcher />
-                <ModeToggle />
               </div>
 
               {/* Social Links */}
