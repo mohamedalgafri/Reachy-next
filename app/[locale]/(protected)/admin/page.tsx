@@ -5,6 +5,7 @@ import { constructMetadata } from "@/lib/utils";
 import { DashboardHeader } from "@/components/dashboard/header";
 import InfoCard from "@/components/dashboard/info-card";
 import { getDashboardStats } from "@/lib/analytics";
+import { getLocale } from "next-intl/server";
 
 export const metadata = constructMetadata({
   title: "لوحة التحكم",
@@ -13,10 +14,11 @@ export const metadata = constructMetadata({
 
 export default async function AdminPage() {
   const stats = await getDashboardStats();
+  const locale = await getLocale();
 
   return (
     <>
-      <DashboardHeader heading="لوحة التحكم" text="" />
+      <DashboardHeader heading={ locale === "ar" ? "لوحة التحكم" : "Dashboard"} text="" />
       <div className="flex flex-col gap-5">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {/* <InfoCard

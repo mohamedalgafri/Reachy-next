@@ -15,18 +15,18 @@ interface ProvidersProps {
 
 export function Providers({ children, locale, messages }: ProvidersProps) {
   return (
-    <SessionProvider>
-      <NextIntlClientProvider 
-        locale={locale} 
-        messages={messages}
-        timeZone="Asia/Dubai"
-      >
-        <ClientSideProvider>
-          <Suspense fallback={<Loading />}>
+    <Suspense fallback={<Loading />}>
+      <SessionProvider>
+        <NextIntlClientProvider 
+          locale={locale} 
+          messages={messages}
+          timeZone="Asia/Dubai"
+        >
+          <ClientSideProvider>
             {children}
-          </Suspense>
-        </ClientSideProvider>
-      </NextIntlClientProvider>
-    </SessionProvider>
+          </ClientSideProvider>
+        </NextIntlClientProvider>
+      </SessionProvider>
+    </Suspense>
   );
 }

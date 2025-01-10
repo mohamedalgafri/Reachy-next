@@ -13,12 +13,7 @@ import { NextRequest } from 'next/server';
 export const locales = ['ar', 'en'];
 export const defaultLocale = 'ar';
 
-const i18nMiddleware = createMiddleware({
-    locales,
-    defaultLocale,
-    localePrefix: 'always'
-});
-
+// تحسين دالة مطابقة المسار
 function matchesPath(cleanPath: string, routePattern: string) {
     if (routePattern.endsWith('*')) {
         const baseRoute = routePattern.slice(0, -1);
@@ -27,37 +22,11 @@ function matchesPath(cleanPath: string, routePattern: string) {
     return cleanPath === routePattern;
 }
 
-// أنشئ middleware المصادقة
-const authMiddleware = auth((req) => {
-    const { nextUrl } = req;
-    const isLoggedIn = !!req.auth;
-    
-    // تجاهل مسارات API
-    if (nextUrl.pathname.startsWith('/api')) {
-        return null;
-    }
-
-    // استخراج اللغة والمسار النظيف
-    const currentLocale = nextUrl.pathname.split('/')[1] || defaultLocale;
-    const cleanPath = '/' + nextUrl.pathname.split('/').slice(2).join('/');
-
-    const isApiAuthRoute = cleanPath.startsWith(apiAuthPrefix);
-    const isAuthRoute = authRoutes.some(route => matchesPath(cleanPath, route));
-    const isAdminRoute = adminRoutes.some(route => matchesPath(cleanPath, route));
-
-    if (isApiAuthRoute) {
-        return null;
-    }
-
-    if (isAuthRoute && isLoggedIn) {
-        return NextResponse.redirect(new URL(`/${currentLocale}${DEFAULT_LOGIN_REDIRECT}`, nextUrl));
-    }
-
-    if (isAdminRoute && !isLoggedIn) {
-        return NextResponse.redirect(new URL(`/${currentLocale}/auth/login`, nextUrl));
-    }
-
-    return NextResponse.next();
+// دمج middleware المصادقة مع i18n
+const nextIntlMiddleware = createMiddleware({
+    locales,
+    defaultLocale,
+    localePrefix: 'always'
 });
 
 export default async function middleware(request: NextRequest) {
@@ -72,34 +41,60 @@ export default async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // التحقق مما إذا كان المسار يبدأ بلغة
+    // التحقق من اللغة وإضافتها إذا لم تكن موجودة
     const pathnameHasLocale = locales.some(
         locale => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     );
 
-    // إذا لم يكن المسار يبدأ بلغة، قم بإعادة التوجيه إلى المسار مع اللغة الافتراضية
     if (!pathnameHasLocale) {
-        return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}`, request.url));
+        return NextResponse.redirect(
+            new URL(`/${defaultLocale}${pathname}`, request.url)
+        );
     }
 
-    try {
-        // تنفيذ middleware المصادقة
-        const authResult = await authMiddleware(request);
-        if (authResult instanceof Response) {
-            return authResult;
-        }
+    // تطبيق i18n middleware أولاً
+    const response = await nextIntlMiddleware(request);
+    
+    if (response && response instanceof Response) {
+        return response;
+    }
 
-        // تطبيق i18n middleware
-        return i18nMiddleware(request);
-    } catch (error) {
-        console.error('Middleware error:', error);
+    // استخراج المسار النظيف واللغة
+    const currentLocale = pathname.split('/')[1] || defaultLocale;
+    const cleanPath = '/' + pathname.split('/').slice(2).join('/');
+
+    // التحقق من المصادقة
+    const session = await auth()(request);
+    const isLoggedIn = !!session?.auth;
+
+    // التحقق من نوع المسار
+    const isApiAuthRoute = cleanPath.startsWith(apiAuthPrefix);
+    const isAuthRoute = authRoutes.some(route => matchesPath(cleanPath, route));
+    const isAdminRoute = adminRoutes.some(route => matchesPath(cleanPath, route));
+
+    // تطبيق قواعد المصادقة
+    if (isApiAuthRoute) {
         return NextResponse.next();
     }
+
+    if (isAuthRoute && isLoggedIn) {
+        return NextResponse.redirect(
+            new URL(`/${currentLocale}${DEFAULT_LOGIN_REDIRECT}`, request.url)
+        );
+    }
+
+    if (isAdminRoute && !isLoggedIn) {
+        return NextResponse.redirect(
+            new URL(`/${currentLocale}/auth/login`, request.url)
+        );
+    }
+
+    return NextResponse.next();
 }
 
 export const config = {
     matcher: [
-        // تطابق كل المسارات
+        // تطابق كل المسارات ما عدا الخاصة
         '/((?!api|_next|_vercel|.*\\.).*)',
         // تطابق مسارات اللغة
         '/',
