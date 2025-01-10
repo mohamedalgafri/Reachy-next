@@ -143,14 +143,14 @@ export default async function HomePage() {
       //     />
       //   );
 
-      case 'FEATURES':
-        return (
-          <FeaturesSection
-            key={section.id}
-            features={features}
-            data={formatFeaturesData(section)}
-          />
-        );
+      // case 'FEATURES':
+      //   return (
+      //     <FeaturesSection
+      //       key={section.id}
+      //       features={features}
+      //       data={formatFeaturesData(section)}
+      //     />
+      //   );
 
       // case 'HERO':
       //   return (
@@ -175,8 +175,8 @@ export default async function HomePage() {
 
   return (
     <main>
-      {page.sections.map((section) => renderSection(section))}
-      <ClientsSection  clients={clients} />
+      {/* {page.sections.map((section) => renderSection(section))} */}
+      {/* <ClientsSection  clients={clients} /> */}
       {/* <ContactSection /> */}
     </main>
   );
