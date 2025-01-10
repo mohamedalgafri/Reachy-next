@@ -1,9 +1,8 @@
-// components/LanguageSwitcher.tsx
 'use client';
 
 import { useLocale } from 'next-intl';
 import Image from 'next/image';
-import { usePathname, useRouter } from '@/i18n/navigation';
+import { usePathname, useRouter } from '@/i18n/navigation';  
 import { useEffect, useState } from 'react';
 
 export function LanguageSwitcher() {

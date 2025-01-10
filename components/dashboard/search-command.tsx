@@ -15,12 +15,13 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Icons } from "@/components/shared/icons";
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 export function SearchCommand({ links }: { links: SidebarNavItem[] }) {
   const t = useTranslations();
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
+  const locale = useLocale();
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -48,17 +49,19 @@ export function SearchCommand({ links }: { links: SidebarNavItem[] }) {
         onClick={() => setOpen(true)}
       >
         <span className="inline-flex">
-          بحث
+          {locale === "ar" ? "بحث" : "research"}
         </span>
-        <kbd className="pointer-events-none absolute right-[0.3rem]  top-[0.45rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+        <kbd className={`pointer-events-none absolute right-[0.3rem] top-[0.45rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex`}>
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
 
       <CommandDialog open={open} onOpenChange={setOpen} >
-        <CommandInput placeholder="ابحث هنا..." />
+        <CommandInput placeholder={`${locale === "ar" ? "ابحث هنا..." : "Search here..."}`}/>
         <CommandList>
-          <CommandEmpty>لا توجد نتائج.</CommandEmpty>
+          <CommandEmpty>
+          {locale === "ar" ? " لا توجد نتائج." : "No results found."}
+          </CommandEmpty>
           {links.map((section) => (
             <CommandGroup key={section.titleKey} heading={t(section.titleKey)}>
             {section.items.map((item) => {
