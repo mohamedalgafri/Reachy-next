@@ -69,7 +69,7 @@ export default async function AboutPage({ params: { locale } }: Props) {
         <div className="bgHeader"></div>
         <div className="bgImgHeaderPage">
           <Image 
-            src="/images/BG_Page.png" 
+            src="/images/BG_Page.webp" 
             alt="" 
             width={1920} 
             height={1080}

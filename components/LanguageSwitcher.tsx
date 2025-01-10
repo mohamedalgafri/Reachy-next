@@ -29,7 +29,6 @@ export function LanguageSwitcher() {
         <div
             onClick={switchLocale}
             className="btnLang flex items-center gap-2">
-            <div className="flex gap-2 items-center"></div>
             <Image src="/images/iconLang.png"  
             width={24}
             height={24}

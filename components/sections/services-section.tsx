@@ -1,8 +1,30 @@
-// components/sections/services-section.tsx
 "use client";
-
 import { useLocale } from 'next-intl'; 
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { cn } from "@/lib/utils";
+
+// مكون BlurBackground منفصل
+const BlurBackground = ({ position }: { position: 'left' | 'right' }) => {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        fetch(`/images/bg${position === 'right' ? 'R' : 'L'}.webp`)
+            .then(response => response.blob())
+            .then(() => setIsLoaded(true))
+            .catch(error => console.error('Error loading image:', error));
+    }, [position]);
+
+    return (
+        <div
+            className={cn(
+                'blur-background',
+                position === 'right' ? 'blurR' : 'blurL',
+                isLoaded && 'loaded'
+            )}
+        />
+    );
+};
 
 interface ServiceData {
   id: number;
@@ -28,9 +50,14 @@ const ServicesSection = ({ data, services }: ServicesSectionProps) => {
   const locale = useLocale(); 
   const title = locale === 'ar' ? data.title.ar : data.title.en;
 
-
   return (
-    <section className="sectionO sectionBGColor">
+    <section className="sectionO sectionBGColor relative">
+      <div className="overlay-wrapper overlay-wrapperR">
+        <BlurBackground position="right" />
+      </div>
+      <div className="overlay-wrapper overlay-wrapperL">
+        <BlurBackground position="left" />
+      </div>
       <div className="container relative">
         <div className="pt-10">
           <div className="ballsCT">
@@ -40,7 +67,9 @@ const ServicesSection = ({ data, services }: ServicesSectionProps) => {
               <div className="ballC"></div>
             </div>
             <div>
-              <span className="uppercase font-bold text-white">{locale === 'ar' ? ".خدماتنا" : "OUR SERVICES."}</span>
+              <span className="uppercase font-bold text-white">
+                {locale === 'ar' ? ".خدماتنا" : "OUR SERVICES."}
+              </span>
             </div>
           </div>
 
@@ -53,19 +82,27 @@ const ServicesSection = ({ data, services }: ServicesSectionProps) => {
               {services.map((service, index) => (
                 <div key={service.id} className={`cardS ${index % 2 !== 0 ? 'orgCS' : ''}`}>
                   {service.image && (
-                    <Image   width={300}
-                      height={300} src={service.image} alt={service.subtitle} />
+                    <Image
+                      width={300}
+                      height={300}
+                      src={service.image}
+                      alt={service.subtitle}
+                      className="w-full h-auto object-cover"
+                    />
                   )}
                   <div className="textCardS">
-                    <p className="text-base lg:text-xl" 
-                       dangerouslySetInnerHTML={{ __html: locale === 'ar' ? service.title_ar : service.title_en }} 
+                    <p 
+                      className="text-base lg:text-xl"
+                      dangerouslySetInnerHTML={{ 
+                        __html: locale === 'ar' ? service.title_ar : service.title_en 
+                      }} 
                     />
-                    <ul>
-                      <div 
-                        dangerouslySetInnerHTML={{ __html: locale === 'ar' ? service.subtitle_ar : service.subtitle_en }}
-                        className="mt-2"
-                      />
-                    </ul>
+                    <div 
+                      dangerouslySetInnerHTML={{ 
+                        __html: locale === 'ar' ? service.subtitle_ar : service.subtitle_en 
+                      }}
+                      className="mt-2"
+                    />
                   </div>
                 </div>
               ))}
@@ -73,8 +110,13 @@ const ServicesSection = ({ data, services }: ServicesSectionProps) => {
           </div>
         </div>
       </div>
-      <Image className="arrowSC arrowSC2"   width={0}
-  height={0} src="images/arrow2.svg" alt="image"  />
+      <Image 
+        className="arrowSC arrowSC2" 
+        width={80}
+        height={80}
+        src="/images/arrow2.svg" 
+        alt="arrow decoration" 
+      />
     </section>
   );
 };

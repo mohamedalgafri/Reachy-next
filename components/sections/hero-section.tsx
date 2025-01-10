@@ -1,9 +1,10 @@
-// components/sections/hero-section.tsx
 "use client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useLocale } from "next-intl";
 import Image from "next/image";
+import { useEffect, useState } from 'react';
+import { cn } from "@/lib/utils";
 
 interface HeroSectionProps {
     data: {
@@ -23,25 +24,68 @@ interface HeroSectionProps {
     }
 }
 
+const BlurBackground = ({ position }: { position: 'left' | 'right' }) => {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        fetch(`/images/bg${position === 'right' ? 'R' : 'L'}.webp`)
+            .then(response => response.blob())
+            .then(() => setIsLoaded(true))
+            .catch(error => console.error('Error loading image:', error));
+    }, [position]);
+
+    return (
+        <div
+            className={cn(
+                'blur-background',
+                position === 'right' ? 'blurR' : 'blurL',
+                isLoaded && 'loaded'
+            )}
+        />
+    );
+};
+
 const HeroSection = ({ data }: HeroSectionProps) => {
     const locale = useLocale();
+    const [videoLoaded, setVideoLoaded] = useState(false);
+
+    const handleVideoLoad = (video: HTMLVideoElement) => {
+        if (video) {
+            video.play().catch(error => console.log("Auto-play was prevented:", error));
+            setVideoLoaded(true);
+        }
+    };
     
     return (
         <>
-            <div className="bgHeaderHome">
+            <div className="bgHeaderHome bgVH">
                 <div className="bgHeader"></div>
                 <div className="overlay-wrapper overlay-wrapperR">
-                    <div className="blur-background blurR"></div>
+                    <BlurBackground position="right" />
                 </div>
                 <div className="overlay-wrapper overlay-wrapperL">
-                    <div className="blur-background blurL"></div>
+                    <BlurBackground position="left" />
                 </div>
-                <div>
-                    <video autoPlay loop className="backVideo lazy-video" muted playsInline>
+                <div 
+                    className={cn(
+                        'absolute inset-0 ',
+                        'opacity-0 transition-opacity duration-1000',
+                        videoLoaded && 'opacity-100'
+                    )}
+                >
+                    <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="backVideo lazy-video w-full h-full object-cover"
+                        onLoadedData={(e) => handleVideoLoad(e.target as HTMLVideoElement)}
+                    >
                         <source src="/images/02.mp4" type="video/mp4" />
                     </video>
                 </div>
             </div>
+
 
             <header className="headerHome">
                 <div className="container relative z-20 flex items-center gap-5 text-white h-full">
@@ -85,9 +129,10 @@ const HeroSection = ({ data }: HeroSectionProps) => {
                             <Image 
                                 src="images/arrowHero.svg" 
                                 alt="image"  
-                                width="80"
-                                height="80"
+                                width={80}
+                                height={80}
                                 className={locale === 'ar' ? 'transform rotate-180' : ''}
+                                priority
                             />
                         </div>
                     </div>

@@ -1,3 +1,4 @@
+// app/[locale]/NavMobile.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -5,31 +6,41 @@ import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useSession } from "next-auth/react";
-
+import { useLocale, useTranslations } from 'next-intl';
 import { cn } from "@/lib/utils";
-import { Icons } from "@/components/shared/icons";
 import { Button } from "@/components/ui/button";
-import LoginButton from "../auth/login-button";
 import { ModeToggle } from "./mode-toggle";
-import { NavItem } from "@/types";
-import * as lucideIcons from 'lucide-react';
 
+import * as lucideIcons from 'lucide-react';
+import Image from 'next/image';
+import { LanguageSwitcher } from "../LanguageSwitcher";
+
+interface NavItem {
+  titleKey: string;
+  href: string;
+  disabled?: boolean;
+}
 
 interface NavMobileProps {
   scroll?: boolean;
   large?: boolean;
   navItems: NavItem[];
-  settings;
+  settings?: {
+    logoText?: string;
+    logoImage?: string;
+    socialLinks?: any;
+    email?: string;
+    phone?: string;
+  };
 }
 
-export function NavMobile({ scroll = false, large = false, navItems,settings }: NavMobileProps) {
+export function NavMobile({ scroll = false, large = false, navItems, settings }: NavMobileProps) {
   const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
   const selectedLayout = useSelectedLayoutSegment();
-  const documentation = selectedLayout === "docs";
+  const locale = useLocale();
+  const t = useTranslations('nav');
 
-
-  // prevent body scroll when modal is open
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -60,8 +71,35 @@ export function NavMobile({ scroll = false, large = false, navItems,settings }: 
           open && "block",
         )}
       >
-        <div className="flex flex-col">
+        <div className="flex flex-col h-full">
+          {/* Contact Info */}
+          <div className="flex flex-col gap-4 mb-6 text-sm">
+            {settings?.email && (
+              <div className="flex items-center gap-2">
+                <Image 
+                  src="/images/envelope.svg" 
+                  width={16}
+                  height={16} 
+                  alt="email"
+                />
+                <span>{settings.email}</span>
+              </div>
+            )}
+            
+            {settings?.phone && (
+              <div className="flex items-center gap-2">
+                <Image 
+                  src="/images/whatsapp-brands-solid.svg" 
+                  width={16}
+                  height={16} 
+                  alt="phone"
+                />
+                <span>{settings.phone}</span>
+              </div>
+            )}
+          </div>
 
+          {/* Navigation Items */}
           <ul className="grid divide-y divide-muted">
             {navItems.map((item, index) => (
               <li key={index} className="py-3">
@@ -70,38 +108,26 @@ export function NavMobile({ scroll = false, large = false, navItems,settings }: 
                   onClick={() => setOpen(false)}
                   className={cn(
                     "flex w-full font-medium transition-colors hover:text-foreground/80",
-                    // item.href.startsWith(`/${selectedLayout}`)
-                    //   ? "text-foreground"
-                    //   : "text-foreground/60",
                     item.disabled && "cursor-not-allowed opacity-80"
                   )}
                 >
-                  {item.title}
+                  {t(item.titleKey)}
                 </Link>
               </li>
             ))}
           </ul>
 
+          {/* Footer Section */}
           <div className="mt-auto pt-4 border-t">
-            {session && (
-              <Link
-                href={session.user.role === "ADMIN" ? "/admin" : "/dashboard"}
-                onClick={() => setOpen(false)}
-              >
-                <Button
-                  className="w-full gap-2"
-                  variant="default"
-                  size="sm"
-                  rounded="xl"
-                >
-                  <span>لوحة التحكم</span>
-                </Button>
-              </Link>
-            )}
+            <div className="flex flex-col gap-4">
+              {/* Language Switcher */}
+              <div className="flex justify-between items-center">
+                <LanguageSwitcher />
+                <ModeToggle />
+              </div>
 
-            <div className="mt-6 flex items-center justify-between">
+              {/* Social Links */}
               <div className="flex items-center gap-3">
-
                 {settings?.socialLinks?.map((item) => {
                   const iconName = item?.icon
                     ?.replace(/<|>|\//g, '')
@@ -114,14 +140,17 @@ export function NavMobile({ scroll = false, large = false, navItems,settings }: 
                   if (!IconComponent) return null;
 
                   return (
-                    <Link target="_blank" key={item.name} href={item.url}>
+                    <Link 
+                      target="_blank" 
+                      key={item.name} 
+                      href={item.url}
+                      className="hover:text-primary transition-colors"
+                    >
                       <IconComponent className="size-5" />
                     </Link>
                   );
                 })}
-
               </div>
-              <ModeToggle />
             </div>
           </div>
         </div>

@@ -55,7 +55,7 @@ export default async function ServicePage({ params: { locale } }: Props) {
       <header className="headerPage">
         <div className="bgHeader"></div>
         <div className="bgImgHeaderPage">
-          <Image src="/images/BG_Page.png" alt="" width={1920} height={1080} />
+          <Image src="/images/BG_Page.webp" alt="" width={1920} height={1080} />
         </div>
 
         <div className="container headerTextPage relative z-20 flex items-center gap-5 text-white h-full">
