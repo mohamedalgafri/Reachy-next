@@ -97,7 +97,7 @@ const ServicesSection = ({ data, services }: ServicesSectionProps) => {
                         __html: locale === 'ar' ? service.title_ar : service.title_en 
                       }} 
                     />
-                    <div 
+                    <ul 
                       dangerouslySetInnerHTML={{ 
                         __html: locale === 'ar' ? service.subtitle_ar : service.subtitle_en 
                       }}

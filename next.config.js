@@ -1,7 +1,7 @@
 const createNextIntlPlugin = require('next-intl/plugin');
 const { withContentlayer } = require("next-contentlayer2");
 
-const withNextIntl = createNextIntlPlugin('./i18n.config.ts');
+const withNextIntl = createNextIntlPlugin();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -34,8 +34,7 @@ const nextConfig = {
   },
   experimental: {
     serverActions: true,
-    mdxRs: true,
-    turbo: true, 
+    mdxRs: true
   }
 };
 

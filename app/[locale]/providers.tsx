@@ -1,32 +1,27 @@
-// app/[locale]/providers.tsx
 'use client';
 
 import { SessionProvider } from "next-auth/react";
-import { NextIntlClientProvider } from 'next-intl';
-import { Suspense } from "react";
+import { NextIntlClientProvider, AbstractIntlMessages } from 'next-intl';
 import { ClientSideProvider } from "./client-provider";
-import Loading from "../loading";
 
 interface ProvidersProps {
   children: React.ReactNode;
   locale: string;
-  messages: any;
+  messages: AbstractIntlMessages;
 }
 
 export function Providers({ children, locale, messages }: ProvidersProps) {
   return (
-    <Suspense fallback={<Loading />}>
-      <SessionProvider>
-        <NextIntlClientProvider 
-          locale={locale} 
-          messages={messages}
-          timeZone="Asia/Dubai"
-        >
-          <ClientSideProvider>
-            {children}
-          </ClientSideProvider>
-        </NextIntlClientProvider>
-      </SessionProvider>
-    </Suspense>
+    <SessionProvider>
+      <NextIntlClientProvider 
+        locale={locale} 
+        messages={messages}
+        timeZone="Asia/Dubai"
+      >
+        <ClientSideProvider>
+          {children}
+        </ClientSideProvider>
+      </NextIntlClientProvider>
+    </SessionProvider>
   );
 }

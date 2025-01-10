@@ -1,9 +1,11 @@
-import { Providers } from './providers';
-import { setRequestLocale } from 'next-intl/server';
-import { cn } from "@/lib/utils";
-import { montserrat , fontArabic } from "@/assets/fonts";
+// app/[locale]/layout.tsx
+import { Suspense } from 'react';
+import Loading from "../loading";
 import { getMessages } from '@/lib/messages';
-
+import { setRequestLocale } from 'next-intl/server';
+import { Providers } from './providers';
+import { fontArabic, montserrat } from '@/assets/fonts';
+import { cn } from '@/lib/utils';
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
@@ -28,9 +30,11 @@ export default async function LocaleLayout({
       )}
       lang={locale}>
       <Providers locale={locale} messages={messages}>
-        <main className="min-h-screen bg-background antialiased">
-          {children}
-        </main>
+        <Suspense fallback={<Loading />}>
+          <main className="min-h-screen bg-background antialiased">
+            {children}
+          </main>
+        </Suspense>
       </Providers>
     </div>
   );

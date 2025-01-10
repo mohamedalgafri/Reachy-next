@@ -137,7 +137,7 @@ const HeroSection = ({ data }: HeroSectionProps) => {
                         'transition-opacity duration-1000',
                     )}
                 >
-                    {/* <video
+                    <video
                         ref={videoRef}
                         autoPlay
                         loop
@@ -146,7 +146,7 @@ const HeroSection = ({ data }: HeroSectionProps) => {
                         className="backVideo w-full h-full object-cover"
                         onLoadedData={handleVideoLoad}
                         preload="metadata"
-                    /> */}
+                    />
                 </div>
             </div>
 
