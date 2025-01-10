@@ -145,9 +145,9 @@ export default async function AboutPage({ params: { locale } }: Props) {
             <div className="cards cardShow mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
               <div className="cardS">
                 <div className="textCardS">
-                  <p className="text-base lg:text-xl">
-                    {locale === 'ar' ? content.vision.title.ar : content.vision.title.en}
-                  </p>
+                  <p className="text-base lg:text-xl"
+                    dangerouslySetInnerHTML={{ __html: locale === 'ar' ? content.vision.title.ar : content.vision.title.en}}
+                  />
                   <ul>
                     <li dangerouslySetInnerHTML={{ 
                       __html: locale === 'ar' ? content.vision.content.ar : content.vision.content.en 
