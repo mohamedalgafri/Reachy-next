@@ -76,6 +76,9 @@
 [dir="rtl"] {
   font-family: var(--font-arabic) !important;
 }
+.font-arabic {
+  font-family: var(--font-arabic) !important;
+}
 
 @layer utilities {
   .step {

@@ -2,12 +2,11 @@
 
 import { useLocale } from 'next-intl';
 import Image from 'next/image';
-import { usePathname, useRouter } from '@/i18n/navigation';  
+import { usePathname } from '@/i18n/navigation';
 import { useEffect, useState } from 'react';
 
 export function LanguageSwitcher() {
     const locale = useLocale();
-    const router = useRouter();
     const pathname = usePathname();
     const [mounted, setMounted] = useState(false);
 
@@ -21,13 +20,17 @@ export function LanguageSwitcher() {
 
     const switchLocale = () => {
         const nextLocale = locale === 'ar' ? 'en' : 'ar';
-        router.replace(pathname, { locale: nextLocale });
+        const currentPath = pathname.replace(`/${locale}`, '') || '/';
+        const newPath = `/${nextLocale}${currentPath}`;
+        window.location.href = newPath;
     };
 
     return (
-        <div
+        <button 
             onClick={switchLocale}
-            className="btnLang flex items-center gap-2 cursor-pointer">
+            className="btnLang flex items-center gap-2 cursor-pointer"
+            aria-label={locale === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
+        >
             <Image 
                 src="/images/iconLang.png"  
                 width={24}
@@ -35,7 +38,12 @@ export function LanguageSwitcher() {
                 className="size-6 object-contain" 
                 alt="language icon"
             />
-            <span>{locale === 'ar' ? 'English' : 'عربي'}</span>
-        </div>
+            {locale === 'ar' ? 
+            <span>English</span>
+             :
+             <span className='font-arabic'>عربي</span>
+            }
+            
+        </button>
     );
 }
