@@ -43,12 +43,6 @@ const ContactForm = ({settings}) => {
 
   return (
     <section className="sectionCU sectionBGColor" id="contact">
-      <div className="overlay-wrapper overlay-wrapperR">
-        <div className="blur-background blurR"></div>
-      </div>
-      <div className="overlay-wrapper overlay-wrapperL">
-        <div className="blur-background blurL"></div>
-      </div>
       <div className="container relative">
         <div className="pt-10">
           <div className="ballsCT">

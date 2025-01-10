@@ -52,6 +52,10 @@ const HeroSection = ({ data }: HeroSectionProps) => {
     const [isVideoVisible, setIsVideoVisible] = useState(false);
 
     useEffect(() => {
+        if (videoRef.current) {
+            videoRef.current.load();
+        }
+
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -80,26 +84,15 @@ const HeroSection = ({ data }: HeroSectionProps) => {
 
     useEffect(() => {
         const loadVideo = async () => {
-            if (isVideoVisible && videoRef.current) {
-                try {
-                    const cachedVideo = sessionStorage.getItem('heroVideo');
-                    if (cachedVideo) {
-                        videoRef.current.src = cachedVideo;
-                    } else {
-                        const response = await fetch('/images/02.mp4');
-                        const blob = await response.blob();
-                        const videoUrl = URL.createObjectURL(blob);
-                        videoRef.current.src = videoUrl;
-                        
-                        try {
-                            sessionStorage.setItem('heroVideo', videoUrl);
-                        } catch (error) {
-                            console.log('Cache storage failed:', error);
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error loading video:', error);
-                }
+            if (!isVideoVisible || !videoRef.current) return;
+
+            try {
+                // محاولة تحميل الفيديو
+                videoRef.current.load();
+                // تعيين المصدر مباشرة
+                videoRef.current.src = '/images/02.mp4';
+            } catch (error) {
+                console.error('Error loading video:', error);
             }
         };
 
@@ -109,14 +102,27 @@ const HeroSection = ({ data }: HeroSectionProps) => {
     const handleVideoLoad = () => {
         if (videoRef.current) {
             videoRef.current.play()
-                .catch(error => console.log("Auto-play was prevented:", error));
             setVideoLoaded(true);
+
+                // .then(() => {
+                //     // تأخير قصير لضمان انتقال سلس
+                //     setTimeout(() => {
+                //         setVideoLoaded(true);
+                //     }, 100);
+                // })
+                // .catch(error => console.log("Auto-play was prevented:", error));
         }
     };
 
     return (
         <>
             <div className="bgHeaderHome bgVH">
+                {/* Background overlay - سيبقى ظاهراً حتى يتم تحميل الفيديو بالكامل */}
+                <div className={cn(
+                    "absolute inset-0 bg-gradient-overlay",
+                    "transition-opacity duration-1000",
+                )}></div>
+                
                 <div className="bgHeader"></div>
                 <div className="overlay-wrapper overlay-wrapperR">
                     <BlurBackground position="right" />
@@ -124,27 +130,23 @@ const HeroSection = ({ data }: HeroSectionProps) => {
                 <div className="overlay-wrapper overlay-wrapperL">
                     <BlurBackground position="left" />
                 </div>
+                
+                {/* Video container */}
                 <div 
                     className={cn(
-                        'absolute inset-0',
-                        'opacity-0 transition-opacity duration-1000',
-                        videoLoaded && 'opacity-100'
+                        'transition-opacity duration-1000',
                     )}
                 >
-                    <video
+                    {/* <video
                         ref={videoRef}
                         autoPlay
                         loop
                         muted
                         playsInline
-                        className={cn(
-                            'backVideo w-full h-full object-cover',
-                            'opacity-0 transition-opacity duration-500',
-                            videoLoaded && 'opacity-100'
-                        )}
+                        className="backVideo w-full h-full object-cover"
                         onLoadedData={handleVideoLoad}
-                        preload="none"
-                    />
+                        preload="metadata"
+                    /> */}
                 </div>
             </div>
 
@@ -188,7 +190,7 @@ const HeroSection = ({ data }: HeroSectionProps) => {
                                 </span>
                             </Link>
                             <Image 
-                                src="images/arrowHero.svg" 
+                                src="/images/arrowHero.svg" 
                                 alt="image"  
                                 width={80}
                                 height={80}

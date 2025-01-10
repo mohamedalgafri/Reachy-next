@@ -1688,3 +1688,25 @@ html {
 }
 
 }
+
+
+.mapouter {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  border-radius: 20px;
+  overflow: hidden;
+
+}
+
+.gmap_canvas {
+  overflow: hidden;
+  background: none !important;
+  width: 100%;
+  height: 400px;
+}
+
+.gmap_iframe {
+  width: 100% !important;
+  height: 400px !important;
+}
