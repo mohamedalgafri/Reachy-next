@@ -44,7 +44,7 @@ export default function FeaturesSection({ data, features }: FeaturesSectionProps
               {features.map((feature, index) => (
                 <div key={index} className="cardWR">
                   {feature.image && (
-                    <div className="relative w-16 h-16 mb-4">
+                    <div className="relative w-8 h-8 mb-4">
                       <Image
                         src={feature.image}
                         alt="image" 

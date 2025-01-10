@@ -30,10 +30,24 @@ export function NavBar({ navItems, settings }: NavBarProps) {
   const t = useTranslations('nav');
 
   const isActiveLink = (href: string) => {
+    // 1. طباعة القيم للتأكد من صحتها
+    console.log('Current pathname:', pathname);
+    console.log('Link href:', href);
+  
     if (href.startsWith('#')) return false;
+  
+    // 2. معالجة الصفحة الرئيسية بشكل خاص
+    if (href === '/') {
+      return pathname === `/${locale}` || pathname === `/${locale}/`;
+    }
+    
+    // 3. معالجة باقي الروابط
     const currentPath = pathname.split('/').slice(2).join('/');
     const itemPath = href.startsWith('/') ? href.slice(1) : href;
-    return currentPath === itemPath || (itemPath === '' && currentPath === '');
+    
+    console.log('Comparing:', { currentPath, itemPath });
+    
+    return currentPath === itemPath;
   };
 
   return (

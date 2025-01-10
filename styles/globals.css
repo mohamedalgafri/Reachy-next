@@ -1534,7 +1534,19 @@ html {
 
 @media (max-width:991px){
   .headerHome{
-    height:calc( 100vh - 75px);
+    height:auto;
+    min-height: 400px;
+  }
+  .bgHeaderHome{
+    height:auto;
+    min-height: 400px;
+  }
+  .headerH{
+    height:auto;
+    min-height: 400px;
+  }
+  .textHomeHero{
+    margin: auto 0;
   }
   .nevTop{
     display: none;

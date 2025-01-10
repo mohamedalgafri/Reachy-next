@@ -151,7 +151,7 @@ const HeroSection = ({ data }: HeroSectionProps) => {
             </div>
 
             <header className="headerHome">
-                <div className="container relative z-20 flex items-center gap-5 text-white h-full">
+                <div className="container headerH relative z-20 flex items-center gap-5 text-white h-full">
                     <div className="textHomeHero text-start">
                         <div className="ballsCT">
                             <div className="ballsColor">
