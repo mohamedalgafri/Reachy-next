@@ -139,7 +139,7 @@ export const columns: ColumnDef<Section>[] = [
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const locale = useLocale();
       const date = new Date(row.getValue("updatedAt"));
-      return date.toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', {
+      return date.toLocaleDateString(locale === 'ar' ? 'en-US' : 'en-US', {
         year: 'numeric',
         month: 'numeric',
         day: 'numeric',
