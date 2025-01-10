@@ -62,7 +62,7 @@ export const columns: ColumnDef<Client>[] = [
     accessorKey: "createdAt",
     header: "تاريخ الإضافة",
     cell: ({ row }) => {
-      return new Date(row.original.createdAt).toLocaleDateString('ar-SA')
+      return new Date(row.original.createdAt).toLocaleDateString()
     }
   },
   {

@@ -100,7 +100,7 @@ export function ServiceForm({ initialData, mode }: ServiceFormProps) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <div className="mx-auto w-full ">
       <Card>
         <CardHeader>
           <h2 className="text-2xl font-bold">
@@ -119,7 +119,7 @@ export function ServiceForm({ initialData, mode }: ServiceFormProps) {
             )}
 
             <Tabs defaultValue="ar" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="">
                 <TabsTrigger value="ar">العربية</TabsTrigger>
                 <TabsTrigger value="en">English</TabsTrigger>
               </TabsList>

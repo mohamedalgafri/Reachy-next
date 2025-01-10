@@ -103,7 +103,7 @@ export function FeatureForm({ initialData, mode }: FeatureFormProps) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <div className="mx-auto w-full ">
       <Card>
         <CardHeader>
           <h2 className="text-2xl font-bold">
@@ -118,8 +118,8 @@ export function FeatureForm({ initialData, mode }: FeatureFormProps) {
               </div>
             )}
 
-<Tabs defaultValue="ar" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+            <Tabs defaultValue="ar" className="w-full">
+              <TabsList className="">
                 <TabsTrigger value="ar">العربية</TabsTrigger>
                 <TabsTrigger value="en">English</TabsTrigger>
               </TabsList>

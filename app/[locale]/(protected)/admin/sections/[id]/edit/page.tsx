@@ -67,8 +67,10 @@ export default async function EditSectionPage({ params }: EditSectionPageProps) 
     
       case 'STORY':
         return {
-          title: section.inputs.find(i => i.label === 'title')?.value || '',
-          subTitle: section.inputs.find(i => i.label === 'subTitle')?.value || '',
+          title_ar: section.inputs.find(i => i.label === 'title_ar')?.value || '',
+          title_en: section.inputs.find(i => i.label === 'title_en')?.value || '',
+          subTitle_ar: section.inputs.find(i => i.label === 'subTitle_ar')?.value || '',
+          subTitle_en: section.inputs.find(i => i.label === 'subTitle_en')?.value || '',
           profileUrl: section.inputs.find(i => i.label === 'profileUrl')?.value || ''
         };
 

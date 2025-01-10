@@ -106,7 +106,7 @@ export function ClientForm({ initialData, mode }: ClientFormProps) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <div className="mx-auto w-full ">
       <Card>
         <CardHeader>
           <h2 className="text-2xl font-bold">

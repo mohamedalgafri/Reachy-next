@@ -118,14 +118,14 @@ const HeroSection = ({ data }: HeroSectionProps) => {
                         />
 
                         <div className={`arrowBtn`}>
-                            <a 
+                            <Link
                                 href={data.buttonLink} 
                                 className="action btnArrow flex items-center gap-1 w-max mt-5 py-1 px-8"
                             >
                                 <span className="textbtn">
                                     {data.buttonText[locale]}
                                 </span>
-                            </a>
+                            </Link>
                             <Image 
                                 src="images/arrowHero.svg" 
                                 alt="image"  

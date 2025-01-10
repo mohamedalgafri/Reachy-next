@@ -23,8 +23,8 @@ export default async function ServicesPage() {
           </p>
         </div>
         <Button >
-          <Link className="flex gap-2" href="/admin/services/create">
-            <Plus className="w-4 h-4 ml-2" />
+          <Link className="flex gap-1" href="/admin/services/create">
+            <Plus className="w-4 h-4" />
             إضافة خدمة
           </Link>
         </Button>

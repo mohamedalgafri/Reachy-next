@@ -23,8 +23,8 @@ export default async function ClientsPage() {
           </p>
         </div>
         <Button >
-          <Link href="/admin/clients/create">
-            <Plus className="w-4 h-4 ml-2" />
+          <Link href="/admin/clients/create" className="flex items-center gap-1">
+            <Plus className="w-4 h-4" />
             إضافة عميل
           </Link>
         </Button>

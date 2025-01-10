@@ -86,20 +86,20 @@ export const columns: ColumnDef<Service>[] = [
       return (
         <div className="space-y-1">
           <div 
-            className="max-w-[400px] line-clamp-2 prose prose-sm text-right"
+            className="max-w-[400px] line-clamp-1 prose prose-sm text-right"
             dir="rtl"
             dangerouslySetInnerHTML={{ 
-              __html: row.original.subtitle_ar.length > 150 
-                ? row.original.subtitle_ar.substring(0, 150) + '...' 
+              __html: row.original.subtitle_ar.length > 50 
+                ? row.original.subtitle_ar.substring(0, 50) + '...' 
                 : row.original.subtitle_ar 
             }} 
           />
           <div 
-            className="max-w-[400px] line-clamp-2 prose prose-sm text-muted-foreground"
+            className="max-w-[400px] line-clamp-1 prose prose-sm text-muted-foreground"
             dir="ltr"
             dangerouslySetInnerHTML={{ 
-              __html: row.original.subtitle_en.length > 150 
-                ? row.original.subtitle_en.substring(0, 150) + '...' 
+              __html: row.original.subtitle_en.length > 50 
+                ? row.original.subtitle_en.substring(0, 50) + '...' 
                 : row.original.subtitle_en 
             }} 
           />
