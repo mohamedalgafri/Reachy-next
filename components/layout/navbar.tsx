@@ -122,13 +122,6 @@ export function NavBar({ navItems, settings }: NavBarProps) {
               </ul>
             </div>
           </div>
-
-          <div id="menuIcon" className="menuIcon">
-            <Image className="openNav" width={0}
-              height={0} src="images/bars-solid.svg" alt="image" />
-            <Image className="closeNav" width={0}
-              height={0} src="images/xmark-solid.svg" alt="image" />
-          </div>
         </div>
       </nav>
     </>
