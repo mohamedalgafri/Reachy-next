@@ -48,7 +48,7 @@ export default function HeroSectionForm({
       title_ar: initialData?.title_ar || "",
       title_en: initialData?.title_en || "",
       subTitle_ar: initialData?.subTitle_ar || "",
-      subTitle_en: initialData?.subTitle_en || "",
+      subTitle_en: initialData?.subTitle_en || ""
     }
   });
 
@@ -56,7 +56,7 @@ export default function HeroSectionForm({
     try {
       setIsLoading(true);
       const result = await updateHeroSection(sectionId, values);
-      
+
       if (result.success) {
         toast.success('تم تحديث القسم بنجاح');
         router.push('/admin/sections');
@@ -81,7 +81,7 @@ export default function HeroSectionForm({
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <Tabs defaultValue="ar" className="w-full text-start">
+            <Tabs defaultValue="ar" className="w-full">
               <TabsList className="mb-4">
                 <TabsTrigger value="ar">عربي</TabsTrigger>
                 <TabsTrigger value="en">English</TabsTrigger>
@@ -120,6 +120,7 @@ export default function HeroSectionForm({
                       </FormItem>
                     )}
                   />
+
                 </div>
               </TabsContent>
 
@@ -139,8 +140,25 @@ export default function HeroSectionForm({
                         <FormMessage />
                       </FormItem>
                     )}
-                  />      
-                </div>     
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="subTitle_en"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Subtitle (English)</FormLabel>
+                        <TextEditor
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="Enter the subtitle..."
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                </div>
               </TabsContent>
             </Tabs>
 
@@ -153,8 +171,8 @@ export default function HeroSectionForm({
               >
                 إعادة تعيين
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isLoading}
                 className="min-w-[120px]"
               >

@@ -115,7 +115,7 @@ export function NavBar({ navItems, settings }: NavBarProps) {
           <Link 
             href="/"
             locale={locale}
-            className="action logo text-white h-7 object-contain object-left"
+            className={`action logo text-white h-7 object-contain ${locale === "ar" ? "object-right" : "object-left"} `}
           >
             {settings?.logoImage && (
               <Image 
