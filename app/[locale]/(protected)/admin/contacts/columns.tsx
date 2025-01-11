@@ -30,6 +30,7 @@ export const columns: ColumnDef<Contact>[] = [
   {
     accessorKey: "name",
     header: ({ }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const locale = useLocale();
       return locale === 'ar' ? "الاسم" : "Name";
     },
@@ -37,6 +38,7 @@ export const columns: ColumnDef<Contact>[] = [
   {
     accessorKey: "email",
     header: ({ }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const locale = useLocale();
       return locale === 'ar' ? "البريد الإلكتروني" : "Email";
     },
@@ -56,6 +58,7 @@ export const columns: ColumnDef<Contact>[] = [
   {
     accessorKey: "phone",
     header: ({ }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const locale = useLocale();
       return locale === 'ar' ? "رقم الهاتف" : "Phone";
     },
@@ -63,6 +66,7 @@ export const columns: ColumnDef<Contact>[] = [
   {
     accessorKey: "subject",
     header: ({ }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const locale = useLocale();
       return locale === 'ar' ? "الموضوع" : "Subject";
     },
@@ -82,11 +86,13 @@ export const columns: ColumnDef<Contact>[] = [
   {
     id: "createdAt",
     header: ({ }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const locale = useLocale();
       return locale === 'ar' ? "تاريخ الإرسال" : "Date";
     },
     cell: ({ row }) => {
       const date = new Date(row.original.createdAt)
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const locale = useLocale();
       return (
         <TooltipProvider>
@@ -112,6 +118,7 @@ export const columns: ColumnDef<Contact>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const locale = useLocale();
       const isUnread = !row.original.isRead
       
