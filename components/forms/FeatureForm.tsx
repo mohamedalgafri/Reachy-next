@@ -1,4 +1,3 @@
-// components/forms/FeatureForm.tsx
 'use client';
 
 import { useState } from 'react';
@@ -12,6 +11,7 @@ import { ImageUploader } from './ImageUploader';
 import { toast } from "sonner";
 import { createFeature, updateFeature } from '@/actions/feature';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLocale } from 'next-intl';
 
 interface FeatureFormProps {
   initialData?: any;
@@ -20,6 +20,7 @@ interface FeatureFormProps {
 
 export function FeatureForm({ initialData, mode }: FeatureFormProps) {
   const router = useRouter();
+  const locale = useLocale();
   
   // Form state
   const [title_ar, setTitleAr] = useState(initialData?.title_ar || '');
@@ -33,6 +34,51 @@ export function FeatureForm({ initialData, mode }: FeatureFormProps) {
     initialData?.image ? [initialData.image] : []
   );
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+
+  const translations = {
+    ar: {
+      createTitle: "إضافة ميزة جديدة",
+      editTitle: "تعديل الميزة",
+      title: "العنوان",
+      briefDescription: "الوصف المختصر",
+      arabic: "العربية",
+      english: "English",
+      image: "الصورة",
+      save: "حفظ",
+      saving: "جاري الحفظ...",
+      back: "رجوع",
+      allFieldsRequired: "جميع الحقول مطلوبة باللغتين",
+      featureAddedSuccess: "تم إضافة الميزة بنجاح",
+      featureUpdatedSuccess: "تم تحديث الميزة بنجاح",
+      unexpectedError: "حدث خطأ غير متوقع",
+      titlePlaceholderAr: "أدخل العنوان بالعربية",
+      titlePlaceholderEn: "Enter title in English",
+      descPlaceholderAr: "أدخل الوصف المختصر بالعربية",
+      descPlaceholderEn: "Enter brief description in English"
+    },
+    en: {
+      createTitle: "Add New Feature",
+      editTitle: "Edit Feature",
+      title: "Title",
+      briefDescription: "Brief Description",
+      arabic: "Arabic",
+      english: "English",
+      image: "Image",
+      save: "Save",
+      saving: "Saving...",
+      back: "Back",
+      allFieldsRequired: "All fields are required in both languages",
+      featureAddedSuccess: "Feature added successfully",
+      featureUpdatedSuccess: "Feature updated successfully",
+      unexpectedError: "An unexpected error occurred",
+      titlePlaceholderAr: "Enter title in Arabic",
+      titlePlaceholderEn: "Enter title in English",
+      descPlaceholderAr: "Enter brief description in Arabic",
+      descPlaceholderEn: "Enter brief description in English"
+    }
+  };
+
+  const t = translations[locale as keyof typeof translations];
 
   const handleImagesChange = (files: File[]) => {
     const urls = files.map(file => URL.createObjectURL(file));
@@ -49,7 +95,7 @@ export function FeatureForm({ initialData, mode }: FeatureFormProps) {
     e.preventDefault();
     
     if (!title_ar || !title_en || !subtitle_ar || !subtitle_en) {
-      toast.error('جميع الحقول مطلوبة باللغتين');
+      toast.error(t.allFieldsRequired);
       return;
     }
 
@@ -86,28 +132,24 @@ export function FeatureForm({ initialData, mode }: FeatureFormProps) {
         throw new Error(result.error);
       }
 
-      toast.success(
-        mode === "create" 
-          ? "تم إضافة الميزة بنجاح" 
-          : "تم تحديث الميزة بنجاح"
-      );
+      toast.success(mode === "create" ? t.featureAddedSuccess : t.featureUpdatedSuccess);
       
       router.push('/admin/features');
       router.refresh();
     } catch (err: any) {
-      setError(err.message || 'حدث خطأ غير متوقع');
-      toast.error(err.message || 'حدث خطأ غير متوقع');
+      setError(err.message || t.unexpectedError);
+      toast.error(err.message || t.unexpectedError);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="mx-auto w-full ">
+    <div className="mx-auto w-full" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <Card>
         <CardHeader>
           <h2 className="text-2xl font-bold">
-            {mode === "create" ? "إضافة ميزة جديدة" : "تعديل الميزة"}
+            {mode === "create" ? t.createTitle : t.editTitle}
           </h2>
         </CardHeader>
         <CardContent>
@@ -118,29 +160,29 @@ export function FeatureForm({ initialData, mode }: FeatureFormProps) {
               </div>
             )}
 
-            <Tabs defaultValue="ar" className="w-full">
-              <TabsList className="">
-                <TabsTrigger value="ar">العربية</TabsTrigger>
-                <TabsTrigger value="en">English</TabsTrigger>
+            <Tabs defaultValue={locale} className="w-full">
+              <TabsList>
+                <TabsTrigger value="ar">{t.arabic}</TabsTrigger>
+                <TabsTrigger value="en">{t.english}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="ar" className="space-y-4">
                 <div>
-                  <Label>العنوان</Label>
+                  <Label>{t.title}</Label>
                   <Input
                     value={title_ar}
                     onChange={(e) => setTitleAr(e.target.value)}
-                    placeholder="أدخل العنوان بالعربية"
+                    placeholder={t.titlePlaceholderAr}
                     dir="rtl"
                   />
                 </div>
 
                 <div>
-                  <Label>الوصف المختصر</Label>
+                  <Label>{t.briefDescription}</Label>
                   <Textarea
                     value={subtitle_ar}
                     onChange={(e) => setSubtitleAr(e.target.value)}
-                    placeholder="أدخل الوصف المختصر بالعربية"
+                    placeholder={t.descPlaceholderAr}
                     className="min-h-[100px]"
                     dir="rtl"
                   />
@@ -149,21 +191,21 @@ export function FeatureForm({ initialData, mode }: FeatureFormProps) {
               
               <TabsContent value="en" className="space-y-4">
                 <div>
-                  <Label>Title</Label>
+                  <Label>{t.title}</Label>
                   <Input
                     value={title_en}
                     onChange={(e) => setTitleEn(e.target.value)}
-                    placeholder="Enter title in English"
+                    placeholder={t.titlePlaceholderEn}
                     dir="ltr"
                   />
                 </div>
 
                 <div>
-                  <Label>Brief Description</Label>
+                  <Label>{t.briefDescription}</Label>
                   <Textarea
                     value={subtitle_en}
                     onChange={(e) => setSubtitleEn(e.target.value)}
-                    placeholder="Enter brief description in English"
+                    placeholder={t.descPlaceholderEn}
                     className="min-h-[100px]"
                     dir="ltr"
                   />
@@ -172,7 +214,7 @@ export function FeatureForm({ initialData, mode }: FeatureFormProps) {
             </Tabs>
 
             <div>
-              <Label>الصورة</Label>
+              <Label>{t.image}</Label>
               <ImageUploader
                 onImagesChange={handleImagesChange}
                 previewImages={previewImages}
@@ -187,7 +229,7 @@ export function FeatureForm({ initialData, mode }: FeatureFormProps) {
                 type="submit"
                 disabled={loading}
               >
-                {loading ? "جاري الحفظ..." : "حفظ"}
+                {loading ? t.saving : t.save}
               </Button>
               
               <Button
@@ -196,7 +238,7 @@ export function FeatureForm({ initialData, mode }: FeatureFormProps) {
                 onClick={() => router.back()}
                 disabled={loading}
               >
-                رجوع
+                {t.back}
               </Button>
             </div>
           </form>

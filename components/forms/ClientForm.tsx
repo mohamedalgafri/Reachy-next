@@ -9,17 +9,8 @@ import { Button } from '@/components/ui/button';
 import { ImageUploader } from './ImageUploader';
 import { toast } from "sonner";
 import { createClient, updateClient } from '@/actions/client';
-import { 
-  AlertDialog, 
-  AlertDialogAction, 
-  AlertDialogCancel,
-  AlertDialogContent, 
-  AlertDialogDescription, 
-  AlertDialogFooter, 
-  AlertDialogHeader, 
-  AlertDialogTitle 
-} from "@/components/ui/alert-dialog";
 import { Loader2 } from "lucide-react";
+import { useLocale } from 'next-intl';
 
 interface ClientFormProps {
   initialData?: any;
@@ -28,17 +19,52 @@ interface ClientFormProps {
 
 export function ClientForm({ initialData, mode }: ClientFormProps) {
   const router = useRouter();
+  const locale = useLocale();
   
   // Form state
   const [name, setName] = useState(initialData?.name || '');
   const [loading, setLoading] = useState(false);
-  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [error, setError] = useState('');
   
   const [previewImages, setPreviewImages] = useState<string[]>(
     initialData?.image ? [initialData.image] : []
   );
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+
+  const translations = {
+    ar: {
+      createTitle: "إضافة عميل جديد",
+      editTitle: "تعديل العميل",
+      clientName: "اسم العميل",
+      clientLogo: "شعار العميل",
+      save: "حفظ",
+      saving: "جاري الحفظ...",
+      saveClient: "حفظ العميل",
+      cancel: "إلغاء",
+      nameRequired: "اسم العميل مطلوب",
+      namePlaceholder: "أدخل اسم العميل",
+      clientAddedSuccess: "تم إضافة العميل بنجاح",
+      clientUpdatedSuccess: "تم تحديث العميل بنجاح",
+      unexpectedError: "حدث خطأ غير متوقع"
+    },
+    en: {
+      createTitle: "Add New Client",
+      editTitle: "Edit Client",
+      clientName: "Client Name",
+      clientLogo: "Client Logo",
+      save: "Save",
+      saving: "Saving...",
+      saveClient: "Save Client",
+      cancel: "Cancel",
+      nameRequired: "Client name is required",
+      namePlaceholder: "Enter client name",
+      clientAddedSuccess: "Client added successfully",
+      clientUpdatedSuccess: "Client updated successfully",
+      unexpectedError: "An unexpected error occurred"
+    }
+  };
+
+  const t = translations[locale as keyof typeof translations];
 
   const handleImagesChange = (files: File[]) => {
     const urls = files.map(file => URL.createObjectURL(file));
@@ -55,7 +81,7 @@ export function ClientForm({ initialData, mode }: ClientFormProps) {
     e.preventDefault();
     
     if (!name) {
-      toast.error('Client name is required');
+      toast.error(t.nameRequired);
       return;
     }
 
@@ -91,26 +117,26 @@ export function ClientForm({ initialData, mode }: ClientFormProps) {
 
       toast.success(
         mode === "create" 
-          ? "تم إضافة العميل بنجاح" 
-          : "تم تحديث العميل بنجاح"
+          ? t.clientAddedSuccess 
+          : t.clientUpdatedSuccess
       );
       
       router.push('/admin/clients');
       router.refresh();
     } catch (err: any) {
-      setError(err.message || 'حدث خطأ غير متوقع');
-      toast.error(err.message || 'حدث خطأ غير متوقع');
+      setError(err.message || t.unexpectedError);
+      toast.error(err.message || t.unexpectedError);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="mx-auto w-full ">
+    <div className="mx-auto w-full" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <Card>
         <CardHeader>
           <h2 className="text-2xl font-bold">
-            {mode === "create" ? "إضافة عميل جديد" : "تعديل العميل"}
+            {mode === "create" ? t.createTitle : t.editTitle}
           </h2>
         </CardHeader>
         <CardContent>
@@ -122,17 +148,17 @@ export function ClientForm({ initialData, mode }: ClientFormProps) {
             )}
 
             <div>
-              <Label>Client Name</Label>
+              <Label>{t.clientName}</Label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter client name"
+                placeholder={t.namePlaceholder}
                 dir="ltr"
               />
             </div>
 
             <div>
-              <Label>Client Logo</Label>
+              <Label>{t.clientLogo}</Label>
               <ImageUploader
                 onImagesChange={handleImagesChange}
                 previewImages={previewImages}
@@ -147,7 +173,7 @@ export function ClientForm({ initialData, mode }: ClientFormProps) {
                 type="submit"
                 disabled={loading}
               >
-                {loading ? "جاري الحفظ..." : "حفظ العميل"}
+                {loading ? t.saving : t.saveClient}
               </Button>
               
               <Button
@@ -155,7 +181,7 @@ export function ClientForm({ initialData, mode }: ClientFormProps) {
                 variant="outline"
                 onClick={() => router.back()}
               >
-                إلغاء
+                {t.cancel}
               </Button>
             </div>
           </form>
