@@ -16,11 +16,6 @@ interface HeroSectionProps {
             ar: string;
             en: string;
         };
-        buttonText: {
-            ar: string;
-            en: string;
-        };
-        buttonLink: string;
     }
 }
 
@@ -182,11 +177,11 @@ const HeroSection = ({ data }: HeroSectionProps) => {
 
                         <div className={`arrowBtn`}>
                             <Link
-                                href={data.buttonLink} 
+                                href={locale === "ar" ? "ar/#contact" : "en/#contact"}
                                 className="action btnArrow flex items-center gap-1 w-max mt-5 py-1 px-8"
                             >
                                 <span className="textbtn">
-                                    {data.buttonText[locale]}
+                                    {locale === 'ar' ? "احجز استشارة مجانية الآن" : "Book a FREE Consultation Now"}
                                 </span>
                             </Link>
                             <Image 

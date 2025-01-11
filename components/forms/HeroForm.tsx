@@ -20,9 +20,6 @@ const formSchema = z.object({
   title_en: z.string().min(1, "العنوان الرئيسي باللغة الإنجليزية مطلوب"),
   subTitle_ar: z.string().min(1, "العنوان الفرعي باللغة العربية مطلوب"),
   subTitle_en: z.string().min(1, "العنوان الفرعي باللغة الإنجليزية مطلوب"),
-  buttonText_ar: z.string().optional(),
-  buttonText_en: z.string().optional(),
-  buttonLink: z.string().url().optional().or(z.string().length(0))
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -33,9 +30,6 @@ interface HeroFormProps {
     title_en: string;
     subTitle_ar: string;
     subTitle_en: string;
-    buttonText_ar?: string;
-    buttonText_en?: string;
-    buttonLink?: string;
   };
   sectionId: number;
 }
@@ -55,9 +49,6 @@ export default function HeroSectionForm({
       title_en: initialData?.title_en || "",
       subTitle_ar: initialData?.subTitle_ar || "",
       subTitle_en: initialData?.subTitle_en || "",
-      buttonText_ar: initialData?.buttonText_ar || "",
-      buttonText_en: initialData?.buttonText_en || "",
-      buttonLink: initialData?.buttonLink || ""
     }
   });
 
@@ -90,7 +81,7 @@ export default function HeroSectionForm({
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <Tabs defaultValue="ar" className="w-full">
+            <Tabs defaultValue="ar" className="w-full text-start">
               <TabsList className="mb-4">
                 <TabsTrigger value="ar">عربي</TabsTrigger>
                 <TabsTrigger value="en">English</TabsTrigger>
@@ -108,7 +99,6 @@ export default function HeroSectionForm({
                           value={field.value}
                           onChange={field.onChange}
                           placeholder="أدخل العنوان الرئيسي..."
-                          dir="rtl"
                         />
                         <FormMessage />
                       </FormItem>
@@ -125,20 +115,7 @@ export default function HeroSectionForm({
                           value={field.value}
                           onChange={field.onChange}
                           placeholder="أدخل العنوان الفرعي..."
-                          dir="rtl"
                         />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="buttonText_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>نص الزر (عربي)</FormLabel>
-                        <Input {...field} dir="rtl" />
                         <FormMessage />
                       </FormItem>
                     )}
@@ -158,56 +135,14 @@ export default function HeroSectionForm({
                           value={field.value}
                           onChange={field.onChange}
                           placeholder="Enter the title..."
-                          dir="ltr"
                         />
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="subTitle_en"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Subtitle (English)</FormLabel>
-                        <TextEditor
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder="Enter the subtitle..."
-                          dir="ltr"
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="buttonText_en"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Button Text (English)</FormLabel>
-                        <Input {...field} dir="ltr" />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                  />      
+                </div>     
               </TabsContent>
             </Tabs>
-
-            <FormField
-              control={form.control}
-              name="buttonLink"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>رابط الزر</FormLabel>
-                  <Input dir="ltr" {...field} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <div className="flex justify-end gap-3 pt-6">
               <Button

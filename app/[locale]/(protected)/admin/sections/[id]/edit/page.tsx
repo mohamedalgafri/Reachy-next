@@ -44,9 +44,6 @@ export default async function EditSectionPage({ params }: EditSectionPageProps) 
           title_en: section.inputs.find(i => i.label === 'title_en')?.value || '',
           subTitle_ar: section.inputs.find(i => i.label === 'subTitle_ar')?.value || '',
           subTitle_en: section.inputs.find(i => i.label === 'subTitle_en')?.value || '',
-          buttonText_ar: section.inputs.find(i => i.label === 'buttonText_ar')?.value || '',
-          buttonText_en: section.inputs.find(i => i.label === 'buttonText_en')?.value || '',
-          buttonLink: section.inputs.find(i => i.label === 'buttonLink')?.value || ''
         };
 
       case 'ABOUT':

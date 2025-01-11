@@ -1,6 +1,7 @@
 // app/[locale]/services/page.tsx
 import { db } from "@/lib/db";
 import Image from "next/image";
+import Link from "next/link";
 
 interface Props {
   params: {
@@ -81,11 +82,12 @@ export default async function ServicePage({ params: { locale } }: Props) {
             />
 
             <div className="arrowBtn">
-              <a href="/#contact" className="action btnArrow flex items-center gap-1 w-max mt-5 py-1 px-8">
+              <Link href={locale === "ar" ? "ar/#contact" : "en/#contact"}
+                className="action btnArrow flex items-center gap-1 w-max mt-5 py-1 px-8">
                 <span className="textbtn">
                   {locale === 'ar' ? "احجز استشارة مجانية الآن" : "Book a FREE Consultation Now"}
                 </span>
-              </a>
+              </Link>
               <Image src="/images/arrowHero.svg" alt="" width={100} height={100} />
             </div>
           </div>

@@ -8,9 +8,6 @@ interface HeroSectionData {
   title_en: string;
   subTitle_ar: string;
   subTitle_en: string;
-  buttonText_ar?: string;
-  buttonText_en?: string;
-  buttonLink?: string;
 }
 
 export async function updateHeroSection(sectionId: number, data: HeroSectionData) {
@@ -49,24 +46,6 @@ export async function updateHeroSection(sectionId: number, data: HeroSectionData
               type: 'RICH_TEXT',
               value: data.subTitle_en,
               order: 4
-            },
-            {
-              label: 'buttonText_ar',
-              type: 'TEXT',
-              value: data.buttonText_ar || '',
-              order: 5
-            },
-            {
-              label: 'buttonText_en',
-              type: 'TEXT',
-              value: data.buttonText_en || '',
-              order: 6
-            },
-            {
-              label: 'buttonLink',
-              type: 'TEXT',
-              value: data.buttonLink || '',
-              order: 7
             }
           ]
         }

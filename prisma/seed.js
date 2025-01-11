@@ -52,18 +52,7 @@ async function main() {
                   value: '<p>WANNA REACH EASY?</p>',
                   order: 2
                 },
-                {
-                  label: 'buttonText',
-                  type: 'TEXT',
-                  value: 'Book a FREE Consultation Now',
-                  order: 3
-                },
-                {
-                  label: 'buttonLink',
-                  type: 'TEXT',
-                  value: '/about-us',
-                  order: 4
-                }
+               
               ]
             }
           },
