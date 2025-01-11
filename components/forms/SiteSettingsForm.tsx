@@ -1,4 +1,3 @@
-// components/forms/SiteSettingsForm.tsx
 "use client";
 
 import { useState, useTransition } from "react";
@@ -10,22 +9,20 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SectionColumns } from "@/components/dashboard/section-columns";
 import { useUpload } from "@/hooks/useUpload";
 import { updateSiteSettings } from "@/actions/settings";
 import { ImageUploader } from "./ImageUploader";
 import { TextEditor } from "./TextEditor";
+import { useLocale } from 'next-intl';
 
-const siteSettingsSchema = z.object({
-  siteName: z.string().min(1, "اسم الموقع مطلوب").max(50),
+const getSiteSettingsSchema = (t: any) => z.object({
+  siteName: z.string().min(1, t.siteNameRequired).max(50),
   logoImage: z.string().optional(),
   logoText: z.string().optional(),
-  email: z.string().email("البريد الإلكتروني غير صالح").optional().or(z.literal("")),
-  phone: z.string().regex(/^[0-9+\s-]+$/, "رقم الهاتف غير صالح").optional().or(z.literal("")),
+  email: z.string().email(t.invalidEmail).optional().or(z.literal("")),
+  phone: z.string().regex(/^[0-9+\s-]+$/, t.invalidPhone).optional().or(z.literal("")),
   address: z.string().optional(),
 });
-
-type FormData = z.infer<typeof siteSettingsSchema>;
 
 interface SiteSettingsFormProps {
   settings: {
@@ -35,11 +32,13 @@ interface SiteSettingsFormProps {
     logoText?: string;
     email?: string;
     phone?: string;
-    address?: string;
+    address_ar?: string;
+    address_en?: string;
   } | null;
 }
 
 export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
+  const locale = useLocale();
   const [isPending, startTransition] = useTransition();
   const [updated, setUpdated] = useState(false);
   const [address_ar, setAddress_ar] = useState(settings?.address_ar || "");
@@ -49,6 +48,47 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
     file: null as File | null,
   });
   const { uploadFile, isUploading } = useUpload();
+
+  const translations = {
+    ar: {
+      siteSettings: "إعدادات الموقع",
+      description: "تعديل معلومات الموقع الأساسية",
+      siteNameRequired: "اسم الموقع مطلوب",
+      invalidEmail: "البريد الإلكتروني غير صالح",
+      invalidPhone: "رقم الهاتف غير صالح",
+      siteName: "اسم الموقع",
+      logo: "صورة الشعار",
+      email: "البريد الإلكتروني",
+      phone: "رقم الجوال",
+      addressAr: "العنوان بالعربي",
+      addressEn: "العنوان بالانجليزي",
+      saveChanges: "حفظ التغييرات",
+      error: "حدث خطأ",
+      updateSuccess: "تم تحديث الإعدادات بنجاح",
+      updateError: "حدث خطأ أثناء تحديث الإعدادات"
+    },
+    en: {
+      siteSettings: "Site Settings",
+      description: "Edit basic site information",
+      siteNameRequired: "Site name is required",
+      invalidEmail: "Invalid email address",
+      invalidPhone: "Invalid phone number",
+      siteName: "Site Name",
+      logo: "Logo Image",
+      email: "Email Address",
+      phone: "Phone Number",
+      addressAr: "Address in Arabic",
+      addressEn: "Address in English",
+      saveChanges: "Save Changes",
+      error: "Error",
+      updateSuccess: "Settings updated successfully",
+      updateError: "Error updating settings"
+    }
+  };
+
+  const t = translations[locale as keyof typeof translations];
+  const siteSettingsSchema = getSiteSettingsSchema(t);
+  type FormData = z.infer<typeof siteSettingsSchema>;
 
   const {
     handleSubmit,
@@ -63,8 +103,6 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
       logoText: settings?.logoText || "",
       email: settings?.email || "",
       phone: settings?.phone || "",
-      address_ar: settings?.address_ar || "",
-      address_en: settings?.address_en || "",
     },
   });
 
@@ -100,33 +138,32 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
         });
 
         if (result.error) {
-          toast.error("حدث خطأ", {
+          toast.error(t.error, {
             description: result.error,
           });
         } else {
           setUpdated(false);
-          toast.success("تم تحديث الإعدادات بنجاح");
+          toast.success(t.updateSuccess);
         }
       } catch (error) {
-        toast.error("حدث خطأ أثناء تحديث الإعدادات");
+        toast.error(t.updateError);
       }
     });
   });
 
   return (
     <form onSubmit={onSubmit} className="mt-8">
-
       <div className="pt-8">
         <div className="space-y-1.5">
-          <h2 className="text-lg font-semibold leading-none">إعدادات الموقع"</h2>
+          <h2 className="text-lg font-semibold leading-none">{t.siteSettings}</h2>
           <p className="text-balance text-sm text-muted-foreground">
-            تعديل معلومات الموقع الأساسية
+            {t.description}
           </p>
         </div>
 
         <div className="pt-8">
           <div className="space-y-1.5 mb-4">
-            <Label htmlFor="siteName">اسم الموقع</Label>
+            <Label htmlFor="siteName">{t.siteName}</Label>
             <Input
               id="siteName"
               className="mt-2"
@@ -139,7 +176,7 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
           </div>
 
           <div className="mb-4">
-            <Label>صورة الشعار</Label>
+            <Label>{t.logo}</Label>
             <div className="mt-2">
               <ImageUploader
                 onImagesChange={handleLogoImageChange}
@@ -156,44 +193,41 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
           </div>
 
           <div className="grid grid-cols-2 gap-5">
+            <div className="mb-4">
+              <Label htmlFor="email">{t.email}</Label>
+              <Input
+                id="email"
+                type="email"
+                className="mt-2"
+                {...register("email")}
+                onChange={(e) => setUpdated(true)}
+                dir="ltr"
+              />
+              {errors?.email && (
+                <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>
+              )}
+            </div>
 
-
-          <div className="mb-4">
-            <Label htmlFor="email">البريد الإلكتروني</Label>
-            <Input
-              id="email"
-              type="email"
-              className="mt-2"
-              {...register("email")}
-              onChange={(e) => setUpdated(true)}
-              dir="ltr"
-            />
-            {errors?.email && (
-              <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>
-            )}
+            <div className="mb-4">
+              <Label htmlFor="phone">{t.phone}</Label>
+              <Input
+                id="phone"
+                type="tel"
+                className="mt-2"
+                {...register("phone")}
+                onChange={(e) => setUpdated(true)}
+                dir="ltr"
+              />
+              {errors?.phone && (
+                <p className="text-red-600 text-sm mt-1">{errors.phone.message}</p>
+              )}
+            </div>
           </div>
-
-          <div className="mb-4">
-            <Label htmlFor="phone">رقم الجوال</Label>
-            <Input
-              id="phone"
-              type="tel"
-              className="mt-2"
-              {...register("phone")}
-              onChange={(e) => setUpdated(true)}
-              dir="ltr"
-            />
-            {errors?.phone && (
-              <p className="text-red-600 text-sm mt-1">{errors.phone.message}</p>
-            )}
-          </div>
-          </div>
-
 
           <div className="grid grid-cols-2 gap-5">
             <div className="mb-4">
-              <Label>العنوان بالعربي</Label>
-              <div className="mt-2">
+              <Label>{t.addressAr}</Label>
+              <div className="mt-2" dir="rtl">
                 <TextEditor
                   value={address_ar}
                   onChange={(value) => {
@@ -205,8 +239,8 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
             </div>
 
             <div className="mb-4">
-              <Label>العنوان بالانجليزي</Label>
-              <div className="mt-2">
+              <Label>{t.addressEn}</Label>
+              <div className="mt-2" dir="ltr">
                 <TextEditor
                   value={address_en}
                   onChange={(value) => {
@@ -218,8 +252,6 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
             </div>
           </div>
 
-
-
           <Button
             type="submit"
             disabled={isPending || isUploading || !updated}
@@ -228,12 +260,11 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
             {isPending || isUploading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              "حفظ التغييرات"
+              t.saveChanges
             )}
           </Button>
         </div>
       </div>
-
     </form>
   );
 }

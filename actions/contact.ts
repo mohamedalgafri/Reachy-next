@@ -64,3 +64,15 @@ export async function markContactAsRead(id: number) {
     return { success: false };
   }
 }
+
+export async function deleteContact(id: string) {
+  try {
+    await db.contact.delete({
+      where: { id }
+    });
+    return { success: true, message: "Message deleted successfully" };
+  } catch (error) {
+    console.error("[Server] Error deleting contact:", error);
+    return { success: false, error: "Error deleting message" };
+  }
+}

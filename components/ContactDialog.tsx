@@ -14,6 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from './ui/button';
 import { Copy, Mail } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLocale } from 'next-intl';
 
 interface ContactDialogProps {
   contact: Contact;
@@ -21,6 +22,35 @@ interface ContactDialogProps {
 }
 
 export function ContactDialog({ contact, onClose }: ContactDialogProps) {
+  const locale = useLocale();
+
+  const translations = {
+    ar: {
+      messageDetails: "تفاصيل الرسالة",
+      name: "الاسم",
+      email: "البريد الإلكتروني",
+      phone: "رقم الهاتف",
+      sendDate: "تاريخ الإرسال",
+      subject: "الموضوع",
+      message: "الرسالة",
+      copied: "تم نسخ",
+      successfully: "بنجاح"
+    },
+    en: {
+      messageDetails: "Message Details",
+      name: "Name",
+      email: "Email",
+      phone: "Phone",
+      sendDate: "Send Date",
+      subject: "Subject",
+      message: "Message",
+      copied: "Copied",
+      successfully: "successfully"
+    }
+  };
+
+  const t = translations[locale as keyof typeof translations];
+
   useEffect(() => {
     if (!contact.isRead) {
       markContactAsRead(contact.id);
@@ -29,32 +59,39 @@ export function ContactDialog({ contact, onClose }: ContactDialogProps) {
 
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
-    toast.success(`تم نسخ ${label} بنجاح`);
+    if (locale === 'ar') {
+      toast.success(`تم نسخ ${label} بنجاح`);
+    } else {
+      toast.success(`${label} copied successfully`);
+    }
   };
 
   const handleEmailClick = () => {
     window.location.href = `mailto:${contact.email}`;
   };
 
+  const isRTL = locale === 'ar';
+  const textDirection = isRTL ? 'rtl' : 'ltr';
+
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col">
-        <DialogHeader>
-          <DialogTitle>تفاصيل الرسالة</DialogTitle>
+      <DialogContent className="max-w-2xl h-[85vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6">
+          <DialogTitle>{t.messageDetails}</DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="flex-1">
-          <div className="space-y-6 p-4">
+        <ScrollArea className="flex-1 px-6" dir={textDirection}>
+          <div className="space-y-6 py-4">
             <div className="grid gap-4 border-b pb-4">
               <div className="grid grid-cols-3 items-center gap-4">
-                <span className="font-semibold">الاسم:</span>
-                <div className="col-span-2 flex items-center gap-2">
+                <span className="font-semibold">{t.name}:</span>
+                <div className="col-span-2 ltr:ml-auto rtl:mr-auto flex items-center gap-2">
                   {contact.name}
                   <Button
                     variant="ghost"
                     size="sm"
                     className="h-8 w-8"
-                    onClick={() => handleCopy(contact.name, "الاسم")}
+                    onClick={() => handleCopy(contact.name, t.name)}
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
@@ -62,8 +99,8 @@ export function ContactDialog({ contact, onClose }: ContactDialogProps) {
               </div>
 
               <div className="grid grid-cols-3 items-center gap-4">
-                <span className="font-semibold">البريد الإلكتروني:</span>
-                <div className="col-span-2 flex items-center gap-2">
+                <span className="font-semibold">{t.email}:</span>
+                <div className="col-span-2 text-end flex items-center gap-2">
                   <span dir="ltr" className="text-left flex-1">
                     {contact.email}
                   </span>
@@ -71,7 +108,7 @@ export function ContactDialog({ contact, onClose }: ContactDialogProps) {
                     variant="ghost"
                     size="sm"
                     className="h-8 w-8"
-                    onClick={() => handleCopy(contact.email, "البريد الإلكتروني")}
+                    onClick={() => handleCopy(contact.email, t.email)}
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
@@ -87,8 +124,8 @@ export function ContactDialog({ contact, onClose }: ContactDialogProps) {
               </div>
 
               <div className="grid grid-cols-3 items-center gap-4">
-                <span className="font-semibold">رقم الهاتف:</span>
-                <div className="col-span-2 flex items-center gap-2">
+                <span className="font-semibold">{t.phone}:</span>
+                <div className="col-span-2 text-end flex items-center gap-2">
                   <span dir="ltr" className="text-left flex-1">
                     {contact.phone}
                   </span>
@@ -96,7 +133,7 @@ export function ContactDialog({ contact, onClose }: ContactDialogProps) {
                     variant="ghost"
                     size="sm"
                     className="h-8 w-8"
-                    onClick={() => handleCopy(contact.phone, "رقم الهاتف")}
+                    onClick={() => handleCopy(contact.phone, t.phone)}
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
@@ -104,22 +141,24 @@ export function ContactDialog({ contact, onClose }: ContactDialogProps) {
               </div>
 
               <div className="grid grid-cols-3 items-center gap-4">
-                <span className="font-semibold">تاريخ الإرسال:</span>
-                <span className="col-span-2">
-                  {format(new Date(contact.createdAt), 'dd/MM/yyyy - hh:mm a', { locale: ar })}
+                <span className="font-semibold">{t.sendDate}:</span>
+                <span className="col-span-2 text-end">
+                  {format(new Date(contact.createdAt), 'dd/MM/yyyy - hh:mm a', { 
+                    locale: isRTL ? ar : undefined 
+                  })}
                 </span>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold mb-2">الموضوع:</h3>
+                <h3 className="font-semibold mb-2">{t.subject}:</h3>
                 <p>{contact.subject}</p>
               </div>
 
               <div>
-                <h3 className="font-semibold mb-2">الرسالة:</h3>
-                <div className="bg-muted/50 p-4 rounded-lg whitespace-pre-wrap">
+                <h3 className="font-semibold mb-2">{t.message}:</h3>
+                <div className="bg-muted/50 p-4 rounded-lg whitespace-pre-wrap max-h-[300px] overflow-y-auto">
                   {contact.message}
                 </div>
               </div>

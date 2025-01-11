@@ -1,11 +1,11 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
+import { usePathname } from "@/i18n/navigation";
 import { SidebarNavItem } from "@/types";
 import { Menu, PanelLeftClose, PanelRightClose } from "lucide-react";
-import { useTranslations } from 'next-intl';
 
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -37,8 +37,9 @@ interface SidebarNavProps extends SidebarProps {
 }
 
 function SidebarNav({ links, settings, isExpanded, isMobile, onLinkClick }: SidebarNavProps) {
-  const path = usePathname();
+  const pathname = usePathname();
   const t = useTranslations();
+  const locale = useLocale();
 
   const IconComponent = ({ iconName }: { iconName?: string }) => {
     const Icon = Icons[iconName || "arrowRight"];
@@ -49,6 +50,14 @@ function SidebarNav({ links, settings, isExpanded, isMobile, onLinkClick }: Side
     return <Icon className="size-5" />;
   };
 
+  const isActiveLink = (href: string) => {
+    if (href === '/') {
+      return pathname === `/${locale}` || pathname === `/${locale}/` || pathname === '/';
+    }
+    const cleanPathname = pathname.replace(`/${locale}`, '');
+    const itemPath = href.startsWith('/') ? href : `/${href}`;
+    return cleanPathname === itemPath;
+  };
 
   const NavLinks = () => (
     <>
@@ -72,13 +81,14 @@ function SidebarNav({ links, settings, isExpanded, isMobile, onLinkClick }: Side
                     href={item.disabled ? "#" : item.href}
                     className={cn(
                       "flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-muted rtl:flex-row-reverse",
-                      path === item.href
+                      isActiveLink(item.href)
                         ? "bg-muted"
                         : "text-muted-foreground hover:text-accent-foreground",
                       item.disabled &&
                       "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
                     )}
                     onClick={onLinkClick}
+                    locale={locale}
                   >
                     <IconComponent iconName={item.icon} />
                     {t(item.titleKey)}
@@ -90,12 +100,13 @@ function SidebarNav({ links, settings, isExpanded, isMobile, onLinkClick }: Side
                         href={item.disabled ? "#" : item.href}
                         className={cn(
                           "flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-muted",
-                          path === item.href
+                          isActiveLink(item.href)
                             ? "bg-muted"
                             : "text-muted-foreground hover:text-accent-foreground",
                           item.disabled &&
                           "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
                         )}
+                        locale={locale}
                       >
                         <span className="flex size-full items-center justify-center">
                           <IconComponent iconName={item.icon} />
@@ -128,6 +139,7 @@ function SidebarNav({ links, settings, isExpanded, isMobile, onLinkClick }: Side
 export function DashboardSidebar({ links, settings }: SidebarProps) {
   const { isTablet } = useMediaQuery();
   const [isExpanded, setIsExpanded] = useState(!isTablet);
+  const locale = useLocale();
 
   useEffect(() => {
     setIsExpanded(!isTablet);
@@ -144,7 +156,7 @@ export function DashboardSidebar({ links, settings }: SidebarProps) {
             <div className="flex h-full max-h-screen flex-1 flex-col gap-2">
               <div className="logoDash flex h-14 items-center p-4 lg:h-[60px] rtl:flex-row-reverse justify-between">
                 {isExpanded && (
-                  <Link href="/" className="flex gap-2 items-center rtl:flex-row-reverse">
+                  <Link href="/" locale={locale} className="flex gap-2 items-center rtl:flex-row-reverse">
                     {settings?.logoImage && (
                       <Image 
                         width={128}
@@ -196,6 +208,7 @@ export function DashboardSidebar({ links, settings }: SidebarProps) {
 export function MobileSheetSidebar({ links, settings }: SidebarProps) {
   const [open, setOpen] = useState(false);
   const { isSm, isMobile } = useMediaQuery();
+  const locale = useLocale();
 
   if (!isSm && !isMobile) {
     return null;
@@ -214,7 +227,7 @@ export function MobileSheetSidebar({ links, settings }: SidebarProps) {
         </Button>
       </SheetTrigger>
       <SheetContent 
-        side="right" 
+        side={locale === 'ar' ? 'right' : 'left'} 
         className="flex flex-col p-0 w-[80%] sm:w-[350px]"
       >
         <ScrollArea className="flex-1">

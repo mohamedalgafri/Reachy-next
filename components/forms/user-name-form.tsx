@@ -7,6 +7,7 @@ import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useLocale } from 'next-intl';
 
 import { userNameSchema } from "@/lib/validations/user";
 import { Button } from "@/components/ui/button";
@@ -24,8 +25,36 @@ export function UserNameForm({ user }: UserNameFormProps) {
   const [updated, setUpdated] = useState(false);
   const [isPending, startTransition] = useTransition();
   const updateUserNameWithId = updateUserName.bind(null, user.id);
+  const locale = useLocale();
 
-  const checkUpdate = (value) => {
+  const translations = {
+    ar: {
+      accountName: "اسم الحساب",
+      description: "تعديل اسم الحساب",
+      name: "الاسم",
+      save: "حفظ",
+      saveChanges: "حفظ التعديل",
+      maxChars: "الحد الأقصى 32 حرف",
+      error: "حدث خطأ",
+      errorDesc: "لم يتم تحديث الاسم. يرجى المحاولة مرة أخرى",
+      success: "تم تحديث اسم المستخدم بنجاح"
+    },
+    en: {
+      accountName: "Account Name",
+      description: "Edit your account name",
+      name: "Name",
+      save: "Save",
+      saveChanges: "Save Changes",
+      maxChars: "Max 32 characters",
+      error: "Something went wrong",
+      errorDesc: "Your name was not updated. Please try again",
+      success: "Your name has been updated"
+    }
+  };
+
+  const t = translations[locale as keyof typeof translations];
+
+  const checkUpdate = (value: string) => {
     setUpdated(user.name !== value);
   };
 
@@ -45,13 +74,13 @@ export function UserNameForm({ user }: UserNameFormProps) {
       const { status } = await updateUserNameWithId(data);
 
       if (status !== "success") {
-        toast.error("Something went wrong.", {
-          description: "Your name was not updated. Please try again.",
+        toast.error(t.error, {
+          description: t.errorDesc,
         });
       } else {
         await update();
         setUpdated(false);
-        toast.success("Your name has been updated.");
+        toast.success(t.success);
       }
     });
   });
@@ -59,12 +88,12 @@ export function UserNameForm({ user }: UserNameFormProps) {
   return (
     <form onSubmit={onSubmit}>
       <SectionColumns
-        title="اسم الحساب"
-        description="تعديل اسم الحساب"
+        title={t.accountName}
+        description={t.description}
       >
         <div className="flex w-full items-center gap-2">
           <Label className="sr-only" htmlFor="name">
-            الأسم
+            {t.name}
           </Label>
           <Input
             id="name"
@@ -83,8 +112,10 @@ export function UserNameForm({ user }: UserNameFormProps) {
               <Icons.spinner className="size-4 animate-spin" />
             ) : (
               <p>
-                حفظ
-                <span className="hidden sm:inline-flex">&nbsp;التعديل</span>
+                {t.save}
+                <span className="hidden sm:inline-flex">
+                  &nbsp;{locale === 'ar' ? 'التعديل' : 'Changes'}
+                </span>
               </p>
             )}
           </Button>
@@ -95,7 +126,7 @@ export function UserNameForm({ user }: UserNameFormProps) {
               {errors.name.message}
             </p>
           )}
-          <p className="text-[13px] text-muted-foreground">Max 32 characters</p>
+          <p className="text-[13px] text-muted-foreground">{t.maxChars}</p>
         </div>
       </SectionColumns>
     </form>

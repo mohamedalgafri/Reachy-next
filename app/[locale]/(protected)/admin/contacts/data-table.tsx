@@ -1,4 +1,3 @@
-// app/(protected)/admin/contacts/data-table.tsx
 "use client";
 
 import * as React from "react";
@@ -31,6 +30,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import { useLocale } from 'next-intl';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -41,10 +41,36 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const locale = useLocale();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [pageIndex, setPageIndex] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(10);
+
+  const translations = {
+    ar: {
+      searchPlaceholder: "بحث باسم المرسل...",
+      itemsPerPage: "رسائل كل صفحة:",
+      noMessages: "لا توجد رسائل.",
+      messages: "الرسائل:",
+      of: "من",
+      page: "صفحة",
+      previous: "السابق",
+      next: "التالي"
+    },
+    en: {
+      searchPlaceholder: "Search by sender name...",
+      itemsPerPage: "Items per page:",
+      noMessages: "No messages found.",
+      messages: "Messages:",
+      of: "of",
+      page: "Page",
+      previous: "Previous",
+      next: "Next"
+    }
+  };
+
+  const t = translations[locale as keyof typeof translations];
 
   const table = useReactTable({
     data,
@@ -84,7 +110,7 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       <div className="flex items-center gap-5 justify-between">
         <Input
-          placeholder="بحث باسم المرسل..."
+          placeholder={t.searchPlaceholder}
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
@@ -93,7 +119,7 @@ export function DataTable<TData, TValue>({
         />
 
         <div className="flex items-center justify-between gap-4">
-          <span className="text-sm text-gray-500 hidden sm:flex">رسائل كل صفحة:</span>
+          <span className="text-sm text-gray-500 hidden sm:flex">{t.itemsPerPage}</span>
           <Select
             value={pageSize.toString()}
             onValueChange={(value) => {
@@ -123,7 +149,10 @@ export function DataTable<TData, TValue>({
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id} className="text-right">
+                      <TableHead 
+                        key={header.id} 
+                        className={locale === 'ar' ? "text-right" : "text-left"}
+                      >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -143,7 +172,10 @@ export function DataTable<TData, TValue>({
                       data-state={row.getIsSelected() && "selected"}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
+                        <TableCell 
+                          key={cell.id}
+                          className={locale === 'ar' ? "text-right" : "text-left"}
+                        >
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()
@@ -158,7 +190,7 @@ export function DataTable<TData, TValue>({
                       colSpan={columns.length}
                       className="h-24 text-center"
                     >
-                      لا توجد رسائل.
+                      {t.noMessages}
                     </TableCell>
                   </TableRow>
                 )}
@@ -168,12 +200,12 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
 
-      <div className="flex items-center justify-between rtl">
+      <div className={`flex items-center justify-between ${locale === 'ar' ? 'rtl' : 'ltr'}`}>
         <div className="hidden sm:flex items-center gap-2 text-sm text-gray-500">
-          <span>الرسائل: {totalRows}</span>
+          <span>{t.messages} {totalRows}</span>
           <span>|</span>
           <span>
-            {totalRows > 0 ? `${startRow}-${endRow}` : '0'} من {totalRows}
+            {totalRows > 0 ? `${startRow}-${endRow}` : '0'} {t.of} {totalRows}
           </span>
         </div>
         
@@ -184,13 +216,13 @@ export function DataTable<TData, TValue>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            السابق
+            {t.previous}
           </Button>
           
           <span className="px-2">
-            صفحة{' '}
+            {t.page}{' '}
             <strong>
-              {pageIndex + 1} من {totalPages}
+              {pageIndex + 1} {t.of} {totalPages}
             </strong>
           </span>
           
@@ -200,7 +232,7 @@ export function DataTable<TData, TValue>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            التالي
+            {t.next}
           </Button>
         </div>
       </div>
