@@ -824,9 +824,6 @@ html {
   .navMenu{
     gap: 10px;
   }
-  .navbar.active{
-    background-color: #0B44B5;
-  }
   .navMenu{
     position: absolute;
     flex-direction: column;
@@ -1318,10 +1315,8 @@ html {
   backdrop-filter: blur(10px);
   padding: 10px 20px;
   border-radius: 30px;
-  margin-bottom: 10px;
   outline: none;
   color: #fff;
-
 }
 
 .inputF::placeholder{
@@ -1535,6 +1530,14 @@ html {
   transform: translateY(0px);
 }
 
+@media (max-width:1024px){
+  .nevTop{
+    display: none;
+  }
+  .navMenu {
+    display: none;
+  }
+}
 @media (max-width:991px){
   .headerHome{
     height:auto;
@@ -1554,9 +1557,7 @@ html {
   .textHomeHero{
     margin: auto 0;
   }
-  .nevTop{
-    display: none;
-  }
+
   .navbar{
     top: 0;
   }

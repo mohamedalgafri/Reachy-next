@@ -61,9 +61,9 @@ const ContactForm = ({settings}) => {
           <div className="formMap mt-10">
             <div className="formC">
               <form onSubmit={form.handleSubmit(onSubmit)}>
-                <div>
+                <div className='mb-3'>
                   <input
-                    className="inputF"
+                    className={`inputF ${ form.formState.errors.name && "border border-red-600"} `}
                     type="text"
                     placeholder={`${locale === 'ar' ? 'الاسم' : 'Name'}`}
                     {...form.register("name")}
@@ -76,10 +76,10 @@ const ContactForm = ({settings}) => {
                   )}
                 </div>
                 
-                <div className="flex gap-3">
-                  <div className="w-full mb-4">
+                <div className="flex flex-col md:flex-row gap-1 md:gap-3 mb-1">
+                  <div className="w-full mb-2">
                     <input
-                      className="inputF"
+                      className={`inputF ${ form.formState.errors.email && "border border-red-600"} `}
                       type="email"
                       placeholder={`${locale === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}`}
                       {...form.register("email")}
@@ -91,9 +91,9 @@ const ContactForm = ({settings}) => {
                       </p>
                     )}
                   </div>
-                  <div className="w-full">
+                  <div className="w-full mb-2">
                     <input
-                      className="inputF"
+                      className={`inputF ${ form.formState.errors.phone && "border border-red-600"} `}
                       type="tel"
                       placeholder={`${locale === 'ar' ? 'رقم الهاتف' : 'Phone Number'}`}
                       {...form.register("phone")}
@@ -107,9 +107,9 @@ const ContactForm = ({settings}) => {
                   </div>
                 </div>
 
-                <div>
+                <div className='mb-3'>
                   <input
-                    className="inputF"
+                    className={`inputF ${ form.formState.errors.subject && "border border-red-600"} `}
                     type="text"
                     placeholder={`${locale === 'ar' ? 'عنوان الرسالة' : 'Message Subject'}`}
                     {...form.register("subject")}
@@ -122,16 +122,17 @@ const ContactForm = ({settings}) => {
                   )}
                 </div>
 
-                <div>
+                <div className='mb-3'>
                   <textarea
-                    className="inputF"
+                    className={`inputF ${ form.formState.errors.message && "border border-red-600"} `}
                     placeholder={`${locale === 'ar' ? 'نص الرسالة' : 'Message Text'}`}
                     rows={10}
                     {...form.register("message")}
                     disabled={isLoading}
+                    
                   />
                   {form.formState.errors.message && (
-                    <p className="text-red-500 text-sm mt-1">
+                    <p className="text-red-600 font-bold text-sm mt-1">
                       {form.formState.errors.message.message}
                     </p>
                   )}

@@ -66,7 +66,7 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          "absolute top-6 z-50 rounded-full p-2 transition-colors duration-200 hover:bg-muted focus:outline-none active:bg-muted md:hidden",
+          "absolute top-6 z-50 rounded-full p-2 transition-colors duration-200 hover:bg-muted focus:outline-none active:bg-muted lg:hidden",
           open && "hover:bg-muted active:bg-muted",
           locale === "ar" ? "left-4" : "right-4"
         )}
