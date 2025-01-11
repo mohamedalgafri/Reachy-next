@@ -7,19 +7,26 @@ import AboutForm from "@/components/forms/AboutForm";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { getLocale } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: "تعديل القسم",
-  description: "تعديل محتوى القسم",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+
+  return {
+    title: locale === 'ar' ? "تعديل القسم" : "Edit Section",
+    description: locale === 'ar' ? "تعديل محتوى القسم" : "Edit section content",
+  };
+}
 
 interface EditSectionPageProps {
   params: {
     id: string;
+    locale: string;
   };
 }
 
 export default async function EditSectionPage({ params }: EditSectionPageProps) {
+  const locale = await getLocale();
   if (!params?.id) return notFound();
 
   const sectionId = parseInt(params.id);
@@ -161,12 +168,16 @@ export default async function EditSectionPage({ params }: EditSectionPageProps) 
       case 'ABOUT':
         return <AboutForm {...props} />;
       default:
-        return <div className="text-center p-4 text-red-500">نوع القسم غير معروف</div>;
+        return (
+          <div className="text-center p-4 text-red-500">
+            {locale === 'ar' ? "نوع القسم غير معروف" : "Unknown section type"}
+          </div>
+        );
     }
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       {renderForm()}
     </div>
   );

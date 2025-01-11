@@ -10,6 +10,7 @@ import { ImageUploader } from './ImageUploader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { createService, updateService } from '@/actions/service';
+import { useLocale } from 'next-intl';
 
 interface ServiceFormProps {
   initialData?: any;
@@ -18,10 +19,10 @@ interface ServiceFormProps {
 
 export function ServiceForm({ initialData, mode }: ServiceFormProps) {
   const router = useRouter();
+  const locale = useLocale();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  // Form state
   const [title_ar, setTitleAr] = useState(initialData?.title_ar || '');
   const [title_en, setTitleEn] = useState(initialData?.title_en || '');
   const [subtitle_ar, setSubtitleAr] = useState(initialData?.subtitle_ar || '');
@@ -30,6 +31,49 @@ export function ServiceForm({ initialData, mode }: ServiceFormProps) {
     initialData?.image ? [initialData.image] : []
   );
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+
+  const translations = {
+    ar: {
+      create: "إضافة خدمة جديدة",
+      edit: "تعديل الخدمة",
+      description: "أدخل تفاصيل الخدمة باللغتين العربية والإنجليزية",
+      arabic: "العربية",
+      english: "English",
+      serviceTitle: "عنوان الخدمة",
+      serviceTitleEn: "Service Title",
+      briefDesc: "الوصف المختصر",
+      briefDescEn: "Brief Description",
+      serviceImage: "صورة الخدمة",
+      save: "حفظ",
+      saving: "جاري الحفظ...",
+      cancel: "إلغاء",
+      allFieldsRequired: "جميع الحقول مطلوبة باللغتين",
+      createSuccess: "تم إنشاء الخدمة بنجاح",
+      updateSuccess: "تم تحديث الخدمة بنجاح",
+      unexpectedError: "حدث خطأ غير متوقع"
+    },
+    en: {
+      create: "Add New Service",
+      edit: "Edit Service",
+      description: "Enter service details in both Arabic and English",
+      arabic: "Arabic",
+      english: "English",
+      serviceTitle: "Service Title",
+      serviceTitleAr: "Service Title (Arabic)",
+      briefDesc: "Brief Description",
+      briefDescAr: "Brief Description (Arabic)",
+      serviceImage: "Service Image",
+      save: "Save",
+      saving: "Saving...",
+      cancel: "Cancel",
+      allFieldsRequired: "All fields are required in both languages",
+      createSuccess: "Service created successfully",
+      updateSuccess: "Service updated successfully",
+      unexpectedError: "An unexpected error occurred"
+    }
+  };
+
+  const t = translations[locale as keyof typeof translations];
 
   const handleImagesChange = (files: File[]) => {
     const urls = files.map(file => URL.createObjectURL(file));
@@ -46,7 +90,7 @@ export function ServiceForm({ initialData, mode }: ServiceFormProps) {
     e.preventDefault();
     
     if (!title_ar || !title_en || !subtitle_ar || !subtitle_en) {
-      toast.error('جميع الحقول مطلوبة باللغتين');
+      toast.error(t.allFieldsRequired);
       return;
     }
 
@@ -83,32 +127,26 @@ export function ServiceForm({ initialData, mode }: ServiceFormProps) {
         throw new Error(result.error);
       }
 
-      toast.success(
-        mode === "create" 
-          ? "تم إنشاء الخدمة بنجاح" 
-          : "تم تحديث الخدمة بنجاح"
-      );
+      toast.success(mode === "create" ? t.createSuccess : t.updateSuccess);
       
       router.push('/admin/services');
       router.refresh();
     } catch (err: any) {
-      setError(err.message || 'حدث خطأ غير متوقع');
-      toast.error(err.message || 'حدث خطأ غير متوقع');
+      setError(err.message || t.unexpectedError);
+      toast.error(err.message || t.unexpectedError);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="mx-auto w-full ">
+    <div className="mx-auto w-full">
       <Card>
         <CardHeader>
           <h2 className="text-2xl font-bold">
-            {mode === "create" ? "إضافة خدمة جديدة" : "تعديل الخدمة"}
+            {mode === "create" ? t.create : t.edit}
           </h2>
-          <CardDescription>
-            أدخل تفاصيل الخدمة باللغتين العربية والإنجليزية
-          </CardDescription>
+          <CardDescription>{t.description}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-6">
@@ -119,14 +157,14 @@ export function ServiceForm({ initialData, mode }: ServiceFormProps) {
             )}
 
             <Tabs defaultValue="ar" className="w-full">
-              <TabsList className="">
-                <TabsTrigger value="ar">العربية</TabsTrigger>
-                <TabsTrigger value="en">English</TabsTrigger>
+              <TabsList>
+                <TabsTrigger value="ar">{t.arabic}</TabsTrigger>
+                <TabsTrigger value="en">{t.english}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="ar" className="space-y-4">
                 <div>
-                  <Label>عنوان الخدمة</Label>
+                  <Label>{locale === 'ar' ? t.serviceTitle : t.serviceTitleAr}</Label>
                   <TextEditor
                     value={title_ar}
                     onChange={setTitleAr}
@@ -135,7 +173,7 @@ export function ServiceForm({ initialData, mode }: ServiceFormProps) {
                 </div>
 
                 <div>
-                  <Label>الوصف المختصر</Label>
+                  <Label>{locale === 'ar' ? t.briefDesc : t.briefDescAr}</Label>
                   <TextEditor
                     value={subtitle_ar}
                     onChange={setSubtitleAr}
@@ -146,7 +184,7 @@ export function ServiceForm({ initialData, mode }: ServiceFormProps) {
               
               <TabsContent value="en" className="space-y-4">
                 <div>
-                  <Label>Service Title</Label>
+                  <Label>{t.serviceTitle}</Label>
                   <TextEditor
                     value={title_en}
                     onChange={setTitleEn}
@@ -155,7 +193,7 @@ export function ServiceForm({ initialData, mode }: ServiceFormProps) {
                 </div>
 
                 <div>
-                  <Label>Brief Description</Label>
+                  <Label>{t.briefDesc}</Label>
                   <TextEditor
                     value={subtitle_en}
                     onChange={setSubtitleEn}
@@ -166,7 +204,7 @@ export function ServiceForm({ initialData, mode }: ServiceFormProps) {
             </Tabs>
 
             <div>
-              <Label>صورة الخدمة</Label>
+              <Label>{t.serviceImage}</Label>
               <ImageUploader
                 onImagesChange={handleImagesChange}
                 previewImages={previewImages}
@@ -181,7 +219,7 @@ export function ServiceForm({ initialData, mode }: ServiceFormProps) {
                 type="submit"
                 disabled={loading}
               >
-                {loading ? "جاري الحفظ..." : "حفظ الخدمة"}
+                {loading ? t.saving : t.save}
               </Button>
               
               <Button
@@ -189,7 +227,7 @@ export function ServiceForm({ initialData, mode }: ServiceFormProps) {
                 variant="outline"
                 onClick={() => router.back()}
               >
-                إلغاء
+                {t.cancel}
               </Button>
             </div>
           </form>
