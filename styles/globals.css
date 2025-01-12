@@ -1242,7 +1242,7 @@ html {
   align-items: center;
   justify-content: center;
   border-radius: 30px;
-  padding: 5px 0px;
+  padding: 5px 10px;
 }
 .cardOC img{
   width: 130px;
@@ -1650,6 +1650,7 @@ html {
   }
   .cardOC{
     height: 180px;
+    padding: 5px;
   }
 
 }
@@ -1672,10 +1673,6 @@ html {
   .borderC{
     border: none;
     padding: 0;
-  }
-  .cardOC{
-
-    padding: 20px;
   }
   .cardOC img{
     width: 100px;
