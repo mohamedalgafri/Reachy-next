@@ -377,6 +377,7 @@ html {
   padding-top: 20px;
   padding-bottom: 20px;
   flex-wrap: wrap;
+  gap: 10px;
 }
 
 .logoF{
@@ -424,7 +425,9 @@ html {
   height: 35px;
   padding: 0 10px;
 }
-
+.leftItemNavTopc svg{
+  font-size: 20px;
+}
 .rightNavTop{
   display: flex;
   border: 1px solid #dfe2f1d7;
@@ -1645,7 +1648,9 @@ html {
   .sectionOC{
     padding-top: 0px;
   }
-
+  .cardOC{
+    height: 180px;
+  }
 
 }
 @media (max-width:500px){
@@ -1685,7 +1690,7 @@ html {
 
   }
   .logoF{
-    height: 20px;
+    height: 40px;
   }
 
   .sliderSec .swiper-button-next,

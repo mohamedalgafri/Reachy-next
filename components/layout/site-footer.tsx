@@ -51,7 +51,7 @@ export async function SiteFooter({ className }: React.HTMLAttributes<HTMLElement
           alt="logo" 
         />
         
-        <div className="flex gap-1">
+        <div className="flex gap-1 flex-wrap">
           {settings?.socialLinks?.map((item) => renderSocialIcon(item))}
         </div>
         

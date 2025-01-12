@@ -5,7 +5,7 @@ import { useSelectedLayoutSegment, usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useLocale, useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';  
+import { Link } from '@/i18n/navigation';
 import { cn } from "@/lib/utils";
 import * as FA6Icons from 'react-icons/fa6';
 import Image from 'next/image';
@@ -48,14 +48,14 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
 
   const isActiveLink = (href: string) => {
     if (href.startsWith('#')) return false;
-    
+
     if (href === '/') {
       return pathname === `/${locale}` || pathname === `/${locale}/` || pathname === '/';
     }
 
     const cleanPathname = pathname.replace(`/${locale}`, '');
     const itemPath = href.startsWith('/') ? href : `/${href}`;
-    
+
     return cleanPathname === itemPath;
   };
 
@@ -79,9 +79,9 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
     if (!IconComponent) return null;
 
     return (
-      <Link 
-        target="_blank" 
-        key={item.name} 
+      <Link
+        target="_blank"
+        key={item.name}
         href={item.url}
         locale={locale}
         className="hover:text-primary transition-colors"
@@ -119,26 +119,24 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
           <div className="flex flex-col gap-4 mb-6 text-sm">
             {settings?.email && (
               <div className="flex items-center gap-2">
-                <Image 
-                  src="/images/envelope.svg" 
+                <Image
+                  src="/images/envelope.svg"
                   width={16}
-                  height={16} 
+                  height={16}
                   alt="email"
                 />
                 <span>{settings.email}</span>
               </div>
             )}
-            
+
             {settings?.phone && (
-              <div className="flex items-center gap-2">
-                <Image 
-                  src="/images/whatsapp-brands-solid.svg" 
-                  width={16}
-                  height={16} 
-                  alt="phone"
-                />
-                <span>{settings.phone}</span>
-              </div>
+              <a
+                href={`https://wa.me/${settings?.phone}`}
+                target='_blank'
+                className="flex  items-center gap-2">
+                <FA6Icons.FaWhatsapp className="text-xl" />
+                <span>{locale === "ar" ? "دعونا نتحدث!" : "Lets Talk!"}</span>
+              </a>
             )}
           </div>
 
@@ -147,24 +145,24 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
             {navItems.map((item, index) => {
               const isActive = isActiveLink(item.href);
               return (
-                <li 
-                  key={index} 
+                <li
+                  key={index}
                   className={cn(
                     "py-3",
                     isActive && "active"
                   )}
                 >
-                    <Link
-                      href={item.disabled ? "#" : item.href}
-                      onClick={() => setOpen(false)}
-                      locale={locale}
-                      className={cn(
-                        "flex w-full font-medium transition-colors hover:text-foreground/80 text-white",
-                        item.disabled && "cursor-not-allowed opacity-80"
-                      )}
-                    >
-                      {t(item.titleKey)}
-                    </Link>
+                  <Link
+                    href={item.disabled ? "#" : item.href}
+                    onClick={() => setOpen(false)}
+                    locale={locale}
+                    className={cn(
+                      "flex w-full font-medium transition-colors hover:text-foreground/80 text-white",
+                      item.disabled && "cursor-not-allowed opacity-80"
+                    )}
+                  >
+                    {t(item.titleKey)}
+                  </Link>
                 </li>
               );
             })}

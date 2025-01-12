@@ -46,7 +46,7 @@ export default function ClientsSection({ clients }: ClientsSectionProps) {
                                     prevEl: '.prev-BoardO',
                                 }}
                                 breakpoints={{
-                                    400: {
+                                    500: {
                                         slidesPerView: 3,
                                         spaceBetween: 15,
                                     },

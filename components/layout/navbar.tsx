@@ -30,14 +30,14 @@ export function NavBar({ navItems, settings }: NavBarProps) {
 
   const isActiveLink = (href: string) => {
     if (href.startsWith('#')) return false;
-    
+
     if (href === '/') {
       return pathname === `/${locale}` || pathname === `/${locale}/` || pathname === '/';
     }
 
     const cleanPathname = pathname.replace(`/${locale}`, '');
     const itemPath = href.startsWith('/') ? href : `/${href}`;
-    
+
     return cleanPathname === itemPath;
   };
 
@@ -61,8 +61,8 @@ export function NavBar({ navItems, settings }: NavBarProps) {
     if (!IconComponent) return null;
 
     return (
-      <Link 
-        target="_blank" 
+      <Link
+        target="_blank"
         className="iconS flex items-center justify-center action"
         key={item.name}
         href={item.url}
@@ -80,29 +80,31 @@ export function NavBar({ navItems, settings }: NavBarProps) {
           <div className="leftNavTop">
             <div className="leftItemNavTop">
               {settings?.email && (
-                <div className="flex gap-2 items-center">
-                  <Image 
-                    src="/images/envelope.svg"
-                    width={16}
-                    height={16}
-                    className="size-4 object-contain" 
-                    alt="email icon" 
-                  />
-                  <span>{settings.email}</span>
-                </div>
+                <a
+                href={`mailto:${settings?.email}`}
+                target='_blank' 
+                className="flex gap-2 items-center"
+              >
+                <Image
+                  src="/images/envelope.svg"
+                  width={16}
+                  height={16}
+                  className="size-4 object-contain"
+                  alt="email icon"
+                />
+                <span>{settings.email}</span>
+              </a>
               )}
 
               {settings?.phone && (
-                <div className="flex gap-2 items-center leftItemNavTopc">
-                  <Image 
-                    src="/images/whatsapp-brands-solid.svg"
-                    width={16}
-                    height={16}
-                    className="size-4 object-contain" 
-                    alt="whatsapp icon" 
-                  />
+                <a
+                  href={`https://wa.me/${settings?.phone}`}
+                  target='_blank'
+                  className="flex gap-2 items-center leftItemNavTopc"
+                >
+                  <FA6Icons.FaWhatsapp />
                   <span>{t('contactUs')}</span>
-                </div>
+                </a>
               )}
 
               <LanguageSwitcher />
@@ -117,18 +119,18 @@ export function NavBar({ navItems, settings }: NavBarProps) {
 
       <nav className="navbar">
         <div className="container flex justify-between items-center w-full">
-          <Link 
+          <Link
             href="/"
             locale={locale}
             className={`action logo text-white h-7 object-contain ${locale === "ar" ? "object-right" : "object-left"} `}
           >
             {settings?.logoImage && (
-              <Image 
-                className="size-full" 
+              <Image
+                className="size-full"
                 width={28}
                 height={28}
-                src={settings.logoImage} 
-                alt="logo" 
+                src={settings.logoImage}
+                alt="logo"
               />
             )}
           </Link>
@@ -146,7 +148,7 @@ export function NavBar({ navItems, settings }: NavBarProps) {
                         isActive && "active"
                       )}
                     >
-                      <Link 
+                      <Link
                         href={item.href}
                         locale={locale}
                         className='text-white'

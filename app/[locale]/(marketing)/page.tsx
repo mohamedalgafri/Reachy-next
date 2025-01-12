@@ -8,6 +8,7 @@ import ClientsSection from "@/components/sections/clients-section";
 import ContactSection from "@/components/sections/contact-section";
 import { FaFacebook, FaWhatsapp } from "react-icons/fa";
 import LetsTake from "@/components/sections/LetsTake";
+import { getSiteSettings } from "@/lib/settings";
 
 interface Section {
   id: number;
@@ -20,6 +21,7 @@ interface Section {
 }
 
 export default async function HomePage() {
+  const settings = await getSiteSettings();
   const page = await db.page.findUnique({
     where: {
       slug: 'home'
@@ -180,7 +182,7 @@ export default async function HomePage() {
       {page.sections.map((section) => renderSection(section))}
       <ClientsSection  clients={clients} />
       <ContactSection />
-      <LetsTake />
+      <LetsTake settings= {settings} />
     </main>
   );
 }
