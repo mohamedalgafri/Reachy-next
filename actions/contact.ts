@@ -20,7 +20,7 @@ export async function createContact(data: ContactType) {
     });
 
     await resend.emails.send({
-      from: 'your-domain@resend.dev',
+      from: 'Seedsofgoodness.team@gmail.com',
       to: 'mohamed18540000@gmail.com',
       subject: `New Contact Form Submission: ${validatedData.subject}`,
       html: `
