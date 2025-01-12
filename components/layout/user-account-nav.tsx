@@ -15,10 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "@/components/shared/user-avatar";
+import { useLocale } from "next-intl";
 
 export function UserAccountNav() {
   const { data: session } = useSession();
   const user = session?.user;
+  const locale = useLocale();
 
   const [open, setOpen] = useState(false);
   const closeDrawer = () => {
@@ -65,23 +67,23 @@ export function UserAccountNav() {
             <ul role="list" className="mb-14 mt-1 w-full text-muted-foreground">
               <li className="rounded-lg text-foreground hover:bg-muted">
                 <Link
-                  href="/admin"
+                  href={`/${locale}/admin`}
                   onClick={closeDrawer}
                   className="flex w-full items-center gap-3 px-2.5 py-2"
                 >
                   <LayoutDashboard className="size-4" />
-                  <p className="text-sm">لوحة التحكم</p>
+                  <p className="text-sm">{locale === "ar" ? "لوحة التحكم" : "Dashboard"}</p>
                 </Link>
               </li>
 
               <li className="rounded-lg text-foreground hover:bg-muted">
                 <Link
-                  href="/admin/settings"
+                  href={`/${locale}/admin/settings`}
                   onClick={closeDrawer}
                   className="flex w-full items-center gap-3 px-2.5 py-2"
                 >
                   <Settings className="size-4" />
-                  <p className="text-sm">الاعدادات</p>
+                  <p className="text-sm">{locale === "ar" ? "الاعدادات" : "Settings"}</p>
                 </Link>
               </li>
 
@@ -97,7 +99,7 @@ export function UserAccountNav() {
                 
                 <div className="flex w-full items-center gap-3 px-2.5 py-2">
                   <LogOut className="size-4" />
-                  <p className="text-sm">تسجيل الخروج</p>
+                  <p className="text-sm">{locale === "ar" ? "تسجيل خروج" : "Logout"}</p>
                 </div>
               </li>
             </ul>
@@ -131,19 +133,19 @@ export function UserAccountNav() {
 
 
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/admin" className="flex items-center gap-2 rtl:flex-row-reverse rtl:justify-start">
+          <Link href={`/${locale}/admin`} className="flex items-center gap-2 rtl:flex-row-reverse rtl:justify-start">
             <LayoutDashboard className="size-4" />
-            <p className="text-sm">لوحة التحكم</p>
+            <p className="text-sm">{locale === "ar" ? "لوحة التحكم" : "Dashboard"}</p>
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild className="cursor-pointer">
           <Link
-            href="/admin/settings"
+            href={`/${locale}/admin/settings`}
             className="flex items-center gap-2 rtl:flex-row-reverse rtl:justify-start"
           >
             <Settings className="size-4" />
-            <p className="text-sm">الاعدادات</p>
+            <p className="text-sm">{locale === "ar" ? "الاعدادات" : "Settings"}</p>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -158,7 +160,7 @@ export function UserAccountNav() {
         >
           <div className="flex items-center gap-2 rtl:flex-row-reverse rtl:justify-start w-full ">
             <LogOut className="size-4" />
-            <p className="text-sm">تسجيل الخروج</p>
+            <p className="text-sm">{locale === "ar" ? "تسجيل خروج" : "Logout"}</p>
           </div>
         </DropdownMenuItem>
       </DropdownMenuContent>

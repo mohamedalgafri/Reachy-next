@@ -1,57 +1,63 @@
-// app/(protected)/admin/settings/page.tsx
+// app/[locale]/admin/settings/page.tsx
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/session";
 import { constructMetadata } from "@/lib/utils";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { db } from "@/lib/db";
-import { UserNameForm } from "@/components/forms/user-name-form";
+import { getLocale, getTranslations } from 'next-intl/server';
+import { UserForms } from "@/components/forms/user-name-form";
 import { SiteSettingsForm } from "@/components/forms/SiteSettingsForm";
 import { SocialLinksForm } from "@/components/forms/SocialLinksForm";
-import { getLocale } from 'next-intl/server';
 
 interface PageProps {
-  params: { locale: string }
+  params: { 
+    locale: string 
+  }
 }
 
-export async function generateMetadata() {
-  const locale = await getLocale();
+
+export default async function SettingsPage({ params: { locale } }: PageProps) {
+  const session = await auth();
   
-  return constructMetadata({
-    title: locale === 'ar' ? "الإعدادات" : "Settings",
-    description: locale === 'ar' ? "إعدادات الموقع" : "Site Settings",
-  });
-}
+  if (!session?.user) {
+    redirect(`/${locale}/auth/login`);
+  }
 
-export default async function SettingsPage() {
-  const user = await getCurrentUser();
-  const locale = await getLocale();
-  if (!user?.id) redirect("/login");
+  // التحقق من صلاحيات المستخدم
+  if (session.user.role !== "ADMIN") {
+    redirect(`/${locale}`);
+  }
 
   const settings = await db.settings.findFirst();
-
-  const translations = {
-    ar: {
-      settings: "الإعدادات",
-      description: "إدارة إعدادات الموقع"
-    },
-    en: {
-      settings: "Settings",
-      description: "Manage site settings"
-    }
-  };
-
-  const t = translations[locale as keyof typeof translations];
 
   return (
     <div className="container" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <DashboardHeader
-        heading={t.settings}
-        text={t.description}
+        heading={locale === 'ar' ? 'الاعدادات' : 'Settings'}
+        text={locale === 'ar' ? 'إدارة إعدادات الموقع' : 'Manage site settings'}
       />
-      <div className="divide-y divide-muted pb-10">
-        <UserNameForm user={{ id: user.id, name: user.name || "" }} />
-        <SiteSettingsForm settings={settings} />
-        <SocialLinksForm settings={settings} />
+      
+      <div className="divide-y divide-border">
+        {/* معلومات المستخدم */}
+        <div className="py-6">
+          <UserForms 
+            user={{
+              id: session.user.id,
+              name: session.user.name || "",
+              email: session.user.email || ""
+            }}
+          />
+        </div>
+
+        {/* إعدادات الموقع */}
+        <div className="py-6">
+          <SiteSettingsForm settings={settings} />
+        </div>
+
+        {/* روابط التواصل الاجتماعي */}
+        <div className="py-6">
+          <SocialLinksForm settings={settings} />
+        </div>
       </div>
     </div>
   );

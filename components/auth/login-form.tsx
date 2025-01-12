@@ -13,25 +13,67 @@ import { Button } from "../ui/button";
 import { FormError } from "../form-error";
 import { login } from "@/actions/login";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { useLocale } from 'next-intl';
 
 const LoginForm = () => {
+  const locale = useLocale();
   const [error, setError] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof LoginSchema>>({
-    resolver: zodResolver(LoginSchema),
+  const translations = {
+    ar: {
+      title: "تسجيل الدخول",
+      email: "البريد الإلكتروني",
+      emailPlaceholder: "admin@example.com",
+      password: "كلمة المرور",
+      passwordPlaceholder: "••••••••",
+      loginButton: "تسجيل الدخول",
+      loggingIn: "جاري تسجيل الدخول...",
+      loginError: "حدث خطأ في تسجيل الدخول!",
+      // Add form validation messages in Arabic
+      emailRequired: "البريد الإلكتروني مطلوب",
+      emailInvalid: "البريد الإلكتروني غير صالح",
+      passwordRequired: "كلمة المرور مطلوبة",
+      passwordLength: "كلمة المرور مطلوبة"
+    },
+    en: {
+      title: "Login",
+      email: "Email",
+      emailPlaceholder: "admin@example.com",
+      password: "Password",
+      passwordPlaceholder: "••••••••",
+      loginButton: "Login",
+      loggingIn: "Logging in...",
+      loginError: "Login error!",
+      // Add form validation messages in English
+      emailRequired: "Email is required",
+      emailInvalid: "Invalid email address",
+      passwordRequired: "Password is required",
+      passwordLength: "Password is required"
+    }
+  };
+
+  const t = translations[locale as keyof typeof translations];
+
+  // Update LoginSchema with localized messages
+  const LocalizedLoginSchema = z.object({
+    email: z.string().min(1, { message: t.emailRequired }).email({ message: t.emailInvalid }),
+    password: z.string().min(6, { message: t.passwordLength }),
+  });
+
+  const form = useForm<z.infer<typeof LocalizedLoginSchema>>({
+    resolver: zodResolver(LocalizedLoginSchema),
     defaultValues: {
       email: "",
       password: "",
     }
   });
 
-  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+  const onSubmit = (values: z.infer<typeof LocalizedLoginSchema>) => {
     setError("");
 
     startTransition(async () => {
       try {
-        // استخدام server action للتحقق
         const result = await login(values);
         
         if (result?.error) {
@@ -39,7 +81,6 @@ const LoginForm = () => {
           return;
         }
 
-        // إذا نجح التحقق، قم بالتسجيل والتوجيه
         if (result?.success) {
           await signIn("credentials", {
             email: result.email,
@@ -49,14 +90,14 @@ const LoginForm = () => {
           });
         }
       } catch (error) {
-        setError("حدث خطأ في تسجيل الدخول!");
+        setError(t.loginError);
       }
     });
-};
+  };
 
   return (
     <CardWrapper
-      headerLabel="تسجيل الدخول"
+      headerLabel={t.title}
       backButtonLabel=""
       backButtonHref=""
       showSocial={false}
@@ -65,6 +106,7 @@ const LoginForm = () => {
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-6"
+          dir={locale === 'ar' ? 'rtl' : 'ltr'}
         >
           <div className="space-y-4">
             <FormField
@@ -72,13 +114,14 @@ const LoginForm = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>البريد الإلكتروني</FormLabel>
+                  <FormLabel>{t.email}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="admin@example.com"
+                      placeholder={t.emailPlaceholder}
                       type="email"
+                      dir="ltr"
                     />
                   </FormControl>
                   <FormMessage />
@@ -90,13 +133,14 @@ const LoginForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>كلمة المرور</FormLabel>
+                  <FormLabel>{t.password}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="••••••••"
+                      placeholder={t.passwordPlaceholder}
                       type="password"
+                      dir="ltr"
                     />
                   </FormControl>
                   <FormMessage />
@@ -110,7 +154,7 @@ const LoginForm = () => {
             className="w-full"
             disabled={isPending}
           >
-            {isPending ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
+            {isPending ? t.loggingIn : t.loginButton}
           </Button>
         </form>
       </Form>

@@ -1,39 +1,48 @@
-
 /**
- * An array of routes that are accessible to the public
- * These routes do not require authentication
+ * المسارات المتاحة للجميع
+ * هذه المسارات لا تتطلب تسجيل دخول
  * @type {string[]}
  */
 export const publicRoutes = [
     "/",
-    "/auth/new-verification",
-    "/*"
+    "/about",
+    "/services",
+    "/contact",
+    "/ar",
+    "/en",
+    "/ar/*",
+    "/en/*"
 ];
 
-
 /**
- * An array of routes that are used for authentication
- * These routes will redirect logged in users to /settings
+ * مسارات المصادقة
+ * هذه المسارات ستقوم بإعادة توجيه المستخدمين المسجلين دخول إلى لوحة التحكم
  * @type {string[]}
  */
 export const authRoutes = [
     "/auth/login",
+    "/auth/error"
 ];
 
 /**
- * The prefix for API authentication
- * Routes that start with this prefix are used for api authentication purposes
+ * بادئة مسارات API الخاصة بالمصادقة
+ * المسارات التي تبدأ بهذه البادئة تستخدم لأغراض المصادقة
  * @type {string}
  */
-export const apiAuthPrefix = "/api/auth"
-
+export const apiAuthPrefix = "/api/auth";
 
 /**
- * The default redirect path after logging in
+ * مسار إعادة التوجيه الافتراضي بعد تسجيل الدخول
  * @type {string}
  */
-export const DEFAULT_LOGIN_REDIRECT = "/admin"
+export const DEFAULT_LOGIN_REDIRECT = "/admin";
 
+/**
+ * مسارات لوحة التحكم
+ * هذه المسارات تتطلب تسجيل دخول كمدير
+ * @type {string[]}
+ */
 export const adminRoutes = [
-    "/admin/*"
+    "/admin",
+    "/admin/*",
 ];

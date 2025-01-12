@@ -46,6 +46,7 @@ import { toast } from "sonner";
 import { deleteClient } from "@/actions/client";
 import { Client } from "./columns";
 import { useRouter } from "next/navigation";
+import { useLocale } from 'next-intl';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -56,20 +57,58 @@ export function DataTable<TData extends Client, TValue>({
   columns: originalColumns,
   data: originalData,
 }: DataTableProps<TData, TValue>) {
-  // Table state
+  const locale = useLocale();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [pageIndex, setPageIndex] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(10);
-  
-  // Delete dialog state
   const [loading, setLoading] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
   
   const router = useRouter();
 
-  // Add delete functionality to data
+  const translations = {
+    ar: {
+      searchPlaceholder: "بحث باسم العميل...",
+      itemsPerPage: "عناصر كل صفحة:",
+      noResults: "لا توجد نتائج.",
+      results: "النتائج",
+      of: "من",
+      page: "صفحة",
+      previous: "السابق",
+      next: "التالي",
+      deleteTitle: "تأكيد حذف العميل",
+      deleteMessage: "هل أنت متأكد من حذف العميل التالي:",
+      deleteWarning: "سيتم حذف جميع البيانات المرتبطة به ولا يمكن التراجع عن هذا الإجراء.",
+      cancel: "إلغاء",
+      deleting: "جاري الحذف...",
+      confirmDelete: "تأكيد الحذف",
+      deleteSuccess: "تم حذف العميل بنجاح",
+      deleteError: "حدث خطأ أثناء حذف العميل"
+    },
+    en: {
+      searchPlaceholder: "Search by client name...",
+      itemsPerPage: "Items per page:",
+      noResults: "No results found.",
+      results: "Results",
+      of: "of",
+      page: "Page",
+      previous: "Previous",
+      next: "Next",
+      deleteTitle: "Confirm Client Deletion",
+      deleteMessage: "Are you sure you want to delete this client:",
+      deleteWarning: "All associated data will be permanently deleted and cannot be recovered.",
+      cancel: "Cancel",
+      deleting: "Deleting...",
+      confirmDelete: "Confirm Delete",
+      deleteSuccess: "Client deleted successfully",
+      deleteError: "Error deleting client"
+    }
+  };
+
+  const t = translations[locale as keyof typeof translations];
+
   const data = React.useMemo(() => {
     return originalData.map(item => ({
       ...item,
@@ -109,27 +148,25 @@ export function DataTable<TData extends Client, TValue>({
     },
   });
 
-  // Calculate page information
   const totalRows = table.getFilteredRowModel().rows.length;
   const totalPages = Math.ceil(totalRows / pageSize);
   const startRow = pageIndex * pageSize + 1;
   const endRow = Math.min((pageIndex + 1) * pageSize, totalRows);
 
-  // Delete function
   const onDelete = async () => {
     if (!clientToDelete) return;
     try {
       setLoading(true);
       const result = await deleteClient(clientToDelete.id);
       if (result.success) {
-        toast.success("تم حذف العميل بنجاح");
+        toast.success(t.deleteSuccess);
         router.refresh();
         setShowDeleteAlert(false);
       } else {
         throw new Error(result.error);
       }
     } catch (error) {
-      toast.error("حدث خطأ أثناء حذف العميل");
+      toast.error(t.deleteError);
     } finally {
       setLoading(false);
       setClientToDelete(null);
@@ -137,7 +174,7 @@ export function DataTable<TData extends Client, TValue>({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <AlertDialog 
         open={showDeleteAlert} 
         onOpenChange={(open) => {
@@ -153,28 +190,28 @@ export function DataTable<TData extends Client, TValue>({
           }
         }}>
           <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد حذف العميل</AlertDialogTitle>
-            <AlertDialogDescription className="space-y-2 text-right">
-              <p>هل أنت متأكد من حذف العميل التالي:</p>
+            <AlertDialogTitle>{t.deleteTitle}</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p>{t.deleteMessage}</p>
               <div className="font-medium text-black dark:text-white">
                 {clientToDelete?.name}
               </div>
               <p className="text-red-600">
-                سيتم حذف جميع البيانات المرتبطة به ولا يمكن التراجع عن هذا الإجراء.
+                {t.deleteWarning}
               </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
             <AlertDialogCancel disabled={loading}>
-              إلغاء
+              {t.cancel}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={onDelete}
               disabled={loading}
               className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
             >
-              {loading && <Loader2 className="h-4 w-4 animate-spin ml-2" />}
-              {loading ? "جاري الحذف..." : "تأكيد الحذف"}
+              {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+              {loading ? t.deleting : t.confirmDelete}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -182,7 +219,7 @@ export function DataTable<TData extends Client, TValue>({
 
       <div className="flex items-center gap-5 justify-between">
         <Input
-          placeholder="بحث باسم العميل..."
+          placeholder={t.searchPlaceholder}
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
@@ -191,7 +228,7 @@ export function DataTable<TData extends Client, TValue>({
         />
 
         <div className="flex items-center justify-between gap-4">
-          <span className="text-sm text-muted-foreground hidden sm:flex">عناصر كل صفحة:</span>
+          <span className="text-sm text-muted-foreground hidden sm:flex">{t.itemsPerPage}</span>
           <Select
             value={pageSize.toString()}
             onValueChange={(value) => {
@@ -220,7 +257,7 @@ export function DataTable<TData extends Client, TValue>({
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} className="text-right">
+                    <TableHead key={header.id} className={locale === 'ar' ? "text-right" : "text-left"}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -240,7 +277,7 @@ export function DataTable<TData extends Client, TValue>({
                     data-state={row.getIsSelected() && "selected"}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="text-right">
+                      <TableCell key={cell.id} className={locale === 'ar' ? "text-right" : "text-left"}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -255,7 +292,7 @@ export function DataTable<TData extends Client, TValue>({
                     colSpan={originalColumns.length}
                     className="h-24 text-center"
                   >
-                    لا توجد نتائج.
+                    {t.noResults}
                   </TableCell>
                 </TableRow>
               )}
@@ -266,10 +303,10 @@ export function DataTable<TData extends Client, TValue>({
 
       <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground w-full sm:w-auto justify-center">
-          <span>النتائج: {totalRows}</span>
+          <span>{t.results}: {totalRows}</span>
           <span className="mx-1">|</span>
           <span>
-            {totalRows > 0 ? `${startRow}-${endRow}` : '0'} من {totalRows}
+            {totalRows > 0 ? `${startRow}-${endRow}` : '0'} {t.of} {totalRows}
           </span>
         </div>
         
@@ -280,15 +317,15 @@ export function DataTable<TData extends Client, TValue>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage() || loading}
           >
-            السابق
+            {t.previous}
           </Button>
           
           <span className="flex items-center gap-1 text-sm">
-            <span>صفحة</span>
+            <span>{t.page}</span>
             <span className="font-medium">
               {pageIndex + 1}
             </span>
-            <span>من</span>
+            <span>{t.of}</span>
             <span className="font-medium">
               {totalPages || 1}
             </span>
@@ -300,7 +337,7 @@ export function DataTable<TData extends Client, TValue>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage() || loading}
           >
-            التالي
+            {t.next}
           </Button>
         </div>
       </div>
