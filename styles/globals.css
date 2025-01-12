@@ -1264,6 +1264,7 @@ html {
   border: 1px solid #fff;
   border-radius: 50%;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  opacity: 1 !important;
 }
 
 .sliderSec .swiper-button-next::after,
