@@ -163,7 +163,7 @@ const HeroSection = ({ data }: HeroSectionProps) => {
 
                         <div className={`arrowBtn`}>
                             <Link
-                                href={locale === "ar" ? "ar/#contact" : "en/#contact"}
+                                href={locale === "ar" ? "/ar/#contact" : "/en/#contact"}
                                 className="action btnArrow flex items-center gap-1 w-max mt-5 py-1 px-8"
                             >
                                 <span className="textbtn">
