@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import { cn } from "@/lib/utils";
-import * as lucideIcons from 'lucide-react';
+import * as FA6Icons from 'react-icons/fa6';
 import Image from 'next/image';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 
@@ -29,21 +29,48 @@ export function NavBar({ navItems, settings }: NavBarProps) {
   const t = useTranslations('nav');
 
   const isActiveLink = (href: string) => {
-    // تجاهل الروابط التي تبدأ بـ #
     if (href.startsWith('#')) return false;
     
-    // معالجة خاصة للصفحة الرئيسية
     if (href === '/') {
-      // تحقق مما إذا كان المسار الحالي هو الصفحة الرئيسية
       return pathname === `/${locale}` || pathname === `/${locale}/` || pathname === '/';
     }
 
-    // للصفحات الأخرى، قم بإزالة بادئة اللغة وقارن المسارات
     const cleanPathname = pathname.replace(`/${locale}`, '');
-    // إذا كان الرابط لا يبدأ بـ /، أضف / في البداية
     const itemPath = href.startsWith('/') ? href : `/${href}`;
     
     return cleanPathname === itemPath;
+  };
+
+  const renderSocialIcon = (item: any) => {
+    // إزالة الـ <>/ من اسم المكون
+    const cleanIconName = item?.icon?.replace(/<|>|\//g, '')?.trim();
+    if (!cleanIconName) return null;
+
+    // معالجة الاسم للحصول على اسم المكون الصحيح
+    let iconName;
+    // التحقق من وجود Fa في بداية الاسم
+    if (cleanIconName.startsWith('Fa')) {
+      iconName = cleanIconName;
+    } else {
+      // إضافة Fa إلى بداية الاسم إذا لم يكن موجوداً
+      iconName = `Fa${cleanIconName}`;
+    }
+
+    // الحصول على المكون من مكتبة FA6Icons
+    const IconComponent = FA6Icons[iconName];
+    if (!IconComponent) return null;
+
+    return (
+      <Link 
+        target="_blank" 
+        className="iconS flex items-center justify-center action"
+        key={item.name}
+        href={item.url}
+        locale={locale}
+      >
+        <IconComponent className="size-5" />
+      </Link>
+    );
   };
 
   return (
@@ -83,29 +110,7 @@ export function NavBar({ navItems, settings }: NavBarProps) {
           </div>
 
           <div className="rightNavTop">
-            {settings?.socialLinks?.map((item) => {
-              const iconName = item?.icon
-                ?.replace(/<|>|\//g, '')
-                ?.trim()
-                ?.replace(/^\w/, c => c.toUpperCase());
-
-              if (!iconName) return null;
-
-              const IconComponent = lucideIcons[iconName];
-              if (!IconComponent) return null;
-
-              return (
-                <Link 
-                  target="_blank" 
-                  className="iconS flex items-center justify-center action"
-                  key={item.name}
-                  href={item.url}
-                  locale={locale}
-                >
-                  <IconComponent className="size-5" />
-                </Link>
-              );
-            })}
+            {settings?.socialLinks?.map((item) => renderSocialIcon(item))}
           </div>
         </div>
       </nav>
@@ -141,12 +146,13 @@ export function NavBar({ navItems, settings }: NavBarProps) {
                         isActive && "active"
                       )}
                     >
-                        <Link 
-                          href={item.href}
-                          locale={locale}
-                        >
-                          {t(item.titleKey)}
-                        </Link>
+                      <Link 
+                        href={item.href}
+                        locale={locale}
+                        className='text-white'
+                      >
+                        {t(item.titleKey)}
+                      </Link>
                     </li>
                   );
                 })}

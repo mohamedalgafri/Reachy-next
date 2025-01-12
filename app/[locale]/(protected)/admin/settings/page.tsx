@@ -31,7 +31,7 @@ export default async function SettingsPage({ params: { locale } }: PageProps) {
   const settings = await db.settings.findFirst();
 
   return (
-    <div className="container" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <DashboardHeader
         heading={locale === 'ar' ? 'الاعدادات' : 'Settings'}
         text={locale === 'ar' ? 'إدارة إعدادات الموقع' : 'Manage site settings'}

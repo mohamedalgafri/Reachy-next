@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';  
 import { cn } from "@/lib/utils";
-import * as lucideIcons from 'lucide-react';
+import * as FA6Icons from 'react-icons/fa6';
 import Image from 'next/image';
 import { LanguageSwitcher } from "../LanguageSwitcher";
 
@@ -49,16 +49,46 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
   const isActiveLink = (href: string) => {
     if (href.startsWith('#')) return false;
     
-    // معالجة خاصة للصفحة الرئيسية
     if (href === '/') {
       return pathname === `/${locale}` || pathname === `/${locale}/` || pathname === '/';
     }
 
-    // إزالة بادئة اللغة للمقارنة
     const cleanPathname = pathname.replace(`/${locale}`, '');
     const itemPath = href.startsWith('/') ? href : `/${href}`;
     
     return cleanPathname === itemPath;
+  };
+
+  const renderSocialIcon = (item: any) => {
+    // إزالة الـ <>/ من اسم المكون
+    const cleanIconName = item?.icon?.replace(/<|>|\//g, '')?.trim();
+    if (!cleanIconName) return null;
+
+    // معالجة الاسم للحصول على اسم المكون الصحيح
+    let iconName;
+    // التحقق من وجود Fa في بداية الاسم
+    if (cleanIconName.startsWith('Fa')) {
+      iconName = cleanIconName;
+    } else {
+      // إضافة Fa إلى بداية الاسم إذا لم يكن موجوداً
+      iconName = `Fa${cleanIconName}`;
+    }
+
+    // الحصول على المكون من مكتبة FA6Icons
+    const IconComponent = FA6Icons[iconName];
+    if (!IconComponent) return null;
+
+    return (
+      <Link 
+        target="_blank" 
+        key={item.name} 
+        href={item.url}
+        locale={locale}
+        className="hover:text-primary transition-colors"
+      >
+        <IconComponent className="size-5" />
+      </Link>
+    );
   };
 
   return (
@@ -121,7 +151,7 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
                   key={index} 
                   className={cn(
                     "py-3",
-                    isActive && "active" // إضافة كلاس active
+                    isActive && "active"
                   )}
                 >
                     <Link
@@ -129,7 +159,7 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
                       onClick={() => setOpen(false)}
                       locale={locale}
                       className={cn(
-                        "flex w-full font-medium transition-colors hover:text-foreground/80",
+                        "flex w-full font-medium transition-colors hover:text-foreground/80 text-white",
                         item.disabled && "cursor-not-allowed opacity-80"
                       )}
                     >
@@ -149,30 +179,8 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
               </div>
 
               {/* Social Links */}
-              <div className="flex items-center gap-3">
-                {settings?.socialLinks?.map((item) => {
-                  const iconName = item?.icon
-                    ?.replace(/<|>|\//g, '')
-                    ?.trim()
-                    ?.replace(/^\w/, c => c.toUpperCase());
-
-                  if (!iconName) return null;
-
-                  const IconComponent = lucideIcons[iconName];
-                  if (!IconComponent) return null;
-
-                  return (
-                    <Link 
-                      target="_blank" 
-                      key={item.name} 
-                      href={item.url}
-                      locale={locale}
-                      className="hover:text-primary transition-colors"
-                    >
-                      <IconComponent className="size-5" />
-                    </Link>
-                  );
-                })}
+              <div className="flex items-center gap-3 flex-wrap">
+                {settings?.socialLinks?.map((item) => renderSocialIcon(item))}
               </div>
             </div>
           </div>

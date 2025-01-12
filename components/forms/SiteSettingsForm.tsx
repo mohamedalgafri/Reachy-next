@@ -192,7 +192,7 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-5">
             <div className="mb-4">
               <Label htmlFor="email">{t.email}</Label>
               <Input
@@ -224,7 +224,7 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-5">
             <div className="mb-4">
               <Label>{t.addressAr}</Label>
               <div className="mt-2" dir="rtl">

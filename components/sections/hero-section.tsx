@@ -98,26 +98,12 @@ const HeroSection = ({ data }: HeroSectionProps) => {
         if (videoRef.current) {
             videoRef.current.play()
             setVideoLoaded(true);
-
-                // .then(() => {
-                //     // تأخير قصير لضمان انتقال سلس
-                //     setTimeout(() => {
-                //         setVideoLoaded(true);
-                //     }, 100);
-                // })
-                // .catch(error => console.log("Auto-play was prevented:", error));
         }
     };
 
     return (
         <>
             <div className="bgHeaderHome bgVH">
-                {/* Background overlay - سيبقى ظاهراً حتى يتم تحميل الفيديو بالكامل */}
-                <div className={cn(
-                    "absolute inset-0 bg-gradient-overlay",
-                    "transition-opacity duration-1000",
-                )}></div>
-                
                 <div className="bgHeader"></div>
                 <div className="overlay-wrapper overlay-wrapperR">
                     <BlurBackground position="right" />

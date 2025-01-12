@@ -56,7 +56,6 @@ export default async function ProtectedLayout({
 
         <div className="flex flex-1 flex-col">
           <header className="sticky top-0 z-50 flex h-14 bg-background px-4 lg:h-[60px] xl:px-8">
-            <MaxWidthWrapper className="flex max-w-7xl items-center gap-x-3 px-0">
               <MobileSheetSidebar links={filteredLinks} settings={settings} />
 
               <div className="w-full flex-1">
@@ -72,7 +71,6 @@ export default async function ProtectedLayout({
                   image: session.user.image
                 }}
               />
-            </MaxWidthWrapper>
           </header>
 
           <main className="flex-1 p-4 xl:px-8">
