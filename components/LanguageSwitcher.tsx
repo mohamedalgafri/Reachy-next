@@ -4,6 +4,7 @@ import { useLocale } from 'next-intl';
 import Image from 'next/image';
 import { usePathname } from '@/i18n/navigation';
 import { useEffect, useState } from 'react';
+import { FaLanguage } from 'react-icons/fa6';
 
 export function LanguageSwitcher() {
     const locale = useLocale();
@@ -38,6 +39,7 @@ export function LanguageSwitcher() {
                 className="size-6 object-contain" 
                 alt="language icon"
             />
+            {/* <FaLanguage /> */}
             {locale === 'ar' ? 
             <span>English</span>
              :

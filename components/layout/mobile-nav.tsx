@@ -117,16 +117,16 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
         <div className="flex flex-col h-full">
           {/* Contact Info */}
           <div className="flex flex-col gap-4 mb-6 text-sm">
+
             {settings?.email && (
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/images/envelope.svg"
-                  width={16}
-                  height={16}
-                  alt="email"
-                />
+              <a
+                href={`mailto:${settings?.email}`}
+                target='_blank'
+                className="flex gap-2 items-center"
+              >
+                <FA6Icons.FaEnvelope />
                 <span>{settings.email}</span>
-              </div>
+              </a>
             )}
 
             {settings?.phone && (

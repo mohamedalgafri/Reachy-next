@@ -85,13 +85,7 @@ export function NavBar({ navItems, settings }: NavBarProps) {
                 target='_blank' 
                 className="flex gap-2 items-center"
               >
-                <Image
-                  src="/images/envelope.svg"
-                  width={16}
-                  height={16}
-                  className="size-4 object-contain"
-                  alt="email icon"
-                />
+                <FA6Icons.FaEnvelope />
                 <span>{settings.email}</span>
               </a>
               )}
