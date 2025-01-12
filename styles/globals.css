@@ -1234,12 +1234,12 @@ html {
 .cardOC{
   background-color: #fff;
   width: 100%;
-  height: 100%;
+  height: 250px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 30px;
-  padding: 20px;
+  padding: 5px 0px;
 }
 .cardOC img{
   width: 130px;
@@ -1584,10 +1584,7 @@ html {
     max-width: 700px;
     margin: 0 auto;
 }
-.cardOC{
 
-  padding: 20px;
-}
 .cardOC img{
   width: 100px;
   height: 100px;

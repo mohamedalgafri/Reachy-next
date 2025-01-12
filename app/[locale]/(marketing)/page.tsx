@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import ClientsSection from "@/components/sections/clients-section";
 import ContactSection from "@/components/sections/contact-section";
 import { FaFacebook, FaWhatsapp } from "react-icons/fa";
+import LetsTake from "@/components/sections/LetsTake";
 
 interface Section {
   id: number;
@@ -179,12 +180,7 @@ export default async function HomePage() {
       {page.sections.map((section) => renderSection(section))}
       <ClientsSection  clients={clients} />
       <ContactSection />
-      <div className="letsTake">
-        <a href="" className="letsTakeC">
-          <span>Lets Talk!</span>
-          <FaWhatsapp />
-        </a>
-      </div>
+      <LetsTake />
     </main>
   );
 }

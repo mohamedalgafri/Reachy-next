@@ -55,7 +55,7 @@ export default async function ProtectedLayout({
         <DashboardSidebar links={filteredLinks} settings={settings} />
 
         <div className="flex flex-1 flex-col">
-          <header className="sticky top-0 z-50 flex h-14 bg-background px-4 lg:h-[60px] xl:px-8">
+          <header className="sticky top-0 z-50 flex h-14 bg-background px-4 lg:h-[60px] xl:px-8 items-center gap-2">
               <MobileSheetSidebar links={filteredLinks} settings={settings} />
 
               <div className="w-full flex-1">
