@@ -70,7 +70,7 @@ export const columns: ColumnDef<Service>[] = [
           {locale === 'ar' ? (
             <>
               <div 
-                className="max-w-[300px] prose prose-sm text-right"
+                className="max-w-[300px] prose prose-sm text-right textTitleCard"
                 dir="rtl"
                 dangerouslySetInnerHTML={{ 
                   __html: row.original.title_ar.length > 100 
@@ -79,7 +79,7 @@ export const columns: ColumnDef<Service>[] = [
                 }} 
               />
               <div 
-                className="max-w-[300px] prose prose-sm text-muted-foreground"
+                className="max-w-[300px] prose prose-sm text-muted-foreground textTitleCard"
                 dir="ltr"
                 dangerouslySetInnerHTML={{ 
                   __html: row.original.title_en.length > 100 
@@ -91,7 +91,7 @@ export const columns: ColumnDef<Service>[] = [
           ) : (
             <>
               <div 
-                className="max-w-[300px] prose prose-sm"
+                className="max-w-[300px] prose prose-sm textTitleCard"
                 dir="ltr"
                 dangerouslySetInnerHTML={{ 
                   __html: row.original.title_en.length > 100 
@@ -100,7 +100,7 @@ export const columns: ColumnDef<Service>[] = [
                 }} 
               />
               <div 
-                className="max-w-[300px] prose prose-sm text-muted-foreground"
+                className="max-w-[300px] prose prose-sm text-muted-foreground textTitleCard"
                 dir="rtl"
                 dangerouslySetInnerHTML={{ 
                   __html: row.original.title_ar.length > 100 
