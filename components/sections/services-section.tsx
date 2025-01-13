@@ -101,7 +101,7 @@ const ServicesSection = ({ data, services }: ServicesSectionProps) => {
                       dangerouslySetInnerHTML={{ 
                         __html: locale === 'ar' ? service.subtitle_ar : service.subtitle_en 
                       }}
-                      className="mt-2 text-sm textTitleCard"
+                      className="mt-2 text-sm textTitleCardD"
                     />
                   </div>
                 </div>

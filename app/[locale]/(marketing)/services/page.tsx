@@ -129,7 +129,7 @@ export default async function ServicePage({ params: { locale } }: Props) {
                     />  
                     <ul>
                       <li 
-                        className="textTitleCard"
+                        className="textTitleCardD"
                         dangerouslySetInnerHTML={{ 
                           __html: locale === 'ar' ? service.subtitle_ar : service.subtitle_en 
                         }} 

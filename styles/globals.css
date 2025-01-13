@@ -84,7 +84,7 @@
   .font-arabic {
     font-family: var(--font-arabic), '29LTBukra', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
   }
-  
+
   * {
     @apply border-border;
   }
@@ -1569,6 +1569,11 @@ html {
 .textTitleCard p{
   margin-bottom: 0;
   line-height: 100%;
+}
+
+.textTitleCardD p{
+  margin-bottom: 0;
+  line-height: 150%;
 }
 
 .textCU{
