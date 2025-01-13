@@ -10,6 +10,7 @@ interface LocaleLayoutProps {
   params: { locale: string };
 }
 
+
 export default async function LocaleLayout({
   children,
   params,
@@ -19,20 +20,23 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   return (
-    <div 
-      dir={locale === 'ar' ? 'rtl' : 'ltr'}
-      className={cn(
+    <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+      </head>
+      <body className={cn(
         "min-h-screen bg-background antialiased",
         montserrat.variable,
-        fontArabic.variable
-      )}
-      lang={locale}
-    >
-      <Providers locale={locale} messages={messages}>
-        <main className="min-h-screen bg-background antialiased">
+        fontArabic.variable,
+        {
+          'font-arabic': locale === 'ar',
+          'font-montserrat': locale !== 'ar'
+        }
+      )}>
+        <Providers locale={locale} messages={messages}>
           {children}
-        </main>
-      </Providers>
-    </div>
+        </Providers>
+      </body>
+    </html>
   );
 }

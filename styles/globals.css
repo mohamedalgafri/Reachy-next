@@ -61,13 +61,30 @@
     --chart-5: 340 75% 55%;
   }
 
-  body {
-    font-family: var(--font-montserrat), sans-serif;
+    @font-face {
+    font-family: '29LTBukra';
+    src: url('/fonts/29ltbukralight.otf') format('opentype');
+    font-display: swap;
   }
 
-  [dir="rtl"] body {
-    font-family: var(--font-arabic) !important;
+  body {
+    font-family: var(--font-montserrat), 'Montserrat', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   }
+
+  /* تعريف الخط العربي للمحتوى RTL */
+  [dir="rtl"] body {
+    font-family: var(--font-arabic), '29LTBukra', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+  }
+
+  /* تعريف classes مساعدة */
+  .font-montserrat {
+    font-family: var(--font-montserrat), 'Montserrat', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+
+  .font-arabic {
+    font-family: var(--font-arabic), '29LTBukra', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+  }
+  
   * {
     @apply border-border;
   }
@@ -417,6 +434,7 @@ html {
   color: #fff;
   font-size: 15px;
   padding: 0 10px;
+  border-bottom: none;
 }
 .leftItemNavTopc{
   border: 1px solid #dfe2f177;
@@ -1543,6 +1561,24 @@ html {
 .textdown.active:hover a{
   transform: translateY(0px);
 }
+
+.textTitleCard{
+  line-height: 100%;
+}
+
+.textTitleCard p{
+  margin-bottom: 0;
+  line-height: 100%;
+}
+
+.textCU{
+  text-transform: uppercase
+}
+.textCU *{
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
 
 @media (max-width:1024px){
   .nevTop{

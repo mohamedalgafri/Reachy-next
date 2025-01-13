@@ -12,8 +12,10 @@ export const montserrat = Montserrat({
 export const fontArabic = localFont({
   src: "./29ltbukralight.otf",
   variable: "--font-arabic",
+  display: 'swap',
+  preload: true,
+  fallback: ['Almarai', 'system-ui', 'sans-serif']
 });
-
 
 // export const fontArabic = Almarai({
 //   subsets: ['arabic'],

@@ -92,7 +92,7 @@ const ServicesSection = ({ data, services }: ServicesSectionProps) => {
                   )}
                   <div className="textCardS">
                     <p 
-                      className="text-base lg:text-xl"
+                      className="text-base mb-5 textCU lg:text-xl textTitleCard "
                       dangerouslySetInnerHTML={{ 
                         __html: locale === 'ar' ? service.title_ar : service.title_en 
                       }} 
@@ -101,7 +101,7 @@ const ServicesSection = ({ data, services }: ServicesSectionProps) => {
                       dangerouslySetInnerHTML={{ 
                         __html: locale === 'ar' ? service.subtitle_ar : service.subtitle_en 
                       }}
-                      className="mt-2 text-sm"
+                      className="mt-2 text-sm textTitleCard"
                     />
                   </div>
                 </div>

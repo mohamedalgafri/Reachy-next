@@ -7,6 +7,17 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig = {
   pageExtensions: ['mdx','ts','tsx'],
   reactStrictMode: true,
+  // إضافة تكوين الخطوط
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.(woff|woff2|eot|ttf|otf)$/i,
+      type: 'asset/resource',
+      generator: {
+        filename: 'static/fonts/[name][ext]'
+      }
+    });
+    return config;
+  },
   images: {
     remotePatterns: [
       {
@@ -35,7 +46,9 @@ const nextConfig = {
   experimental: {
     serverActions: true,
     mdxRs: true
-  }
+  },
+  // إضافة تكوين إضافي للخطوط
+  optimizeFonts: true,
 };
 
 module.exports = withNextIntl(withContentlayer(nextConfig));

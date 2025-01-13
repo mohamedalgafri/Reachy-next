@@ -66,7 +66,7 @@ const StorySection = ({ data }: StorySectionProps) => {
            </div>
          </div>
 
-         <div className="textSOC mt-5 sm:mt-10 w-full">
+         <div className="textSOC text-center mt-5 sm:mt-10 w-full">
            <div 
              className="uppercase max-w-4xl mx-auto font-bold text-white text-center text-xl md:text-2xl lg:text-3xl"
              dangerouslySetInnerHTML={{ __html: data.title[locale] }}
