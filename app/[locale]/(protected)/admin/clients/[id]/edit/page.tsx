@@ -7,7 +7,7 @@ import { Metadata } from "next";
 
 interface ClientEditPageProps {
   params: {
-    clientId: string;
+    id: string;
     locale: string;
   };
 }
@@ -26,12 +26,19 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ClientEditPage({ params }: ClientEditPageProps) {
   const locale = await getLocale();
   
+  // تأكد من أن clientId موجود
+  if (!params.id) {
+    notFound();
+  }
+
+  // حاول العثور على العميل
   const client = await db.client.findUnique({
     where: {
-      id: Number(params.clientId)
+      id: parseInt(params.id)
     }
   });
 
+  // إذا لم يتم العثور على العميل
   if (!client) {
     notFound();
   }

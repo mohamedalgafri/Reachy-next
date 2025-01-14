@@ -115,32 +115,14 @@ export default async function EditSectionPage({ params }: EditSectionPageProps) 
           title
         };
 
-      case 'SERVICES':
-        const servicesMap = new Map();
-
-        section.inputs.forEach(input => {
-          const match = input.label.match(/service_(\d+)_(\w+)/);
-          if (!match) return;
-
-          const [, index, field] = match;
-          const serviceIndex = parseInt(index);
-
-          if (!servicesMap.has(serviceIndex)) {
-            servicesMap.set(serviceIndex, {
-              title: '',
-              description: ''
-            });
-          }
-
-          const service = servicesMap.get(serviceIndex);
-          service[field] = input.value;
-        });
-
-        return {
-          title: section.inputs.find(i => i.label === 'title')?.value || '',
-          services: Array.from(servicesMap.values())
-            .filter(service => service.title && service.description)
-        };
+        case 'SERVICES':
+          return {
+            title: {
+              ar: section.inputs.find(i => i.label === 'title_ar')?.value || '',
+              en: section.inputs.find(i => i.label === 'title_en')?.value || ''
+            }
+          };
+        
 
       default:
         return null;

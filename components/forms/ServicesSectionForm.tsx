@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { TextEditor } from "@/components/forms/TextEditor";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -46,19 +46,36 @@ export default function ServicesSectionForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: {
-        ar: initialData.title?.ar || "",
-        en: initialData.title?.en || ""
+        ar: initialData?.title?.ar || "",
+        en: initialData?.title?.en || ""
       }
     }
   });
 
+  useEffect(() => {
+    // تحديث قيم النموذج عندما تتغير البيانات الأولية
+    if (initialData?.title) {
+      form.reset({
+        title: {
+          ar: initialData.title.ar || "",
+          en: initialData.title.en || ""
+        }
+      });
+    }
+  }, [initialData, form]);
+
   const onSubmit = async (values: FormData) => {
     try {
       setIsLoading(true);
-      const result = await updateServicesSection(sectionId, values);
+      const result = await updateServicesSection(sectionId, {
+        title: {
+          ar: values.title.ar,
+          en: values.title.en
+        }
+      });
 
       if (result.success) {
-        toast.success("تم تحديث القسم بنجاح");
+        toast.success(locale === "ar" ? "تم تحديث القسم بنجاح" : "Section updated successfully");
         router.push("/admin/sections");
         router.refresh();
       } else {
@@ -75,8 +92,12 @@ export default function ServicesSectionForm({
   return (
     <Card>
       <CardHeader>
-        <h2 className="text-2xl font-bold">{locale === "ar" ? " تعديل قسم الخدمات" : "Edit the services section"}</h2>
-        <CardDescription>{locale === "ar" ? "قم بتحديث عنوان قسم الخدمات باللغتين العربية والإنجليزية" : "Update the address of the services section in Arabic and English"}</CardDescription>
+        <h2 className="text-2xl font-bold">{locale === "ar" ? "تعديل قسم الخدمات" : "Edit Services Section"}</h2>
+        <CardDescription>
+          {locale === "ar" 
+            ? "قم بتحديث عنوان قسم الخدمات باللغتين العربية والإنجليزية" 
+            : "Update the services section title in Arabic and English"}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>

@@ -78,7 +78,7 @@ export const columns: ColumnDef<Client>[] = [
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const locale = useLocale();
       return new Date(row.original.createdAt).toLocaleDateString(
-        locale === 'ar' ? 'ar-SA' : 'en-US'
+        locale === 'ar' ? 'en-US' : 'en-US'
       );
     }
   },

@@ -152,7 +152,7 @@ export const columns: ColumnDef<Section>[] = [
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const locale = useLocale();
       return (
-        <Link href={`/admin/sections/${row.original.id}/edit`}>
+        <Link href={`/${locale}/admin/sections/${row.original.id}/edit`}>
           <Button size="sm" variant="outline">
             <Edit className="h-4 w-4 ml-2" />
             {locale === 'ar' ? 'تعديل' : 'Edit'}
