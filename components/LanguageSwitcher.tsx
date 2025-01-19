@@ -3,21 +3,20 @@
 import { useLocale } from 'next-intl';
 import Image from 'next/image';
 import { usePathname } from '@/i18n/navigation';
-import { useEffect, useState } from 'react';
-import { FaLanguage } from 'react-icons/fa6';
+// import { useEffect, useState } from 'react';
 
 export function LanguageSwitcher() {
     const locale = useLocale();
     const pathname = usePathname();
-    const [mounted, setMounted] = useState(false);
+    // const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+    // useEffect(() => {
+    //     setMounted(true);
+    // }, []);
 
-    if (!mounted) {
-        return null;
-    }
+    // if (!mounted) {
+    //     return null;
+    // }
 
     const switchLocale = () => {
         const nextLocale = locale === 'ar' ? 'en' : 'ar';
@@ -39,7 +38,6 @@ export function LanguageSwitcher() {
                 className="size-6 object-contain" 
                 alt="language icon"
             />
-            {/* <FaLanguage /> */}
             {locale === 'ar' ? 
             <span>English</span>
              :
