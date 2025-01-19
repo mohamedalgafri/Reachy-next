@@ -9,11 +9,35 @@ import {
 } from "@/routes";
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
+import { db } from './lib/db';
 
 export const locales = ['ar', 'en'];
 export const defaultLocale = 'ar';
 
-// تحسين دالة مطابقة المسار
+// دالة تتبع الزيارات
+async function trackVisit(request: NextRequest) {
+    try {
+        const ip = request.headers.get("x-forwarded-for")?.split(',')[0] || request.ip || "127.0.0.1";
+        const userAgent = request.headers.get("user-agent") || "";
+        const referer = request.headers.get("referer") || "";
+        const url = new URL(request.url);
+
+        // تخزين الزيارة في قاعدة البيانات
+        await db.visit.create({
+            data: {
+                ip,
+                country: 'UN', // سيتم تحديثه لاحقاً مع خدمة تحديد الموقع
+                countryName: 'Unknown',
+                path: url.pathname,
+                userAgent,
+                referrer: referer,
+            },
+        });
+    } catch (error) {
+        console.error('Error tracking visit:', error);
+    }
+}
+
 function matchesPath(cleanPath: string, routePattern: string) {
     if (routePattern.endsWith('*')) {
         return cleanPath.startsWith(routePattern.slice(0, -1));
@@ -21,7 +45,6 @@ function matchesPath(cleanPath: string, routePattern: string) {
     return cleanPath === routePattern;
 }
 
-// إنشاء middleware للترجمة
 const i18nMiddleware = createMiddleware({
     locales,
     defaultLocale,
@@ -38,39 +61,37 @@ export default async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // استخراج اللغة والمسار النظيف
+    // تتبع الزيارة إذا كانت صفحة عامة
+    if (!pathname.startsWith('/admin') && !pathname.includes('/auth/')) {
+        await trackVisit(request);
+    }
+
     const pathnameHasLocale = locales.some(
         locale => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     );
     const currentLocale = pathname.split('/')[1] || defaultLocale;
     const cleanPath = '/' + pathname.split('/').slice(pathnameHasLocale ? 2 : 1).join('/');
 
-    // إعادة توجيه إذا لم تكن اللغة موجودة في المسار
     if (!pathnameHasLocale) {
         const newUrl = new URL(`/${defaultLocale}${pathname}${search}`, request.url);
         return NextResponse.redirect(newUrl);
     }
 
-    // تطبيق middleware الترجمة
     const i18nResponse = await i18nMiddleware(request);
     if (i18nResponse) return i18nResponse;
 
-    // التحقق من حالة المصادقة
     const session = await auth()(request);
     const isLoggedIn = !!session?.user;
     const isAdmin = session?.user?.role === "ADMIN";
 
-    // مسارات API
     if (cleanPath.startsWith(apiAuthPrefix)) {
         return NextResponse.next();
     }
 
-    // المسارات العامة
     if (publicRoutes.some(route => matchesPath(cleanPath, route))) {
         return NextResponse.next();
     }
 
-    // تحويل المستخدم المسجل دخول من صفحة تسجيل الدخول
     if (authRoutes.some(route => matchesPath(cleanPath, route))) {
         if (isLoggedIn) {
             return NextResponse.redirect(
@@ -80,7 +101,6 @@ export default async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // التحقق من صلاحيات الوصول للوحة التحكم
     if (adminRoutes.some(route => matchesPath(cleanPath, route))) {
         if (!isLoggedIn) {
             const callbackUrl = encodeURIComponent(request.url);
@@ -101,11 +121,8 @@ export default async function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        // تجاهل الملفات الثابتة
         "/((?!.+\\.[\\w]+$|_next).*)",
-        // تطبيق على المسار الرئيسي
         "/",
-        // تطبيق على مسارات اللغة
         "/(ar|en)/:path*"
     ]
 };
