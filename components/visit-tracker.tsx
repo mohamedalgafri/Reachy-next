@@ -9,24 +9,33 @@ export function VisitTracker() {
   useEffect(() => {
     const trackVisit = async () => {
       try {
-        await fetch('/api/track', {
+        // تجاهل المسارات الخاصة
+        if (
+          pathname.startsWith('/admin') || 
+          pathname.startsWith('/auth') || 
+          pathname.includes('api')
+        ) {
+          return;
+        }
+
+        const response = await fetch('/api/track', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ pathname }),
         });
+
+        if (!response.ok) {
+          throw new Error('Failed to track visit');
+        }
       } catch (error) {
+        // تجاهل أخطاء التتبع في الواجهة الأمامية
         console.error('Error tracking visit:', error);
       }
     };
 
-    // تجاهل المسارات الخاصة
-    if (!pathname.startsWith('/admin') && 
-        !pathname.startsWith('/auth') && 
-        !pathname.includes('api')) {
-      trackVisit();
-    }
+    trackVisit();
   }, [pathname]);
 
   return null;
