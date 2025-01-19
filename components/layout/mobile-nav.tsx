@@ -110,8 +110,11 @@ export function NavMobile({ scroll = false, large = false, navItems, settings }:
 
       <nav
         className={cn(
-          "fixed bgBM inset-0 z-20 hidden w-full overflow-auto bg-background px-5 py-16 lg:hidden",
-          open && "block",
+          "fixed bgBM inset-0 z-20 w-full  overflow-auto bg-background px-5 py-16  lg:hidden",
+          "transform transition-transform duration-300 ease-in-out",
+          locale === "ar" 
+            ? open ? "translate-x-0" : "-translate-x-full"  
+            : open ? "translate-x-0" : "translate-x-full",  
         )}
       >
         <div className="flex flex-col h-full">
