@@ -1,6 +1,6 @@
 // lib/visit-tracker.ts
-import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
+import { db } from "./db";
 
 export async function trackVisit(request: NextRequest) {
   try {
@@ -20,7 +20,7 @@ export async function trackVisit(request: NextRequest) {
       return;
     }
 
-    await prisma.visit.create({
+    await db.visit.create({
       data: {
         ip,
         country: 'UN',
