@@ -1,13 +1,14 @@
+// app/(admin)/[locale]/admin/page.tsx
 'use client';
 
-import { Users, Eye, Globe, BarChart } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Users, Eye, Globe } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/header";
 import InfoCard from "@/components/dashboard/info-card";
 import { VisitorsTable } from "@/components/dashboard/visitors-table";
 import { Card } from "@/components/ui/card";
-import { useEffect, useState } from "react";
 
-interface Stats {
+interface DashboardStats {
   totalVisits: number;
   dailyVisits: number;
   monthlyVisits: number;
@@ -17,8 +18,9 @@ interface Stats {
 }
 
 export default function AdminPage({ params: { locale } }: { params: { locale: string } }) {
-  const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -27,8 +29,9 @@ export default function AdminPage({ params: { locale } }: { params: { locale: st
         if (!response.ok) throw new Error('Failed to fetch stats');
         const data = await response.json();
         setStats(data);
-      } catch (error) {
-        console.error('Error fetching stats:', error);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching stats:', err);
       } finally {
         setLoading(false);
       }
@@ -44,24 +47,26 @@ export default function AdminPage({ params: { locale } }: { params: { locale: st
           heading={locale === "ar" ? "لوحة التحكم" : "Dashboard"} 
           text={locale === "ar" ? "جاري التحميل..." : "Loading..."} 
         />
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {[1, 2, 3, 4].map((n) => (
-            <Card key={n} className="p-6">
-              <div className="animate-pulse h-20"></div>
-            </Card>
-          ))}
+        <div className="animate-pulse space-y-4">
+          <div className="h-24 bg-muted rounded"></div>
+          <div className="h-96 bg-muted rounded"></div>
         </div>
       </div>
     );
   }
 
-  if (!stats) {
+  if (error || !stats) {
     return (
       <div className="flex flex-col gap-5">
         <DashboardHeader 
           heading={locale === "ar" ? "لوحة التحكم" : "Dashboard"} 
-          text={locale === "ar" ? "حدث خطأ" : "Error occurred"} 
+          text={locale === "ar" ? "حدث خطأ" : "An error occurred"} 
         />
+        <Card className="p-6">
+          <p className="text-center text-destructive">
+            {error || (locale === "ar" ? "فشل في تحميل البيانات" : "Failed to load data")}
+          </p>
+        </Card>
       </div>
     );
   }
@@ -73,7 +78,7 @@ export default function AdminPage({ params: { locale } }: { params: { locale: st
         text={locale === "ar" ? "إحصائيات الزوار" : "Visitor Statistics"} 
       />
       
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <InfoCard
           title={locale === "ar" ? "إجمالي الزيارات" : "Total Visits"}
           value={stats.totalVisits.toLocaleString()}
@@ -81,15 +86,9 @@ export default function AdminPage({ params: { locale } }: { params: { locale: st
           description={locale === "ar" ? "منذ إطلاق الموقع" : "Since launch"}
         />
         <InfoCard
-          title={locale === "ar" ? "الزوار اليوم" : "Today's Visitors"}
-          value={stats.uniqueVisitorsToday.toLocaleString()}
-          icon={Eye}
-          description={locale === "ar" ? "زوار فريدين" : "Unique visitors"}
-        />
-        <InfoCard
           title={locale === "ar" ? "زيارات اليوم" : "Today's Visits"}
           value={stats.dailyVisits.toLocaleString()}
-          icon={BarChart}
+          icon={Eye}
           description={locale === "ar" ? "اليوم" : "Today"}
         />
         <InfoCard

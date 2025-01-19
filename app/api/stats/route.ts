@@ -1,17 +1,25 @@
 // app/api/stats/route.ts
 import { NextResponse } from "next/server";
+
+import { auth } from "@/auth";
 import { db } from "@/lib/db";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    // التحقق من المصادقة
+    const session = await auth();
+    if (!session || session.user?.role !== "ADMIN") {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
     const now = new Date();
     const startOfDay = new Date(now.setHours(0, 0, 0, 0));
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
     // الإحصائيات الأساسية
     const [totalVisits, dailyVisits, monthlyVisits] = await Promise.all([
-        db.visit.count(),
-        db.visit.count({
+      db.visit.count(),
+      db.visit.count({
         where: { createdAt: { gte: startOfDay } }
       }),
       db.visit.count({
@@ -24,13 +32,6 @@ export async function GET() {
       by: ['country', 'countryName'],
       _count: {
         country: true
-      },
-      having: {
-        country: {
-          _count: {
-            gt: 0
-          }
-        }
       }
     });
 
@@ -44,7 +45,6 @@ export async function GET() {
       }
     });
 
-    // تنسيق بيانات الدول
     const countryData = countriesVisits.map(stat => ({
       countryCode: stat.country,
       country: stat.countryName,
