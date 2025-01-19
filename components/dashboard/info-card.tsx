@@ -24,7 +24,7 @@ export default function InfoCard({ title, value, icon: Icon, description }: Info
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
         {description && (
-          <p className="text-xs text-muted-foreground">{description}</p>
+          <p className="text-xs text-muted-foreground mt-1">{description}</p>
         )}
       </CardContent>
     </Card>
