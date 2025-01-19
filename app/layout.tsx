@@ -1,5 +1,6 @@
 // app/layout.tsx
 import { fontArabic, montserrat } from "@/assets/fonts";
+import { VisitTracker } from "@/components/visit-tracker";
 import { cn, constructMetadata } from "@/lib/utils";
 import "@/styles/globals.css";
 import Script from "next/script";
@@ -33,6 +34,7 @@ export default function RootLayout({
           fontArabic.variable
         )}
       >
+        <VisitTracker />
         {children}
       </body>
     </html>

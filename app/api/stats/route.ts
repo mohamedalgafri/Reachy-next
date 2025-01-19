@@ -1,14 +1,13 @@
 // app/api/stats/route.ts
 import { NextResponse } from "next/server";
-
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     // التحقق من المصادقة
     const session = await auth();
-    if (!session || session.user?.role !== "ADMIN") {
+    if (!session?.user || session.user.role !== "ADMIN") {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
@@ -17,47 +16,26 @@ export async function GET(request: Request) {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
     // الإحصائيات الأساسية
-    const [totalVisits, dailyVisits, monthlyVisits] = await Promise.all([
+    const [totalVisits, dailyVisits, monthlyVisits, uniqueVisitors] = await Promise.all([
       db.visit.count(),
       db.visit.count({
         where: { createdAt: { gte: startOfDay } }
       }),
       db.visit.count({
         where: { createdAt: { gte: startOfMonth } }
+      }),
+      db.visit.groupBy({
+        by: ['ip'],
+        where: { createdAt: { gte: startOfDay } },
+        _count: true
       })
     ]);
-
-    // إحصائيات حسب الدول
-    const countriesVisits = await db.visit.groupBy({
-      by: ['country', 'countryName'],
-      _count: {
-        country: true
-      }
-    });
-
-    // عدد الزوار الفريدين اليوم
-    const uniqueVisitors = await db.visit.groupBy({
-      by: ['ip'],
-      where: {
-        createdAt: {
-          gte: startOfDay
-        }
-      }
-    });
-
-    const countryData = countriesVisits.map(stat => ({
-      countryCode: stat.country,
-      country: stat.countryName,
-      visits: stat._count.country,
-      percentage: `${((stat._count.country / totalVisits) * 100).toFixed(1)}%`
-    }));
 
     return NextResponse.json({
       totalVisits,
       dailyVisits,
       monthlyVisits,
       uniqueVisitorsToday: uniqueVisitors.length,
-      countryData,
       lastUpdated: new Date().toISOString()
     });
   } catch (error) {
