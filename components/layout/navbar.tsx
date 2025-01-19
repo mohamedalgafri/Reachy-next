@@ -42,21 +42,16 @@ export function NavBar({ navItems, settings }: NavBarProps) {
   };
 
   const renderSocialIcon = (item: any) => {
-    // إزالة الـ <>/ من اسم المكون
     const cleanIconName = item?.icon?.replace(/<|>|\//g, '')?.trim();
     if (!cleanIconName) return null;
 
-    // معالجة الاسم للحصول على اسم المكون الصحيح
     let iconName;
-    // التحقق من وجود Fa في بداية الاسم
     if (cleanIconName.startsWith('Fa')) {
       iconName = cleanIconName;
     } else {
-      // إضافة Fa إلى بداية الاسم إذا لم يكن موجوداً
       iconName = `Fa${cleanIconName}`;
     }
 
-    // الحصول على المكون من مكتبة FA6Icons
     const IconComponent = FA6Icons[iconName];
     if (!IconComponent) return null;
 
