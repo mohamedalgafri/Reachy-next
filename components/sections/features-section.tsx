@@ -54,7 +54,7 @@ export default function FeaturesSection({ data, features }: FeaturesSectionProps
                     </div>
                   )}
                   <h4 
-                    className="text-2xl"
+                    className="text-xl sm:text-2xl"
                     dangerouslySetInnerHTML={{ 
                       __html: locale === "ar" ? feature.title_ar : feature.title_en
                     }}
