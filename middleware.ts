@@ -65,24 +65,30 @@ export default async function middleware(request: NextRequest) {
 
     // تسجيل الزيارة إذا كان المسار مؤهلاً
     if (shouldTrackVisit(pathname) && request.headers.get('accept')?.includes('text/html')) {
-        try {
-            const ipInfo = await getIpInfo();
-            const userAgent = request.headers.get('user-agent') || 'Unknown';
-            const referrer = request.headers.get('referer') || undefined;
+    try {
+        console.log('[VISIT_TRACKING] Starting to track visit for path:', pathname);
+        
+        const ipInfo = await getIpInfo();
+        console.log('[VISIT_TRACKING] IP Info:', ipInfo);
+        
+        const userAgent = request.headers.get('user-agent') || 'Unknown';
+        const referrer = request.headers.get('referer') || undefined;
 
-            await createVisit({
-                ip: ipInfo.ip,
-                country: ipInfo.country,
-                countryName: ipInfo.countryName,
-                city: ipInfo.city,
-                userAgent,
-                path: pathname,
-                referrer,
-            });
-        } catch (error) {
-            console.error('[VISIT_TRACKING_ERROR]', error);
-        }
+        const visitResult = await createVisit({
+            ip: ipInfo.ip,
+            country: ipInfo.country,
+            countryName: ipInfo.countryName,
+            city: ipInfo.city,
+            userAgent,
+            path: pathname,
+            referrer,
+        });
+        
+        console.log('[VISIT_TRACKING] Visit created:', visitResult);
+    } catch (error) {
+        console.error('[VISIT_TRACKING_ERROR]', error);
     }
+}
 
     // استخراج اللغة والمسار النظيف
     const pathnameHasLocale = locales.some(

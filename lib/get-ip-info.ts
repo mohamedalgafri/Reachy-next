@@ -7,7 +7,8 @@ export async function getIpInfo() {
       headersList.get('x-real-ip') || 
       headersList.get('x-forwarded-for')?.split(',')[0] || 
       '127.0.0.1'
-    
+
+      console.log('[GET_IP_INFO] Detected IP:', ip);
     // استخدام IP-API للحصول على معلومات الموقع
     const response = await fetch(`http://ip-api.com/json/${ip}`)
     const data = await response.json()

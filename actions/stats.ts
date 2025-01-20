@@ -2,7 +2,7 @@
 
 
 import { db } from '@/lib/db'
-import { startOfDay, startOfMonth, subDays, subMonths } from 'date-fns'
+import { startOfDay, startOfMonth, subDays, subMinutes, subMonths } from 'date-fns'
 import { revalidatePath } from 'next/cache'
 
 interface StatsResponse {
@@ -122,40 +122,50 @@ export async function getStats(): Promise<StatsResponse> {
 
 // إضافة زيارة جديدة
 export async function createVisit(data: {
-  ip: string
-  country: string
-  countryName: string
-  city?: string
-  userAgent: string
-  path: string
-  referrer?: string
+    ip: string
+    country: string
+    countryName: string
+    city?: string
+    userAgent: string
+    path: string
+    referrer?: string
 }) {
-  try {
-    const existingVisit = await db.visit.findFirst({
-      where: {
-        ip: data.ip,
-        path: data.path,
-        createdAt: {
-          gte: subDays(new Date(), 1), // تجاهل الزيارات المكررة خلال 24 ساعة
-        },
-      },
-    })
+    try {
+        // تحقق من وجود زيارة سابقة في آخر 24 ساعة
+        const existingVisit = await db.visit.findFirst({
+            where: {
+                ip: data.ip,
+                path: data.path,
+                createdAt: {
+                    // gte: subDays(new Date(), 1),
+                    gte: subMinutes(new Date(), 1),
+                },
+            },
+        })
 
-    if (existingVisit) {
-      return { success: true, data: existingVisit }
+        console.log('[CREATE_VISIT] Checking existing visit:', existingVisit);
+
+        // إذا لم تكن هناك زيارة سابقة، قم بإنشاء زيارة جديدة
+        if (!existingVisit) {
+            const visit = await db.visit.create({
+                data
+            })
+            console.log('[CREATE_VISIT] New visit created:', visit);
+            revalidatePath('/admin')
+            revalidatePath('/admin')
+            revalidatePath('/[locale]/admin')
+            revalidatePath('/ar/admin')
+            revalidatePath('/en/admin')
+            return { success: true, data: visit }
+        } else {
+            console.log('[CREATE_VISIT] Duplicate visit detected within 24 hours');
+            return { success: true, data: existingVisit }
+        }
+    } catch (error) {
+        console.error('[CREATE_VISIT] Error:', error)
+        return { 
+            success: false, 
+            error: 'حدث خطأ أثناء تسجيل الزيارة'
+        }
     }
-
-    const visit = await db.visit.create({
-      data
-    })
-
-    revalidatePath('/admin')
-    return { success: true, data: visit }
-  } catch (error) {
-    console.error('[VISIT_CREATE]', error)
-    return { 
-      success: false, 
-      error: 'حدث خطأ أثناء تسجيل الزيارة'
-    }
-  }
 }
