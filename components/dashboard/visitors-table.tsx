@@ -47,7 +47,14 @@ export function VisitorsTable({ data, locale }: VisitorsTableProps) {
               {data.map((row) => (
                 <TableRow key={row.country}>
                   <TableCell className="font-medium">
-                    {locale === "ar" ? row.countryName : row.countryName}
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={`https://flag.vercel.app/m/${row.country.toLowerCase()}.svg`}
+                        className="w-6 h-4 object-cover rounded"
+                        alt={row.countryName}
+                      />
+                      <span>{locale === "ar" ? row.countryName : row.countryName}</span>
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
                     {row.visits.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")}

@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { InfoCard } from "@/components/dashboard/info-card";
 import { VisitorsTable } from "@/components/dashboard/visitors-table";
 import { getStats } from "@/actions/stats";
+import { VisitorCharts } from "@/components/dashboard/visitor-charts";
 
 interface AdminPageProps {
   params: Promise<{ locale: string }>;
@@ -104,7 +105,11 @@ export default function AdminPage({ params }: AdminPageProps) {
           locale={locale}
         />
       </div>
-
+      <VisitorCharts 
+  countryData={stats.countryData}
+  timeData={stats.timeData}
+  locale={locale}
+/>
       <VisitorsTable data={stats.countryData} locale={locale} />
 
       <div className="text-sm text-muted-foreground text-center">
