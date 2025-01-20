@@ -102,7 +102,7 @@ export default function AdminPage({ params }: AdminPageProps) {
 
       <YearlyVisitsChart data={stats.monthlyStats} locale={locale} />
 
-      {/* <VisitorsTable data={stats.countryData} locale={locale} /> */}
+      <VisitorsTable data={stats.countryData} locale={locale} />
 
       <div className="text-sm text-muted-foreground text-center">
         {locale === "ar" 

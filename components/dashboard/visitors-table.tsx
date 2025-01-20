@@ -16,7 +16,6 @@ interface CountryData {
   countryName: string;
   visits: number;
   percentage: number;
-  createdAt: string;
 }
 
 interface VisitorsTableProps {
@@ -25,17 +24,6 @@ interface VisitorsTableProps {
 }
 
 export function VisitorsTable({ data, locale }: VisitorsTableProps) {
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString(locale === "ar" ? "ar-US" : "en-US", {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -48,15 +36,14 @@ export function VisitorsTable({ data, locale }: VisitorsTableProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className={` ${locale === "ar" ? "text-right" : "text-left"} `}>{locale === "ar" ? "الدولة" : "Country"}</TableHead>
+                <TableHead className={`${locale === "ar" ? "text-right" : "text-left"}`}>
+                  {locale === "ar" ? "الدولة" : "Country"}
+                </TableHead>
                 <TableHead className="text-right">
                   {locale === "ar" ? "الزيارات" : "Visits"}
                 </TableHead>
                 <TableHead className="text-right">
                   {locale === "ar" ? "النسبة" : "Percentage"}
-                </TableHead>
-                <TableHead className="text-right">
-                  {locale === "ar" ? "التاريخ" : "Date"}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -89,9 +76,6 @@ export function VisitorsTable({ data, locale }: VisitorsTableProps) {
                       minimumFractionDigits: 1,
                       maximumFractionDigits: 1,
                     })}%
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {formatDateTime(row.createdAt)}
                   </TableCell>
                 </TableRow>
               ))}
