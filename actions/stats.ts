@@ -1,56 +1,84 @@
 'use server'
 
+
 import { db } from '@/lib/db'
-import { eachDayOfInterval, endOfDay, startOfDay, startOfMonth, subMonths } from 'date-fns'
+import { startOfDay, startOfMonth, subDays, subMinutes, subMonths } from 'date-fns'
 import { revalidatePath } from 'next/cache'
 
-export async function getStats() {
+interface StatsResponse {
+  success: boolean
+  data?: {
+    totalVisits: number
+    dailyVisits: number
+    monthlyVisits: number
+    dailyTrend: number
+    monthlyTrend: number
+    countryData: Array<{
+      country: string
+      countryName: string
+      visits: number
+      percentage: number
+    }>
+    lastUpdated: string
+  }
+  error?: string
+}
+
+export async function getStats(): Promise<StatsResponse> {
   try {
-    const totalVisits = await db.visit.count();
-    const today = startOfDay(new Date());
-    const dailyVisits = await db.visit.count({
-      where: {
-        createdAt: {
-          gte: today,
+    // Get total visits
+    const totalVisits = await db.visit.count()
+
+    // Get today's visits
+    const today = startOfDay(new Date())
+    const yesterdayStart = startOfDay(subDays(new Date(), 1))
+    
+    const [dailyVisits, yesterdayVisits] = await Promise.all([
+      db.visit.count({
+        where: {
+          createdAt: {
+            gte: today,
+          },
         },
-      },
-    });
-
-    const monthStart = startOfMonth(new Date());
-    const monthlyVisits = await db.visit.count({
-      where: {
-        createdAt: {
-          gte: monthStart,
+      }),
+      db.visit.count({
+        where: {
+          createdAt: {
+            gte: yesterdayStart,
+            lt: today,
+          },
         },
-      },
-    });
+      }),
+    ])
 
-    const sixMonthsAgo = subMonths(startOfDay(new Date()), 5);
-    const days = eachDayOfInterval({
-      start: sixMonthsAgo,
-      end: new Date()
-    });
+    // Get this month's visits
+    const monthStart = startOfMonth(new Date())
+    const lastMonthStart = startOfMonth(subMonths(new Date(), 1))
+    
+    const [monthlyVisits, lastMonthVisits] = await Promise.all([
+      db.visit.count({
+        where: {
+          createdAt: {
+            gte: monthStart,
+          },
+        },
+      }),
+      db.visit.count({
+        where: {
+          createdAt: {
+            gte: lastMonthStart,
+            lt: monthStart,
+          },
+        },
+      }),
+    ])
 
-    const monthlyStats = await Promise.all(
-      days.map(async (day) => {
-        const visits = await db.visit.count({
-          where: {
-            createdAt: {
-              gte: startOfDay(day),
-              lt: endOfDay(day)
-            }
-          }
-        });
+    // Calculate trends
+    const dailyTrend = yesterdayVisits ? (dailyVisits - yesterdayVisits) / yesterdayVisits * 100 : 0
+    const monthlyTrend = lastMonthVisits ? (monthlyVisits - lastMonthVisits) / lastMonthVisits * 100 : 0
 
-        return {
-          date: day.toISOString(),
-          visits
-        };
-      })
-    );
-
-    // تجميع الزيارات حسب الدولة فقط
-    const visits = await db.visit.groupBy({
+    // Get visits by country
+    const countryVisits = await db.visit.groupBy({
       by: ['country', 'countryName'],
       _count: {
         country: true,
@@ -61,36 +89,83 @@ export async function getStats() {
         },
       },
       take: 10,
-    });
+    })
 
-    // حساب النسب المئوية بدون حقل التاريخ
-    const countryData = visits.map((item) => ({
+    // Calculate percentages
+    const countryData = countryVisits.map((item) => ({
       country: item.country,
       countryName: item.countryName,
       visits: item._count.country,
       percentage: item._count.country / totalVisits,
-    }));
+    }))
 
-    revalidatePath('/admin');
-    revalidatePath('/ar/admin');
-    revalidatePath('/en/admin');
+    const data = {
+      totalVisits,
+      dailyVisits,
+      monthlyVisits,
+      dailyTrend,
+      monthlyTrend,
+      countryData,
+      lastUpdated: new Date().toISOString(),
+    }
 
-    return {
-      success: true,
-      data: {
-        totalVisits,
-        dailyVisits,
-        monthlyVisits,
-        monthlyStats,
-        countryData,
-        lastUpdated: new Date().toISOString(),
-      }
-    };
+    revalidatePath('/admin')
+    return { success: true, data }
   } catch (error) {
-    console.error('[STATS_GET]', error);
-    return {
-      success: false,
+    console.error('[STATS_GET]', error)
+    return { 
+      success: false, 
       error: 'حدث خطأ أثناء جلب الإحصائيات'
-    };
+    }
   }
+}
+
+// إضافة زيارة جديدة
+export async function createVisit(data: {
+    ip: string
+    country: string
+    countryName: string
+    city?: string
+    userAgent: string
+    path: string
+    referrer?: string
+}) {
+    try {
+        // تحقق من وجود زيارة سابقة في آخر 24 ساعة
+        const existingVisit = await db.visit.findFirst({
+            where: {
+                ip: data.ip,
+                path: data.path,
+                createdAt: {
+                    // gte: subDays(new Date(), 1),
+                    gte: subMinutes(new Date(), 1),
+                },
+            },
+        })
+
+        console.log('[CREATE_VISIT] Checking existing visit:', existingVisit);
+
+        // إذا لم تكن هناك زيارة سابقة، قم بإنشاء زيارة جديدة
+        if (!existingVisit) {
+            const visit = await db.visit.create({
+                data
+            })
+            console.log('[CREATE_VISIT] New visit created:', visit);
+            revalidatePath('/admin')
+            revalidatePath('/admin')
+            revalidatePath('/[locale]/admin')
+            revalidatePath('/ar/admin')
+            revalidatePath('/en/admin')
+            return { success: true, data: visit }
+        } else {
+            console.log('[CREATE_VISIT] Duplicate visit detected within 24 hours');
+            return { success: true, data: existingVisit }
+        }
+    } catch (error) {
+        console.error('[CREATE_VISIT] Error:', error)
+        return { 
+            success: false, 
+            error: 'حدث خطأ أثناء تسجيل الزيارة'
+        }
+    }
 }

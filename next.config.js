@@ -7,6 +7,9 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig = {
   pageExtensions: ['mdx','ts','tsx'],
   reactStrictMode: true,
+  output: 'standalone',
+  swcMinify: true,
+  compress: true,
   // إضافة تكوين الخطوط
   webpack: (config) => {
     config.module.rules.push({
