@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db';
-import { startOfDay, startOfMonth, subDays, subMonths, eachDayOfInterval } from 'date-fns'
+import { startOfDay, startOfMonth } from 'date-fns'
 import { revalidatePath } from 'next/cache'
 
 export async function getStats() {
@@ -11,47 +11,23 @@ export async function getStats() {
 
     // Get today's visits
     const today = startOfDay(new Date());
-    const yesterdayStart = startOfDay(subDays(new Date(), 1));
-    
-    const [dailyVisits, yesterdayVisits] = await Promise.all([
-      db.visit.count({
-        where: {
-          createdAt: {
-            gte: today,
-          },
+    const dailyVisits = await db.visit.count({
+      where: {
+        createdAt: {
+          gte: today,
         },
-      }),
-      db.visit.count({
-        where: {
-          createdAt: {
-            gte: yesterdayStart,
-            lt: today,
-          },
-        },
-      })
-    ]);
+      },
+    });
 
     // Get this month's visits
     const monthStart = startOfMonth(new Date());
-    const lastMonthStart = startOfMonth(subMonths(new Date(), 1));
-    
-    const [monthlyVisits, lastMonthVisits] = await Promise.all([
-      db.visit.count({
-        where: {
-          createdAt: {
-            gte: monthStart,
-          },
+    const monthlyVisits = await db.visit.count({
+      where: {
+        createdAt: {
+          gte: monthStart,
         },
-      }),
-      db.visit.count({
-        where: {
-          createdAt: {
-            gte: lastMonthStart,
-            lt: monthStart,
-          },
-        },
-      })
-    ]);
+      },
+    });
 
     // Get visits by country
     const countryVisits = await db.visit.groupBy({
@@ -75,61 +51,25 @@ export async function getStats() {
       percentage: item._count.country / totalVisits,
     }));
 
-    // Get daily visits for the last 30 days
-    const thirtyDaysAgo = subDays(today, 30);
-    const dailyStats = await db.visit.groupBy({
-      by: ['createdAt'],
-      _count: {
-        id: true
-      },
-      where: {
-        createdAt: {
-          gte: thirtyDaysAgo,
-        },
-      },
-      orderBy: {
-        createdAt: 'asc',
-      },
-    });
+    revalidatePath('/admin')
+    revalidatePath('/ar/admin')
+    revalidatePath('/en/admin')
 
-    // Fill in missing days with zero visits
-    const allDays = eachDayOfInterval({ start: thirtyDaysAgo, end: today });
-    const timeData = allDays.map(date => {
-      const stats = dailyStats.find(
-        stat => date.toISOString().split('T')[0] === stat.createdAt.toISOString().split('T')[0]
-      );
-      return {
-        date: date.toISOString(),
-        visits: stats ? stats._count.id : 0,
-      };
-    });
-
-    // Calculate trends (without showing +0.0%)
-    const dailyTrend = yesterdayVisits ? ((dailyVisits - yesterdayVisits) / yesterdayVisits) * 100 : 0;
-    const monthlyTrend = lastMonthVisits ? ((monthlyVisits - lastMonthVisits) / lastMonthVisits) * 100 : 0;
-
-    revalidatePath('/admin');
-    revalidatePath('/ar/admin');
-    revalidatePath('/en/admin');
-
-    return { 
-      success: true, 
+    return {
+      success: true,
       data: {
         totalVisits,
         dailyVisits,
         monthlyVisits,
-        dailyTrend: dailyTrend !== 0 ? dailyTrend : null,
-        monthlyTrend: monthlyTrend !== 0 ? monthlyTrend : null,
         countryData,
-        timeData,
         lastUpdated: new Date().toISOString(),
       }
-    };
+    }
   } catch (error) {
-    console.error('[STATS_GET]', error);
-    return { 
-      success: false, 
+    console.error('[STATS_GET]', error)
+    return {
+      success: false,
       error: 'حدث خطأ أثناء جلب الإحصائيات'
-    };
+    }
   }
 }

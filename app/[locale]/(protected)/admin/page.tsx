@@ -1,21 +1,20 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { use } from 'react'; 
+import { use } from 'react';
 import { Users, Eye, Globe } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { Card } from "@/components/ui/card";
 import { InfoCard } from "@/components/dashboard/info-card";
 import { VisitorsTable } from "@/components/dashboard/visitors-table";
-import { getStats } from "@/actions/stats";
-import { VisitorCharts } from "@/components/dashboard/visitor-charts";
+import { getStats } from '@/actions/stats';
 
 interface AdminPageProps {
   params: Promise<{ locale: string }>;
 }
 
 export default function AdminPage({ params }: AdminPageProps) {
-  const { locale } = use(params); // استخدام React.use
+  const { locale } = use(params);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<any>(null);
@@ -85,36 +84,26 @@ export default function AdminPage({ params }: AdminPageProps) {
           value={stats.totalVisits.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")}
           icon={Users}
           description={locale === "ar" ? "منذ إطلاق الموقع" : "Since launch"}
-          trend={stats.dailyTrend}
-          locale={locale}
         />
         <InfoCard
           title={locale === "ar" ? "زيارات اليوم" : "Today's Visits"}
           value={stats.dailyVisits.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")}
           icon={Eye}
           description={locale === "ar" ? "اليوم" : "Today"}
-          trend={stats.dailyTrend}
-          locale={locale}
         />
         <InfoCard
           title={locale === "ar" ? "الزيارات الشهرية" : "Monthly Visits"}
           value={stats.monthlyVisits.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")}
           icon={Globe}
           description={locale === "ar" ? "هذا الشهر" : "This month"}
-          trend={stats.monthlyTrend}
-          locale={locale}
         />
       </div>
-      <VisitorCharts 
-  countryData={stats.countryData}
-  timeData={stats.timeData}
-  locale={locale}
-/>
+
       <VisitorsTable data={stats.countryData} locale={locale} />
 
       <div className="text-sm text-muted-foreground text-center">
         {locale === "ar" 
-          ? `آخر تحديث: ${new Date(stats.lastUpdated).toLocaleString('ar-SA')}` 
+          ? `آخر تحديث: ${new Date(stats.lastUpdated).toLocaleString()}` 
           : `Last updated: ${new Date(stats.lastUpdated).toLocaleString()}`}
       </div>
     </div>

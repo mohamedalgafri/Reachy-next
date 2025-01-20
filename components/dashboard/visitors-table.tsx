@@ -8,6 +8,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Globe2 } from "lucide-react";
+import { getCountryNameByCode } from '@/lib/countries';
 
 interface CountryData {
   country: string;
@@ -46,14 +48,22 @@ export function VisitorsTable({ data, locale }: VisitorsTableProps) {
             <TableBody>
               {data.map((row) => (
                 <TableRow key={row.country}>
-                  <TableCell className="font-medium">
+                  <TableCell>
                     <div className="flex items-center gap-2">
-                      <img
-                        src={`https://flag.vercel.app/m/${row.country.toLowerCase()}.svg`}
-                        className="w-6 h-4 object-cover rounded"
-                        alt={row.countryName}
-                      />
-                      <span>{locale === "ar" ? row.countryName : row.countryName}</span>
+                      {row.country === 'Unknown' ? (
+                        <Globe2 className="w-4 h-4 text-muted-foreground" />
+                      ) : (
+                        <img
+                          src={`https://flagcdn.com/w40/${row.country.toLowerCase()}.png`}
+                          className="w-6 h-4 object-cover rounded"
+                          alt={getCountryNameByCode(row.country, locale)}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciLz4=';
+                          }}
+                        />
+                      )}
+                      <span>{getCountryNameByCode(row.country, locale)}</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
