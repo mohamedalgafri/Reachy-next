@@ -20,11 +20,8 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-      </head>
-      <body className={cn(
+    <div lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+      <div className={cn(
         "min-h-screen bg-background antialiased",
         montserrat.variable,
         fontArabic.variable,
@@ -36,7 +33,7 @@ export default async function LocaleLayout({
         <Providers locale={locale} messages={messages}>
           {children}
         </Providers>
-      </body>
-    </html>
+      </div>
+    </div>
   );
 }

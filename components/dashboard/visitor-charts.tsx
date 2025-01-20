@@ -1,47 +1,74 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
+  Area,
+  AreaChart
 } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface VisitorChartsProps {
-  countryData: Array<{
-    country: string;
-    countryName: string;
-    visits: number;
-    percentage: number;
-  }>;
-  timeData: Array<{
+interface YearlyVisitsProps {
+  data: Array<{
     date: string;
     visits: number;
   }>;
   locale: string;
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', 
-                '#82ca9d', '#ffc658', '#ff7300', '#a4de6c', '#d0ed57'];
+export function YearlyVisitsChart({ data = [], locale }: YearlyVisitsProps) {
+  // تجميع البيانات حسب الشهر
+  const aggregatedData = data.reduce((acc, curr) => {
+    const date = new Date(curr.date);
+    const monthKey = date.toLocaleDateString(locale === 'ar' ? 'ar-US' : 'en-US', {
+      year: 'numeric',
+      month: 'short'
+    });
+    
+    if (!acc[monthKey]) {
+      acc[monthKey] = {
+        date: curr.date,
+        visits: 0
+      };
+    }
+    acc[monthKey].visits += curr.visits;
+    return acc;
+  }, {});
 
-export function VisitorCharts({ countryData, timeData, locale }: VisitorChartsProps) {
-  const formatNumber = (number: number) => 
-    number.toLocaleString(locale === "ar" ? "ar-SA" : "en-US");
+  const chartData = Object.values(aggregatedData);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(locale === 'ar' ? 'ar-US' : 'en-US', {
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  const formatNumber = (value: number) => {
+    return value.toLocaleString(locale === 'ar' ? 'ar-US' : 'en-US');
+  };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
+      const date = new Date(label);
       return (
-        <div className="bg-background border rounded p-2 shadow-lg">
-          <p className="font-medium">{label}</p>
-          <p className="text-muted-foreground">
-            {locale === "ar" ? "الزيارات: " : "Visits: "}
-            {formatNumber(payload[0].value)}
+        <div className="bg-background/95 border rounded p-3 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <p className="font-medium mb-1">
+            {date.toLocaleDateString(locale === 'ar' ? 'ar-US' : 'en-US', {
+              month: 'long',
+              year: 'numeric'
+            })}
+          </p>
+          <p className="text-primary">
+            {locale === 'ar' ? 'الزيارات: ' : 'Visits: '}
+            <span className="font-medium">
+              {formatNumber(payload[0].value)}
+            </span>
           </p>
         </div>
       );
@@ -50,67 +77,89 @@ export function VisitorCharts({ countryData, timeData, locale }: VisitorChartsPr
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {/* رسم بياني للدول */}
-      <Card className="col-span-1">
-        <CardHeader>
-          <CardTitle>
-            {locale === "ar" ? "توزيع الزيارات حسب الدولة" : "Visits by Country"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          {locale === "ar" ? "إحصائيات الزيارات" : "Visit Statistics"}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {chartData.length > 0 ? (
+          <div className="h-[400px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={countryData}
-                  dataKey="visits"
-                  nameKey="countryName"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  label={({ countryName, percent }) => 
-                    `${countryName} (${(percent * 100).toFixed(1)}%)`
-                  }
-                >
-                  {countryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* رسم بياني للزيارات حسب الوقت */}
-      <Card className="col-span-1">
-        <CardHeader>
-          <CardTitle>
-            {locale === "ar" ? "الزيارات حسب الوقت" : "Visits Over Time"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={timeData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="date"
-                  tickFormatter={(value) => new Date(value).toLocaleDateString(
-                    locale === "ar" ? "ar-SA" : "en-US",
-                    { month: 'short', day: 'numeric' }
-                  )}
+              <AreaChart
+                data={chartData}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 40,
+                }}
+              >
+                <defs>
+                  <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid 
+                  strokeDasharray="3 3" 
+                  className="stroke-muted" 
+                  horizontal={true}
+                  vertical={false}
                 />
-                <YAxis tickFormatter={formatNumber} />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="visits" fill="#3b82f6" />
-              </BarChart>
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={formatDate}
+                  tick={{ 
+                    fill: 'hsl(var(--foreground))',
+                    fontSize: 10,
+                    angle: 0,
+                    textAnchor: 'center',
+                    dy: 10
+                  }}
+                  height={60}
+                  axisLine={{ stroke: 'hsl(var(--border))' }}
+                  tickLine={{ stroke: 'hsl(var(--border))' }}
+                />
+                <YAxis
+                  tickFormatter={formatNumber}
+                  tick={{ 
+                    fill: 'hsl(var(--foreground))',
+                    fontSize: 12
+                  }}
+                  axisLine={{ stroke: 'hsl(var(--border))' }}
+                  tickLine={{ stroke: 'hsl(var(--border))' }}
+                />
+                <Tooltip content={CustomTooltip} />
+                <Area
+                  type="monotone"
+                  dataKey="visits"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={2}
+                  fill="url(#colorVisits)"
+                  dot={{
+                    stroke: 'hsl(var(--primary))',
+                    strokeWidth: 2,
+                    r: 4,
+                    fill: 'hsl(var(--background))'
+                  }}
+                  activeDot={{
+                    stroke: 'hsl(var(--primary))',
+                    strokeWidth: 2,
+                    r: 6,
+                    fill: 'hsl(var(--background))'
+                  }}
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        ) : (
+          <div className="h-[400px] w-full flex items-center justify-center text-muted-foreground">
+            {locale === "ar" ? "لا توجد بيانات للعرض" : "No data to display"}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

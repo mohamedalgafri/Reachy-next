@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { InfoCard } from "@/components/dashboard/info-card";
 import { VisitorsTable } from "@/components/dashboard/visitors-table";
 import { getStats } from '@/actions/stats';
+import { YearlyVisitsChart } from "@/components/dashboard/visitor-charts";
 
 interface AdminPageProps {
   params: Promise<{ locale: string }>;
@@ -81,23 +82,25 @@ export default function AdminPage({ params }: AdminPageProps) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <InfoCard
           title={locale === "ar" ? "إجمالي الزيارات" : "Total Visits"}
-          value={stats.totalVisits.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")}
+          value={stats.totalVisits.toLocaleString(locale === "ar" ? "ar-US" : "en-US")}
           icon={Users}
           description={locale === "ar" ? "منذ إطلاق الموقع" : "Since launch"}
         />
         <InfoCard
           title={locale === "ar" ? "زيارات اليوم" : "Today's Visits"}
-          value={stats.dailyVisits.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")}
+          value={stats.dailyVisits.toLocaleString(locale === "ar" ? "ar-US" : "en-US")}
           icon={Eye}
           description={locale === "ar" ? "اليوم" : "Today"}
         />
         <InfoCard
           title={locale === "ar" ? "الزيارات الشهرية" : "Monthly Visits"}
-          value={stats.monthlyVisits.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")}
+          value={stats.monthlyVisits.toLocaleString(locale === "ar" ? "ar-US" : "en-US")}
           icon={Globe}
           description={locale === "ar" ? "هذا الشهر" : "This month"}
         />
       </div>
+
+      <YearlyVisitsChart data={stats.monthlyStats} locale={locale} />
 
       <VisitorsTable data={stats.countryData} locale={locale} />
 
