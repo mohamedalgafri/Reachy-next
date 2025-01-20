@@ -1,43 +1,43 @@
-// app/(admin)/[locale]/admin/page.tsx
 'use client';
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { use } from 'react'; 
 import { Users, Eye, Globe } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/header";
-import InfoCard from "@/components/dashboard/info-card";
-import { VisitorsTable } from "@/components/dashboard/visitors-table";
 import { Card } from "@/components/ui/card";
+import { InfoCard } from "@/components/dashboard/info-card";
+import { VisitorsTable } from "@/components/dashboard/visitors-table";
+import { getStats } from '@/actions/stats';
 
-interface DashboardStats {
-  totalVisits: number;
-  dailyVisits: number;
-  monthlyVisits: number;
-  uniqueVisitorsToday: number;
-  countryData: any[];
-  lastUpdated: string;
+interface AdminPageProps {
+  params: Promise<{ locale: string }>;
 }
 
-export default function AdminPage({ params: { locale } }: { params: { locale: string } }) {
+export default function AdminPage({ params }: AdminPageProps) {
+  const { locale } = use(params); // استخدام React.use
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<any>(null);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    async function loadStats() {
       try {
-        const response = await fetch('/api/stats');
-        if (!response.ok) throw new Error('Failed to fetch stats');
-        const data = await response.json();
-        setStats(data);
+        const result = await getStats();
+        
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+
+        setStats(result.data);
+        setError(null);
       } catch (err) {
-        setError(err.message);
-        console.error('Error fetching stats:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
-    };
+    }
 
-    fetchStats();
+    loadStats();
   }, []);
 
   if (loading) {
@@ -81,21 +81,27 @@ export default function AdminPage({ params: { locale } }: { params: { locale: st
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <InfoCard
           title={locale === "ar" ? "إجمالي الزيارات" : "Total Visits"}
-          value={stats.totalVisits.toLocaleString()}
+          value={stats.totalVisits.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")}
           icon={Users}
           description={locale === "ar" ? "منذ إطلاق الموقع" : "Since launch"}
+          trend={stats.dailyTrend}
+          locale={locale}
         />
         <InfoCard
           title={locale === "ar" ? "زيارات اليوم" : "Today's Visits"}
-          value={stats.dailyVisits.toLocaleString()}
+          value={stats.dailyVisits.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")}
           icon={Eye}
           description={locale === "ar" ? "اليوم" : "Today"}
+          trend={stats.dailyTrend}
+          locale={locale}
         />
         <InfoCard
           title={locale === "ar" ? "الزيارات الشهرية" : "Monthly Visits"}
-          value={stats.monthlyVisits.toLocaleString()}
+          value={stats.monthlyVisits.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")}
           icon={Globe}
           description={locale === "ar" ? "هذا الشهر" : "This month"}
+          trend={stats.monthlyTrend}
+          locale={locale}
         />
       </div>
 
