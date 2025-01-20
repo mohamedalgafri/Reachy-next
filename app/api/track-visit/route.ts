@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { subMinutes } from 'date-fns';
+import { subDays, subMinutes } from 'date-fns';
 import { db } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
                 ip: data.ip,
                 path: data.path,
                 createdAt: {
-                    gte: subMinutes(new Date(), 1),
+                    gte: subDays(new Date(), 1),
                 },
             },
         });
