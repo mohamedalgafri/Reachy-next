@@ -6,7 +6,6 @@ export async function POST(request: NextRequest) {
     try {
         const data = await request.json();
         
-        // التحقق من وجود زيارة سابقة في آخر 5 دقائق
         const existingVisit = await db.visit.findFirst({
             where: {
                 ip: data.ip,
