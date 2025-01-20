@@ -9,7 +9,6 @@ import {
 } from "@/routes";
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
-import { createVisit } from '@/actions/stats';
 import { getIpInfo } from '@/lib/get-ip-info';
 
 export const locales = ['ar', 'en'];
@@ -43,7 +42,6 @@ function matchesPath(cleanPath: string, routePattern: string) {
     return cleanPath === routePattern;
 }
 
-// دالة للتحقق من ما إذا كان يجب تسجيل الزيارة
 function shouldTrackVisit(pathname: string) {
     // تجاهل المسارات المحددة
     if (ignoreVisitPaths.some(path => pathname.includes(path))) {
@@ -74,7 +72,6 @@ const i18nMiddleware = createMiddleware({
     defaultLocale,
     localePrefix: 'always'
 });
-
 export default async function middleware(request: NextRequest) {
     const { pathname, search } = request.nextUrl;
 
@@ -85,52 +82,43 @@ export default async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-// تسجيل الزيارة إذا كان المسار مؤهلاً
-if (shouldTrackVisit(pathname)) {
-    const acceptHeader = request.headers.get('accept') || '';
-    const isHtmlRequest = acceptHeader.includes('text/html');
-    const isGetRequest = request.method === 'GET';
-    
-    console.log('[VISIT_TRACKING] Request details:', {
-        path: pathname,
-        method: request.method,
-        accept: acceptHeader,
-        isHtmlRequest,
-        isGetRequest
-    });
+    // تسجيل الزيارة إذا كان المسار مؤهلاً
+    if (shouldTrackVisit(pathname)) {
+        const acceptHeader = request.headers.get('accept') || '';
+        const isHtmlRequest = acceptHeader.includes('text/html');
+        const isGetRequest = request.method === 'GET';
+        
+        if (isHtmlRequest && isGetRequest) {
+            try {
+                const ipInfo = await getIpInfo();
+                const userAgent = request.headers.get('user-agent') || 'Unknown';
+                const referrer = request.headers.get('referer') || undefined;
 
-    if (isHtmlRequest && isGetRequest) {
-        try {
-            console.log('[VISIT_TRACKING] Starting to track visit for path:', pathname);
-            
-            const ipInfo = await getIpInfo();
-            console.log('[VISIT_TRACKING] IP Info:', ipInfo);
-            
-            const userAgent = request.headers.get('user-agent') || 'Unknown';
-            const referrer = request.headers.get('referer') || undefined;
+                // استخدام API route لتسجيل الزيارة
+                const response = await fetch(new URL('/api/track-visit', request.url).toString(), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ip: ipInfo.ip,
+                        country: ipInfo.country,
+                        countryName: ipInfo.countryName,
+                        city: ipInfo.city,
+                        userAgent,
+                        path: pathname,
+                        referrer,
+                    }),
+                });
 
-            const visitResult = await createVisit({
-                ip: ipInfo.ip,
-                country: ipInfo.country,
-                countryName: ipInfo.countryName,
-                city: ipInfo.city,
-                userAgent,
-                path: pathname,
-                referrer,
-            });
-            
-            if (visitResult.success) {
-                console.log('[VISIT_TRACKING] Visit created successfully');
-            } else {
-                console.error('[VISIT_TRACKING] Failed to create visit:', visitResult.error);
+                const result = await response.json();
+                console.log('[VISIT_TRACKING] Result:', result);
+            } catch (error) {
+                console.error('[VISIT_TRACKING_ERROR]', error);
             }
-        } catch (error) {
-            console.error('[VISIT_TRACKING_ERROR]', error);
         }
-    } else {
-        console.log('[VISIT_TRACKING] Skipping non-HTML or non-GET request');
     }
-}
+
 
     // استخراج اللغة والمسار النظيف
     const pathnameHasLocale = locales.some(
