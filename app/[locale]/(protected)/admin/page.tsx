@@ -7,7 +7,7 @@ import { DashboardHeader } from "@/components/dashboard/header";
 import { Card } from "@/components/ui/card";
 import { InfoCard } from "@/components/dashboard/info-card";
 import { VisitorsTable } from "@/components/dashboard/visitors-table";
-import { getStats } from '@/actions/stats';
+import { getStats } from "@/actions/stats";
 
 interface AdminPageProps {
   params: Promise<{ locale: string }>;

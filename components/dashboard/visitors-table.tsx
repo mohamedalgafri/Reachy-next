@@ -30,38 +30,39 @@ export function VisitorsTable({ data, locale }: VisitorsTableProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{locale === "ar" ? "الدولة" : "Country"}</TableHead>
-              <TableHead className="text-right">
-                {locale === "ar" ? "عدد الزيارات" : "Visits"}
-              </TableHead>
-              <TableHead className="text-right">
-                {locale === "ar" ? "النسبة" : "Percentage"}
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.map((row) => (
-              <TableRow key={row.country}>
-                <TableCell className="font-medium">
-                  {locale === "ar" ? row.countryName : row.countryName}
-                </TableCell>
-                <TableCell className="text-right">
-                  {row.visits.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")}
-                </TableCell>
-                <TableCell className="text-right">
-                  {row.percentage.toLocaleString(locale === "ar" ? "ar-SA" : "en-US", {
-                    style: "percent",
-                    minimumFractionDigits: 1,
-                    maximumFractionDigits: 1,
-                  })}
-                </TableCell>
+        <div className="relative overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{locale === "ar" ? "الدولة" : "Country"}</TableHead>
+                <TableHead className="text-right">
+                  {locale === "ar" ? "الزيارات" : "Visits"}
+                </TableHead>
+                <TableHead className="text-right">
+                  {locale === "ar" ? "النسبة" : "Percentage"}
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {data.map((row) => (
+                <TableRow key={row.country}>
+                  <TableCell className="font-medium">
+                    {locale === "ar" ? row.countryName : row.countryName}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {row.visits.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {(row.percentage * 100).toLocaleString(locale === "ar" ? "ar-SA" : "en-US", {
+                      minimumFractionDigits: 1,
+                      maximumFractionDigits: 1,
+                    })}%
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
