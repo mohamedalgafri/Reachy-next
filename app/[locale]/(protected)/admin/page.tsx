@@ -100,7 +100,7 @@ export default function AdminPage({ params }: AdminPageProps) {
         />
       </div>
 
-      <YearlyVisitsChart data={stats.monthlyStats} locale={locale} />
+      {/* <YearlyVisitsChart data={stats.monthlyStats} locale={locale} /> */}
 
       <VisitorsTable data={stats.countryData} locale={locale} />
 

@@ -50,8 +50,7 @@ const nextConfig = {
     serverActions: true,
     mdxRs: true
   },
-  // إضافة تكوين إضافي للخطوط
-  optimizeFonts: true,
+
 };
 
 module.exports = withNextIntl(withContentlayer(nextConfig));
