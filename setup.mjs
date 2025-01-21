@@ -14,6 +14,66 @@ const fileExists = async (filePath) => {
   }
 };
 
+const setupCloudLinuxEnv = async () => {
+  const rootDir = process.cwd();
+  const appDir = path.join(rootDir, 'app');
+  
+  try {
+    // إنشاء مجلد app إذا لم يكن موجوداً
+    if (!(await fileExists(appDir))) {
+      await fs.mkdir(appDir, { recursive: true });
+      console.log('Created app directory');
+    }
+    
+    // إنشاء ملف node.rc
+    const nodeRcContent = JSON.stringify({
+      "src_dir": "app",
+      "node_modules_dir": "../node_modules"
+    }, null, 2);
+    
+    await fs.writeFile(path.join(rootDir, 'node.rc'), nodeRcContent);
+    console.log('Created node.rc file');
+
+    // نقل الملفات إلى مجلد app
+    const files = await fs.readdir(rootDir);
+    for (const file of files) {
+      if (file !== 'node_modules' && 
+          file !== 'app' && 
+          file !== 'node.rc' && 
+          file !== 'package.json' && 
+          file !== 'package-lock.json' &&
+          file !== 'setup.mjs') {
+        const sourcePath = path.join(rootDir, file);
+        const destPath = path.join(appDir, file);
+        await fs.rename(sourcePath, destPath);
+        console.log(`Moved ${file} to app directory`);
+      }
+    }
+
+    // إنشاء server.js
+    const serverContent = `const next = require('next')
+const app = next({ dir: __dirname, dev: false })
+const handle = app.getRequestHandler()
+
+app.prepare().then(() => {
+  require('http')
+    .createServer((req, res) => handle(req, res))
+    .listen(process.env.PORT || 3000, () => {
+      console.log('> Ready on http://localhost:' + (process.env.PORT || 3000))
+    })
+})`;
+
+    await fs.writeFile(path.join(appDir, 'server.js'), serverContent);
+    console.log('Created server.js file');
+
+    console.log('\nCloudLinux environment setup completed successfully');
+  } catch (error) {
+    console.error('Error setting up CloudLinux environment:', error);
+  }
+};
+
+
+
 // Function to delete or update specific lines from a file
 const manageLinesInFile = async (
   action,
