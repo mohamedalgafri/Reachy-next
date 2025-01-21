@@ -42,7 +42,7 @@ const nextConfig = {
         pathname: "/*/**",
       },
     ],
-    unoptimized: true // إضافة هذا الخيار للصور
+    unoptimized: true
   },
   typescript: {
     ignoreBuildErrors: true,
