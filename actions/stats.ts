@@ -103,20 +103,20 @@ export async function getStats(): Promise<StatsResponse> {
       percentage: item._count.country / totalVisits,
     }))
 
-    const monthlyStats = await db.visit.groupBy({
+    const monthlyStatsRaw = await db.visit.groupBy({
       by: ['createdAt'],
-      _count: {
-        id: true
-      },
-      orderBy: {
-        createdAt: 'asc'
-      },
+      _count: true,
+      where: {
+        createdAt: {
+          gte: subMonths(new Date(), 12)
+        }
+      }
     });
 
     // Transform the data into the format expected by the chart
-    const transformedMonthlyStats = monthlyStats.map(stat => ({
+    const monthlyStats = monthlyStatsRaw.map(stat => ({
       date: stat.createdAt.toISOString(),
-      visits: stat._count.id
+      visits: stat._count
     }));
 
     const data = {
@@ -126,7 +126,7 @@ export async function getStats(): Promise<StatsResponse> {
       dailyTrend,
       monthlyTrend,
       countryData,
-      monthlyStats: transformedMonthlyStats,
+      monthlyStats,
       lastUpdated: new Date().toISOString(),
     }
 
