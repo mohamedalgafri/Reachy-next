@@ -42,6 +42,7 @@ const nextConfig = {
         pathname: "/*/**",
       },
     ],
+    unoptimized: true // إضافة هذا الخيار للصور
   },
   typescript: {
     ignoreBuildErrors: true,
@@ -50,7 +51,6 @@ const nextConfig = {
     serverActions: true,
     mdxRs: true
   },
-
 };
 
 module.exports = withNextIntl(withContentlayer(nextConfig));
