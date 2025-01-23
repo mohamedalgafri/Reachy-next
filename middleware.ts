@@ -188,6 +188,8 @@ export const config = {
         // تطبيق على المسار الرئيسي
         "/",
         // تطبيق على مسارات اللغة
-        "/(ar|en)/:path*"
+        "/(ar|en)/:path*",
+        "/admin/:path*",  
+        "/admin"  
     ]
 };

@@ -87,6 +87,7 @@ const LoginForm = () => {
             password: result.password,
             redirect: true,
             callbackUrl: DEFAULT_LOGIN_REDIRECT
+            // callbackUrl: `/${locale}/admin`
           });
         }
       } catch (error) {
