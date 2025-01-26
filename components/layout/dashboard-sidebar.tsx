@@ -78,7 +78,7 @@ function SidebarNav({ links, settings, isExpanded, isMobile, onLinkClick }: Side
               <Fragment key={`link-fragment-${item.titleKey}`}>
                 {(isExpanded || isMobile) ? (
                   <Link
-                    href={item.disabled ? "#" : item.href}
+                    href={item.href === '/' ? '#' : item.href}
                     className={cn(
                       "flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-muted rtl:flex-row-reverse",
                       isActiveLink(item.href)
@@ -87,8 +87,14 @@ function SidebarNav({ links, settings, isExpanded, isMobile, onLinkClick }: Side
                       item.disabled &&
                       "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
                     )}
-                    onClick={onLinkClick}
-                    locale={locale}
+                    onClick={(e) => {
+                      if (item.href === '/') {
+                        e.preventDefault();
+                        window.location.href = `/${locale}`;
+                      }
+                      onLinkClick?.();
+                    }}
+                    {...(item.href === '/' ? {} : { locale })}
                   >
                     <IconComponent iconName={item.icon} />
                     {t(item.titleKey)}
@@ -158,12 +164,12 @@ export function DashboardSidebar({ links, settings }: SidebarProps) {
                 {isExpanded && (
                   <a href="/" locale={locale} className="flex gap-2 items-center rtl:flex-row-reverse">
                     {settings?.logoImage && (
-                      <Image 
+                      <Image
                         width={128}
                         height={128}
-                        src={settings.logoImage} 
-                        alt="Logo" 
-                        className="size-32 object-contain" 
+                        src={settings.logoImage}
+                        alt="Logo"
+                        className="size-32 object-contain"
                       />
                     )}
                     {settings?.logoText && (
@@ -192,9 +198,9 @@ export function DashboardSidebar({ links, settings }: SidebarProps) {
                 </Button>
               </div>
 
-              <SidebarNav 
-                links={links} 
-                settings={settings} 
+              <SidebarNav
+                links={links}
+                settings={settings}
                 isExpanded={isExpanded}
               />
             </div>
@@ -226,14 +232,14 @@ export function MobileSheetSidebar({ links, settings }: SidebarProps) {
           <span className="sr-only">Toggle navigation menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent 
-        side={locale === 'ar' ? 'right' : 'left'} 
+      <SheetContent
+        side={locale === 'ar' ? 'right' : 'left'}
         className="flex flex-col p-0 w-[80%] sm:w-[350px]"
       >
         <ScrollArea className="flex-1">
-          <SidebarNav 
-            links={links} 
-            settings={settings} 
+          <SidebarNav
+            links={links}
+            settings={settings}
             isMobile={true}
             onLinkClick={() => setOpen(false)}
           />
