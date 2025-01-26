@@ -36,82 +36,75 @@ interface StatsResponse {
 
 export async function getStats(): Promise<StatsResponse> {
   try {
-    const today = startOfDay(new Date());
-    const monthStart = startOfMonth(new Date());
-    const yearStart = startOfMonth(subMonths(new Date(), 11));
+      const today = startOfDay(new Date());
+      const monthStart = startOfMonth(new Date());
+      const yearStart = startOfMonth(subMonths(new Date(), 11));
 
-    // جلب الإحصائيات الأساسية
-    const [totalVisits, dailyVisits, monthlyVisits, countryVisits] = await Promise.all([
-      db.visit.count(),
-      db.visit.count({
-        where: { createdAt: { gte: today } }
-      }),
-      db.visit.count({
-        where: { createdAt: { gte: monthStart } }
-      }),
-      db.visit.groupBy({
-        by: ['country', 'countryName'],
-        _count: { country: true },
-        orderBy: { _count: { country: 'desc' } },
-        take: 10
-      })
-    ]);
+      const [totalVisits, dailyVisits, monthlyVisits, countryVisits] = await Promise.all([
+          db.visit.count({
+              where: {
+                  createdAt: { gte: yearStart }
+              }
+          }),
+          db.visit.count({
+              where: { createdAt: { gte: today } }
+          }),
+          db.visit.count({
+              where: { createdAt: { gte: monthStart } }
+          }),
+          db.visit.groupBy({
+              by: ['country', 'countryName'],
+              _count: { country: true },
+              orderBy: { _count: { country: 'desc' } },
+              take: 10,
+              where: {
+                  createdAt: { gte: yearStart }
+              }
+          })
+      ]);
 
+      const countryData = countryVisits.map(item => ({
+          country: item.country,
+          countryName: item.countryName,
+          visits: item._count.country,
+          percentage: item._count.country / totalVisits
+      }));
 
-    
+      const last12Months = Array.from({ length: 6 }, (_, i) => 
+          startOfMonth(subMonths(new Date(), 5 - i))
+      );
 
-    // معالجة بيانات الدول
-    const countryData = countryVisits.map(item => ({
-      country: item.country,
-      countryName: item.countryName,
-      visits: item._count.country,
-      percentage: item._count.country / totalVisits
-    }));
+      const visitsPerMonth = await Promise.all(
+          last12Months.map(async (month) => ({
+              date: format(month, 'yyyy-MM'),
+              visits: await db.visit.count({
+                  where: {
+                      createdAt: {
+                          gte: startOfMonth(month),
+                          lt: endOfMonth(month)
+                      }
+                  }
+              })
+          }))
+      );
 
-    // إنشاء مصفوفة للأشهر الـ 12 الماضية
-    const last12Months = Array.from({ length: 6 }, (_, i) => {
-      const date = subMonths(new Date(), 5 - i);
-      return startOfMonth(date);
-      
-    });
-
-    // جلب الزيارات الشهرية كاملة
-    const visitsPerMonth = await Promise.all(
-      last12Months.map(async (month) => {
-        const count = await db.visit.count({
-          where: {
-            createdAt: {
-              gte: startOfMonth(month),
-              lt: endOfMonth(month)
-            }
+      return {
+          success: true,
+          data: {
+              totalVisits,
+              dailyVisits,
+              monthlyVisits,
+              countryData,
+              monthlyStats: visitsPerMonth,
+              lastUpdated: new Date().toISOString()
           }
-        });
-    
-        return {
-          date: format(month, 'yyyy-MM'),
-          visits: count
-        };
-      })
-    );
-
-
-    return {
-      success: true,
-      data: {
-        totalVisits,
-        dailyVisits,
-        monthlyVisits,
-        countryData,
-        monthlyStats: visitsPerMonth,
-        lastUpdated: new Date().toISOString()
-      }
-    };
+      };
   } catch (error) {
-    console.error('[STATS_GET]', error);
-    return {
-      success: false,
-      error: 'حدث خطأ أثناء جلب الإحصائيات'
-    };
+      console.error('[STATS_GET]', error);
+      return {
+          success: false,
+          error: 'حدث خطأ أثناء جلب الإحصائيات'
+      };
   }
 }
 

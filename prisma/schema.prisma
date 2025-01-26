@@ -47,9 +47,6 @@ model Visit {
     country     String    @default("Unknown")
     countryName String    @default("Unknown")
     city        String?   @default("Unknown")
-    userAgent   String    
-    entryPage   String?
-    deviceType  String?    
     createdAt   DateTime  @default(now())
 
     @@index([country, createdAt])

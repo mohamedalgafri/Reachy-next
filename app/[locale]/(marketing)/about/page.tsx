@@ -159,13 +159,6 @@ export default async function AboutPage({ params: { locale } }: Props) {
               </div>
               
               <div className="cardS orgCS">
-                <Image 
-                  src="/images/02.jpg" 
-                  alt=""
-                  width={500}
-                  height={300}
-                  className="w-full h-auto"
-                />
                 <div className="textCardS">
                   <p className="text-base lg:text-xl"
                     dangerouslySetInnerHTML={{ __html: locale === 'ar' ? content.mission.title.ar : content.mission.title.en}}
