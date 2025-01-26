@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
             where: {
                 ip: data.ip,
                 createdAt: {
-                    gte: subHours(new Date(), 1)
+                    gte: subHours(new Date(), 12)
                 }
             }
         });
