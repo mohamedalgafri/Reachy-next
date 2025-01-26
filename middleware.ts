@@ -43,26 +43,15 @@ function matchesPath(cleanPath: string, routePattern: string) {
 }
 
 function shouldTrackVisit(pathname: string) {
-    // تجاهل المسارات المحددة
-    if (ignoreVisitPaths.some(path => pathname.includes(path))) {
-        console.log('[VISIT_TRACKING] Ignoring path:', pathname);
-        return false;
-    }
-
-    // تأكد من أن المسار يحتوي على محتوى حقيقي
-    if (pathname === '/' || pathname === '/ar' || pathname === '/en') {
-        console.log('[VISIT_TRACKING] Recording visit for root path:', pathname);
+    
+    if (pathname === '/' || pathname === '/ar' || pathname === '/en' || pathname.startsWith('/ar/') || pathname.startsWith('/en/')) {
         return true;
     }
 
-    // تحقق من أن المسار يحتوي على محتوى فعلي
-    const cleanPath = pathname.split('/').filter(Boolean);
-    if (cleanPath.length < 1) {
-        console.log('[VISIT_TRACKING] Path too short:', pathname);
+    if (ignoreVisitPaths.some(path => pathname.includes(path))) {
         return false;
     }
 
-    console.log('[VISIT_TRACKING] Recording visit for path:', pathname);
     return true;
 }
 
@@ -112,7 +101,6 @@ export default async function middleware(request: NextRequest) {
                 });
 
                 const result = await response.json();
-                console.log('[VISIT_TRACKING] Result:', result);
             } catch (error) {
                 console.error('[VISIT_TRACKING_ERROR]', error);
             }
@@ -180,6 +168,8 @@ export default async function middleware(request: NextRequest) {
 
     return NextResponse.next();
 }
+
+
 
 export const config = {
     matcher: [

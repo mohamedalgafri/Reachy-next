@@ -42,18 +42,18 @@ model User {
 }
 
 model Visit {
-  id          String    @id @default(cuid())
-  ip          String    
-  country     String    
-  countryName String    
-  city        String?   
-  userAgent   String    
-  path        String    
-  referrer    String?   
-  createdAt   DateTime  @default(now())
+    id          String    @id @default(cuid())
+    ip          String    
+    country     String    @default("Unknown")
+    countryName String    @default("Unknown")
+    city        String?   @default("Unknown")
+    userAgent   String    
+    entryPage   String?
+    deviceType  String?    
+    createdAt   DateTime  @default(now())
 
-  @@index([country, createdAt])
-  @@index([createdAt])
+    @@index([country, createdAt])
+    @@index([createdAt])
 }
 
 

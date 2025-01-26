@@ -15,7 +15,7 @@ export default async function LocaleLayout({
   children,
   params,
 }: LocaleLayoutProps) {
-  const locale = params.locale;
+  const locale = await params.locale;
   const messages = await getMessages(locale);
   setRequestLocale(locale);
 

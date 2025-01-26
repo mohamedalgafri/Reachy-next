@@ -156,7 +156,7 @@ export function DashboardSidebar({ links, settings }: SidebarProps) {
             <div className="flex h-full max-h-screen flex-1 flex-col gap-2">
               <div className="logoDash flex h-14 items-center p-4 lg:h-[60px] rtl:flex-row-reverse justify-between">
                 {isExpanded && (
-                  <Link href="/" locale={locale} className="flex gap-2 items-center rtl:flex-row-reverse">
+                  <a href="/" locale={locale} className="flex gap-2 items-center rtl:flex-row-reverse">
                     {settings?.logoImage && (
                       <Image 
                         width={128}
@@ -171,7 +171,7 @@ export function DashboardSidebar({ links, settings }: SidebarProps) {
                         {settings.logoText}
                       </span>
                     )}
-                  </Link>
+                  </a>
                 )}
 
                 <Button

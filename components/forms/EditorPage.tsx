@@ -20,8 +20,7 @@ const EditorPage = () => {
 
   const handleSave = () => {
     const content = editor?.getHTML();
-    // هنا يمكن إرسال المحتوى إلى الخادم أو تخزينه في قاعدة البيانات
-    console.log(content);
+
   };
 
   return (

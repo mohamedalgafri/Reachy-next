@@ -9,6 +9,8 @@ import { InfoCard } from "@/components/dashboard/info-card";
 import { VisitorsTable } from "@/components/dashboard/visitors-table";
 import { getStats } from '@/actions/stats';
 import { YearlyVisitsChart } from "@/components/dashboard/visitor-charts";
+import { BrowserStats } from "@/components/dashboard/browser-stats";
+import { DeviceStats } from "@/components/dashboard/device-stats";
 
 interface AdminPageProps {
   params: Promise<{ locale: string }>;
@@ -24,7 +26,7 @@ export default function AdminPage({ params }: AdminPageProps) {
     async function loadStats() {
       try {
         const result = await getStats();
-        
+
         if (!result.success) {
           throw new Error(result.error);
         }
@@ -44,9 +46,9 @@ export default function AdminPage({ params }: AdminPageProps) {
   if (loading) {
     return (
       <div className="flex flex-col gap-5">
-        <DashboardHeader 
-          heading={locale === "ar" ? "لوحة التحكم" : "Dashboard"} 
-          text={locale === "ar" ? "جاري التحميل..." : "Loading..."} 
+        <DashboardHeader
+          heading={locale === "ar" ? "لوحة التحكم" : "Dashboard"}
+          text={locale === "ar" ? "جاري التحميل..." : "Loading..."}
         />
         <div className="animate-pulse space-y-4">
           <div className="h-24 bg-muted rounded"></div>
@@ -59,9 +61,9 @@ export default function AdminPage({ params }: AdminPageProps) {
   if (error || !stats) {
     return (
       <div className="flex flex-col gap-5">
-        <DashboardHeader 
-          heading={locale === "ar" ? "لوحة التحكم" : "Dashboard"} 
-          text={locale === "ar" ? "حدث خطأ" : "An error occurred"} 
+        <DashboardHeader
+          heading={locale === "ar" ? "لوحة التحكم" : "Dashboard"}
+          text={locale === "ar" ? "حدث خطأ" : "An error occurred"}
         />
         <Card className="p-6">
           <p className="text-center text-destructive">
@@ -74,11 +76,11 @@ export default function AdminPage({ params }: AdminPageProps) {
 
   return (
     <div className="flex flex-col gap-5">
-      <DashboardHeader 
-        heading={locale === "ar" ? "لوحة التحكم" : "Dashboard"} 
-        text={locale === "ar" ? "إحصائيات الزوار" : "Visitor Statistics"} 
+      <DashboardHeader
+        heading={locale === "ar" ? "لوحة التحكم" : "Dashboard"}
+        text={locale === "ar" ? "إحصائيات الزوار" : "Visitor Statistics"}
       />
-      
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <InfoCard
           title={locale === "ar" ? "إجمالي الزيارات" : "Total Visits"}
@@ -100,13 +102,12 @@ export default function AdminPage({ params }: AdminPageProps) {
         />
       </div>
 
-      {/* <YearlyVisitsChart data={stats.monthlyStats} locale={locale} /> */}
-
       <VisitorsTable data={stats.countryData} locale={locale} />
+      <YearlyVisitsChart data={stats.monthlyStats} locale={locale} />
 
       <div className="text-sm text-muted-foreground text-center">
-        {locale === "ar" 
-          ? `آخر تحديث: ${new Date(stats.lastUpdated).toLocaleString()}` 
+        {locale === "ar"
+          ? `آخر تحديث: ${new Date(stats.lastUpdated).toLocaleString()}`
           : `Last updated: ${new Date(stats.lastUpdated).toLocaleString()}`}
       </div>
     </div>

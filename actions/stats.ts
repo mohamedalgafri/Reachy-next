@@ -1,8 +1,15 @@
 'use server'
 
-
 import { db } from '@/lib/db'
-import { startOfDay, startOfMonth, subDays, subMinutes, subMonths } from 'date-fns'
+import { 
+  startOfDay, 
+  startOfMonth, 
+  subMonths, 
+  format,
+  endOfMonth, 
+  subDays,
+  subHours
+} from 'date-fns';
 import { revalidatePath } from 'next/cache'
 
 interface StatsResponse {
@@ -11,8 +18,6 @@ interface StatsResponse {
     totalVisits: number;
     dailyVisits: number;
     monthlyVisits: number;
-    dailyTrend: number;
-    monthlyTrend: number;
     countryData: Array<{
       country: string;
       countryName: string;
@@ -28,118 +33,88 @@ interface StatsResponse {
   error?: string;
 }
 
+
 export async function getStats(): Promise<StatsResponse> {
   try {
-    // Get total visits
-    const totalVisits = await db.visit.count()
+    const today = startOfDay(new Date());
+    const monthStart = startOfMonth(new Date());
+    const yearStart = startOfMonth(subMonths(new Date(), 11));
 
-    // Get today's visits
-    const today = startOfDay(new Date())
-    const yesterdayStart = startOfDay(subDays(new Date(), 1))
-
-    const [dailyVisits, yesterdayVisits] = await Promise.all([
+    // جلب الإحصائيات الأساسية
+    const [totalVisits, dailyVisits, monthlyVisits, countryVisits] = await Promise.all([
+      db.visit.count(),
       db.visit.count({
-        where: {
-          createdAt: {
-            gte: today,
-          },
-        },
+        where: { createdAt: { gte: today } }
       }),
       db.visit.count({
-        where: {
-          createdAt: {
-            gte: yesterdayStart,
-            lt: today,
-          },
-        },
+        where: { createdAt: { gte: monthStart } }
       }),
-    ])
+      db.visit.groupBy({
+        by: ['country', 'countryName'],
+        _count: { country: true },
+        orderBy: { _count: { country: 'desc' } },
+        take: 10
+      })
+    ]);
 
-    // Get this month's visits
-    const monthStart = startOfMonth(new Date())
-    const lastMonthStart = startOfMonth(subMonths(new Date(), 1))
 
-    const [monthlyVisits, lastMonthVisits] = await Promise.all([
-      db.visit.count({
-        where: {
-          createdAt: {
-            gte: monthStart,
-          },
-        },
-      }),
-      db.visit.count({
-        where: {
-          createdAt: {
-            gte: lastMonthStart,
-            lt: monthStart,
-          },
-        },
-      }),
-    ])
+    
 
-    // Calculate trends
-    const dailyTrend = yesterdayVisits ? (dailyVisits - yesterdayVisits) / yesterdayVisits * 100 : 0
-    const monthlyTrend = lastMonthVisits ? (monthlyVisits - lastMonthVisits) / lastMonthVisits * 100 : 0
-
-    // Get visits by country
-    const countryVisits = await db.visit.groupBy({
-      by: ['country', 'countryName'],
-      _count: {
-        country: true,
-      },
-      orderBy: {
-        _count: {
-          country: 'desc',
-        },
-      },
-      take: 10,
-    })
-
-    // Calculate percentages
-    const countryData = countryVisits.map((item) => ({
+    // معالجة بيانات الدول
+    const countryData = countryVisits.map(item => ({
       country: item.country,
       countryName: item.countryName,
       visits: item._count.country,
-      percentage: item._count.country / totalVisits,
-    }))
-
-    const monthlyStatsRaw = await db.visit.groupBy({
-      by: ['createdAt'],
-      _count: true,
-      where: {
-        createdAt: {
-          gte: subMonths(new Date(), 12)
-        }
-      }
-    });
-
-    // Transform the data into the format expected by the chart
-    const monthlyStats = monthlyStatsRaw.map(stat => ({
-      date: stat.createdAt.toISOString(),
-      visits: stat._count
+      percentage: item._count.country / totalVisits
     }));
 
-    const data = {
-      totalVisits,
-      dailyVisits,
-      monthlyVisits,
-      dailyTrend,
-      monthlyTrend,
-      countryData,
-      monthlyStats,
-      lastUpdated: new Date().toISOString(),
-    }
+    // إنشاء مصفوفة للأشهر الـ 12 الماضية
+    const last12Months = Array.from({ length: 6 }, (_, i) => {
+      const date = subMonths(new Date(), 5 - i);
+      return startOfMonth(date);
+      
+    });
 
-    revalidatePath('/admin')
-    return { success: true, data }
+    // جلب الزيارات الشهرية كاملة
+    const visitsPerMonth = await Promise.all(
+      last12Months.map(async (month) => {
+        const count = await db.visit.count({
+          where: {
+            createdAt: {
+              gte: startOfMonth(month),
+              lt: endOfMonth(month)
+            }
+          }
+        });
+    
+        return {
+          date: format(month, 'yyyy-MM'),
+          visits: count
+        };
+      })
+    );
+
+
+    return {
+      success: true,
+      data: {
+        totalVisits,
+        dailyVisits,
+        monthlyVisits,
+        countryData,
+        monthlyStats: visitsPerMonth,
+        lastUpdated: new Date().toISOString()
+      }
+    };
   } catch (error) {
-    console.error('[STATS_GET]', error)
+    console.error('[STATS_GET]', error);
     return {
       success: false,
       error: 'حدث خطأ أثناء جلب الإحصائيات'
-    }
+    };
   }
 }
+
 
 // إضافة زيارة جديدة
 export async function createVisit(data: {
@@ -152,21 +127,18 @@ export async function createVisit(data: {
   referrer?: string
 }) {
   try {
-    // تحقق من وجود زيارة سابقة في آخر 24 ساعة
     const existingVisit = await db.visit.findFirst({
       where: {
         ip: data.ip,
         path: data.path,
         createdAt: {
-          // gte: subDays(new Date(), 1),
-          gte: subMinutes(new Date(), 1),
+          gte: subHours(new Date(), 12),
         },
       },
     })
 
     console.log('[CREATE_VISIT] Checking existing visit:', existingVisit);
 
-    // إذا لم تكن هناك زيارة سابقة، قم بإنشاء زيارة جديدة
     if (!existingVisit) {
       const visit = await db.visit.create({
         data
@@ -179,7 +151,6 @@ export async function createVisit(data: {
       revalidatePath('/en/admin')
       return { success: true, data: visit }
     } else {
-      console.log('[CREATE_VISIT] Duplicate visit detected within 24 hours');
       return { success: true, data: existingVisit }
     }
   } catch (error) {
